@@ -1,0 +1,74 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Assistant Dashboard</h1>
+      <p class="text-gray-600 mt-1">Manage appointments and patient reports</p>
+    </div>
+    <button (click)="openBookingModal()" class="btn btn-primary">
+      Book Appointment
+    </button>
+  </div>
+
+  <!-- Patient List -->
+  <div class="card">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Patient Queue</h2>
+    
+    <app-loader *ngIf="loading"></app-loader>
+
+    <div *ngIf="!loading" class="overflow-x-auto">
+      <table class="table">
+        <thead class="table-header">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">SL</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Patient</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+          </tr>
+        </thead>
+        <tbody class="table-body">
+          <tr *ngFor="let patient of patients" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+              {{ patient.serialNumber }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm">
+                <p class="font-medium text-gray-900 bengali-text">{{ patient.patientName }}</p>
+                <p class="text-gray-500">{{ patient.patientId }}</p>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="badge badge-absent">{{ patient.status }}</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <button (click)="managePatient(patient)" class="btn btn-sm btn-primary">
+                Manage
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty State -->
+      <div *ngIf="patients.length === 0" class="text-center py-12">
+        <p class="text-gray-500">No patients in queue</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Modal -->
+<app-modal 
+  [isOpen]="showBookingModal" 
+  [title]="'Book Appointment'" 
+  [size]="'lg'"
+  (closeModal)="closeBookingModal()">
+  <div class="space-y-4">
+    <p class="text-gray-600">Appointment booking form will go here</p>
+    <div class="flex space-x-3 pt-4">
+      <button (click)="closeBookingModal()" class="flex-1 btn btn-secondary">Cancel</button>
+      <button class="flex-1 btn btn-primary">Book</button>
+    </div>
+  </div>
+</app-modal>
+
+

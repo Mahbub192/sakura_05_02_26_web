@@ -1,0 +1,12 @@
+<div class="flex flex-col items-center justify-center p-8">
+  <div class="animate-spin rounded-full border-t-4 border-b-4 border-sakura"
+       [ngClass]="{
+         'h-8 w-8': size === 'sm',
+         'h-12 w-12': size === 'md',
+         'h-16 w-16': size === 'lg'
+       }">
+  </div>
+  <p class="mt-4 text-gray-600" *ngIf="message">{{ message }}</p>
+</div>
+
+

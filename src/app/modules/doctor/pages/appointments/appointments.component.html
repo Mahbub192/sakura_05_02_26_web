@@ -1,0 +1,50 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-bold text-gray-900">Appointments</h1>
+    <button (click)="createAppointment()" class="btn btn-primary">
+      New Appointment
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="card">
+    <div class="border-b">
+      <nav class="flex space-x-8">
+        <button
+          (click)="selectTab('today')"
+          [class.border-sakura]="activeTab === 'today'"
+          [class.text-sakura]="activeTab === 'today'"
+          class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+          [class.border-transparent]="activeTab !== 'today'">
+          Today's Appointments
+        </button>
+        <button
+          (click)="selectTab('upcoming')"
+          [class.border-sakura]="activeTab === 'upcoming'"
+          [class.text-sakura]="activeTab === 'upcoming'"
+          class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+          [class.border-transparent]="activeTab !== 'upcoming'">
+          Upcoming
+        </button>
+        <button
+          (click)="selectTab('old')"
+          [class.border-sakura]="activeTab === 'old'"
+          [class.text-sakura]="activeTab === 'old'"
+          class="py-4 px-1 border-b-2 font-medium text-sm transition-colors"
+          [class.border-transparent]="activeTab !== 'old'">
+          History
+        </button>
+      </nav>
+    </div>
+
+    <div class="p-6">
+      <app-loader *ngIf="loading"></app-loader>
+      <div *ngIf="!loading">
+        <!-- Appointment list content -->
+        <p class="text-gray-600">Appointments will be displayed here</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+

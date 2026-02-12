@@ -1,0 +1,109 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+  <div class="grid grid-cols-12 gap-6 p-6 h-screen">
+    <!-- Left Panel - Patient List -->
+    <div class="col-span-7 space-y-6">
+      <!-- Header -->
+      <div class="card bg-gradient-to-r from-sakura to-sakura-dark text-white">
+        <div class="text-center py-4">
+          <h1 class="text-4xl font-bold">{{ chamberName }}</h1>
+          <p class="text-xl mt-2">{{ currentDate | date:'fullDate' }}</p>
+        </div>
+      </div>
+
+      <!-- Patient List -->
+      <div class="card">
+        <div class="overflow-hidden">
+          <table class="w-full">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-6 py-4 text-left text-2xl font-bold text-gray-700">Serial</th>
+                <th class="px-6 py-4 text-left text-2xl font-bold text-gray-700">Patient ID</th>
+                <th class="px-6 py-4 text-left text-2xl font-bold text-gray-700">Status</th>
+                <th class="px-6 py-4 text-left text-2xl font-bold text-gray-700">EWT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr 
+                *ngFor="let patient of patients"
+                [class.bg-green-100]="patient.status === 'Running'"
+                [class.bg-yellow-50]="patient.status === 'Next'"
+                [class.bg-red-50]="patient.status === 'Absent'"
+                class="border-b hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-6 text-4xl font-bold text-gray-900">{{ patient.serialNumber }}</td>
+                <td class="px-6 py-6 text-2xl text-gray-700">{{ patient.patientId }}</td>
+                <td class="px-6 py-6">
+                  <span 
+                    class="px-4 py-2 rounded-full text-lg font-semibold"
+                    [ngClass]="{
+                      'bg-green-500 text-white': patient.status === 'Running',
+                      'bg-yellow-500 text-white': patient.status === 'Next',
+                      'bg-blue-500 text-white': patient.status === 'Waiting',
+                      'bg-red-500 text-white': patient.status === 'Absent'
+                    }">
+                    {{ patient.status }}
+                  </span>
+                </td>
+                <td class="px-6 py-6 text-xl text-gray-600">{{ patient.estimatedWaitTime }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Break Notice -->
+      <div *ngIf="showBreakNotice" class="card bg-yellow-100 border-2 border-yellow-400 animate-pulse">
+        <div class="text-center py-6">
+          <svg class="w-16 h-16 mx-auto text-yellow-600 mb-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          </svg>
+          <h2 class="text-3xl font-bold text-yellow-800">Doctor on Break</h2>
+          <p class="text-xl text-yellow-700 mt-2">{{ breakNotes }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel - Doctor Info & Video -->
+    <div class="col-span-5 space-y-6">
+      <!-- Doctor Information Card -->
+      <div class="card bg-white shadow-xl">
+        <div class="text-center py-8">
+          <div class="w-32 h-32 mx-auto bg-gradient-to-br from-sakura-light to-sakura rounded-full flex items-center justify-center mb-4">
+            <span class="text-white font-bold text-6xl">{{ doctorName.charAt(0) }}</span>
+          </div>
+          <h2 class="text-3xl font-bold text-gray-900">{{ doctorName }}</h2>
+          <p class="text-xl text-gray-600 mt-2">{{ doctorQualification }}</p>
+          <p class="text-lg text-sakura font-semibold mt-1">{{ doctorSpecialization }}</p>
+        </div>
+      </div>
+
+      <!-- YouTube Video Player -->
+      <div class="card bg-white shadow-xl">
+        <div class="aspect-video bg-gray-900 rounded-lg overflow-hidden">
+          <iframe
+            [src]="'https://www.youtube.com/embed/' + youtubeVideoId + '?autoplay=1&mute=1&loop=1&playlist=' + youtubeVideoId | safe: 'resourceUrl'"
+            class="w-full h-full"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+
+      <!-- Current Time -->
+      <div class="card bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+        <div class="text-center py-4">
+          <p class="text-6xl font-bold">{{ currentDate | date:'shortTime' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white py-4">
+    <div class="container mx-auto px-6 text-center">
+      <p class="text-2xl font-semibold">Powered by Sakura - Doctor Appointment System</p>
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,170 @@
+<div class="p-6">
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Today's Appointments</h1>
+    <p class="text-gray-600 mt-1">{{appointments.length}} appointments scheduled for today</p>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
+    <div class="bg-white p-4 rounded-lg shadow">
+      <div class="text-gray-600 text-sm">Total</div>
+      <div class="text-2xl font-bold text-gray-800">{{getAppointmentStats().total}}</div>
+    </div>
+    <div class="bg-blue-50 p-4 rounded-lg shadow">
+      <div class="text-blue-600 text-sm">Scheduled</div>
+      <div class="text-2xl font-bold text-blue-700">{{getAppointmentStats().scheduled}}</div>
+    </div>
+    <div class="bg-green-50 p-4 rounded-lg shadow">
+      <div class="text-green-600 text-sm">Confirmed</div>
+      <div class="text-2xl font-bold text-green-700">{{getAppointmentStats().confirmed}}</div>
+    </div>
+    <div class="bg-purple-50 p-4 rounded-lg shadow">
+      <div class="text-purple-600 text-sm">Running</div>
+      <div class="text-2xl font-bold text-purple-700">{{getAppointmentStats().running}}</div>
+    </div>
+    <div class="bg-gray-50 p-4 rounded-lg shadow">
+      <div class="text-gray-600 text-sm">Completed</div>
+      <div class="text-2xl font-bold text-gray-700">{{getAppointmentStats().completed}}</div>
+    </div>
+    <div class="bg-red-50 p-4 rounded-lg shadow">
+      <div class="text-red-600 text-sm">Cancelled</div>
+      <div class="text-2xl font-bold text-red-700">{{getAppointmentStats().cancelled}}</div>
+    </div>
+    <div class="bg-indigo-50 p-4 rounded-lg shadow">
+      <div class="text-indigo-600 text-sm">Present</div>
+      <div class="text-2xl font-bold text-indigo-700">{{getAppointmentStats().present}}</div>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div class="bg-white p-4 rounded-lg shadow mb-6">
+    <div class="flex items-center gap-4">
+      <label class="font-medium text-gray-700">Filter by Chamber:</label>
+      <select
+        [(ngModel)]="selectedChamberId"
+        (change)="onChamberChange()"
+        class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
+        <option [value]="null">All Chambers</option>
+        <option *ngFor="let chamber of chambers" [value]="chamber.id">
+          {{chamber.name}}
+        </option>
+      </select>
+      <button
+        (click)="loadTodaysAppointments()"
+        class="px-4 py-2 bg-sakura text-white rounded-lg hover:bg-sakura-dark transition-colors">
+        <i class="fas fa-refresh mr-2"></i> Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sakura"></div>
+    <p class="mt-4 text-gray-600">Loading appointments...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error && !loading" class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-6">
+    {{error}}
+  </div>
+
+  <!-- Appointments Table -->
+  <div *ngIf="!loading && !error" class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serial</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chamber</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Present</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let appointment of appointments" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-bold text-gray-900">#{{appointment.serialNumber}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">{{appointment.patient?.fullName}}</div>
+              <div class="text-sm text-gray-500">{{appointment.patient?.patientId}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{appointment.patient?.phone}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{formatTime(appointment.appointmentTime)}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{appointment.chamber?.name}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span 
+                [ngClass]="{
+                  'bg-blue-100 text-blue-800': getStatusColor(appointment.status) === 'blue',
+                  'bg-green-100 text-green-800': getStatusColor(appointment.status) === 'green',
+                  'bg-purple-100 text-purple-800': getStatusColor(appointment.status) === 'purple',
+                  'bg-gray-100 text-gray-800': getStatusColor(appointment.status) === 'gray',
+                  'bg-red-100 text-red-800': getStatusColor(appointment.status) === 'red',
+                  'bg-yellow-100 text-yellow-800': getStatusColor(appointment.status) === 'yellow'
+                }"
+                class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full">
+                {{getStatusLabel(appointment.status)}}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <button
+                (click)="togglePresent(appointment.id)"
+                [ngClass]="appointment.isPresent ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'"
+                class="px-3 py-1 text-xs font-medium rounded-full hover:opacity-80 transition-opacity">
+                {{appointment.isPresent ? '✓ Present' : '○ Absent'}}
+              </button>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <div class="flex items-center gap-2">
+                <!-- Status Change Dropdown -->
+                <select
+                  (change)="changeStatus(appointment.id, $any($event.target).value); $any($event.target).value = appointment.status"
+                  [value]="appointment.status"
+                  class="text-xs px-2 py-1 border rounded hover:bg-gray-50">
+                  <option *ngFor="let status of statusOptions" [value]="status.value">
+                    {{status.label}}
+                  </option>
+                </select>
+                
+                <!-- Edit -->
+                <button
+                  (click)="editAppointment(appointment.id)"
+                  class="text-blue-600 hover:text-blue-800"
+                  title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                
+                <!-- Cancel -->
+                <button
+                  (click)="cancelAppointment(appointment.id)"
+                  class="text-red-600 hover:text-red-800"
+                  title="Cancel">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="appointments.length === 0" class="text-center py-12">
+      <i class="fas fa-calendar-times text-6xl text-gray-300 mb-4"></i>
+      <h3 class="text-xl font-semibold text-gray-700">No Appointments Today</h3>
+      <p class="text-gray-500 mt-2">There are no appointments scheduled for today.</p>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,37 @@
+<aside 
+  class="bg-white shadow-lg h-full transition-all duration-300 fixed lg:static top-16 lg:top-0 bottom-0 left-0 z-40"
+  [ngClass]="{
+    'w-56': !isCollapsed,
+    'w-16': isCollapsed,
+    'translate-x-0': isOpen,
+    '-translate-x-full lg:translate-x-0': !isOpen
+  }">
+  
+  <!-- Close button (mobile only) -->
+  <button 
+    (click)="onCloseSidebar()"
+    class="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-gray-100 lg:hidden z-50">
+    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+    </svg>
+  </button>
+
+  <nav class="p-3 space-y-1 pt-14 lg:pt-3">
+    <a 
+      *ngFor="let item of menuItems"
+      [routerLink]="item.route"
+      [routerLinkActive]="'bg-sakura text-white'"
+      (click)="onCloseSidebar()"
+      class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-sakura-light hover:text-white transition-all duration-200 group text-sm">
+      <span [innerHTML]="item.icon" class="w-5 h-5 flex-shrink-0"></span>
+      <span *ngIf="!isCollapsed" class="flex-1 font-medium">{{ item.label }}</span>
+      <span 
+        *ngIf="item.badge && !isCollapsed" 
+        class="badge badge-next text-xs">
+        {{ item.badge }}
+      </span>
+    </a>
+  </nav>
+</aside>
+
+

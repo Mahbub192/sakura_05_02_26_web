@@ -1,0 +1,202 @@
+<div class="overflow-x-auto">
+  <table class="table">
+    <thead class="table-header">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SL</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Info</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Present</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="table-body">
+      <tr 
+        *ngFor="let patient of patients"
+        [class.bg-green-50]="patient.status === 'running'"
+        [class.bg-gray-50]="patient.status === 'absent'"
+        class="hover:bg-gray-100 transition-colors">
+        
+        <!-- Serial Number -->
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span class="text-lg font-semibold text-gray-900">{{ patient.serialNumber }}</span>
+        </td>
+
+        <!-- Patient Info -->
+        <td class="px-6 py-4">
+          <div class="flex flex-col">
+            <span class="text-sm font-medium text-gray-900">{{ patient.fullName }}</span>
+            <span class="text-sm text-gray-500">ID: {{ patient.patientId }}</span>
+          </div>
+        </td>
+
+        <!-- Type -->
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span 
+            class="px-2 py-1 text-xs font-medium rounded"
+            [ngClass]="{
+              'bg-blue-100 text-blue-800': patient.identifier === 'New',
+              'bg-green-100 text-green-800': patient.identifier === 'Follow-up',
+              'bg-purple-100 text-purple-800': patient.identifier === 'Lab'
+            }">
+            {{ patient.identifier }}
+          </span>
+        </td>
+
+        <!-- Status -->
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span class="px-2 py-1 text-xs font-semibold rounded-full"
+                [ngClass]="{
+                  'bg-blue-100 text-blue-800': patient.status === 'serialized',
+                  'bg-purple-100 text-purple-800': patient.status === 'running',
+                  'bg-green-100 text-green-800': patient.status === 'seen',
+                  'bg-red-100 text-red-800': patient.status === 'absent',
+                  'bg-gray-100 text-gray-800': patient.status === 'next'
+                }">
+            {{ patient.status }}
+          </span>
+        </td>
+
+        <!-- Fee -->
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span class="text-sm font-medium text-gray-900">৳{{ patient.fee }}</span>
+        </td>
+
+        <!-- Present Toggle -->
+        <td class="px-6 py-4 whitespace-nowrap">
+          <button
+            (click)="togglePresence(patient)"
+            class="flex items-center space-x-2 px-3 py-1 rounded-lg transition-colors"
+            [ngClass]="{
+              'bg-green-100 text-green-700 hover:bg-green-200': patient.isPresent,
+              'bg-red-100 text-red-700 hover:bg-red-200': !patient.isPresent
+            }">
+            <span 
+              class="status-indicator"
+              [ngClass]="{
+                'status-present': patient.isPresent,
+                'status-absent': !patient.isPresent
+              }">
+            </span>
+            <span class="text-xs font-medium">{{ patient.isPresent ? 'Present' : 'Absent' }}</span>
+          </button>
+        </td>
+
+        <!-- Actions -->
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="flex items-center space-x-2" *ngIf="patient.status !== 'running'">
+            <button 
+              (click)="editPatient(patient)"
+              class="btn btn-sm bg-blue-500 text-white hover:bg-blue-600"
+              title="Edit">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+              </svg>
+            </button>
+            <button 
+              (click)="viewReport(patient)"
+              class="btn btn-sm bg-purple-500 text-white hover:bg-purple-600"
+              title="Report">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </button>
+            <button 
+              (click)="manageFee(patient)"
+              class="btn btn-sm bg-green-500 text-white hover:bg-green-600"
+              title="Fee">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </button>
+            <button 
+              (click)="printToken(patient)"
+              class="btn btn-sm bg-gray-500 text-white hover:bg-gray-600"
+              title="Print Token">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+              </svg>
+            </button>
+            <button 
+              (click)="printBill(patient)"
+              class="btn btn-sm bg-indigo-500 text-white hover:bg-indigo-600"
+              title="Print Bill">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Running Patient Actions -->
+          <div class="flex items-center space-x-2" *ngIf="patient.status === 'running'">
+            <button 
+              (click)="skipPatient(patient)"
+              class="btn btn-sm btn-warning">
+              Skip
+            </button>
+            <button 
+              (click)="viewReport(patient)"
+              class="btn btn-sm bg-purple-500 text-white hover:bg-purple-600">
+              View
+            </button>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Empty State -->
+      <tr *ngIf="patients.length === 0">
+        <td colspan="7" class="px-6 py-8 text-center">
+          <div class="flex flex-col items-center justify-center text-gray-500">
+            <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            <p class="text-lg font-medium">No patients today</p>
+            <p class="text-sm">New appointments will appear here</p>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Edit Modal -->
+<app-modal 
+  [isOpen]="showEditModal" 
+  [title]="'Edit Patient'" 
+  [size]="'lg'"
+  (closeModal)="closeModals()">
+  <div *ngIf="selectedPatient" class="space-y-4">
+    <p class="text-gray-600">Edit patient details for {{ selectedPatient.fullName }}</p>
+    <!-- Add edit form here -->
+    <div class="flex space-x-3 pt-4">
+      <button (click)="closeModals()" class="flex-1 btn btn-secondary">Cancel</button>
+      <button class="flex-1 btn btn-primary">Save Changes</button>
+    </div>
+  </div>
+</app-modal>
+
+<!-- Report Modal -->
+<app-modal 
+  [isOpen]="showReportModal" 
+  [title]="'Patient Report'" 
+  [size]="'xl'"
+  (closeModal)="closeModals()">
+  <div *ngIf="selectedPatient" class="space-y-4">
+    <p class="text-gray-600">Medical report for {{ selectedPatient.fullName }}</p>
+    <!-- Add report viewer/editor here -->
+  </div>
+</app-modal>
+
+<!-- Fee Modal -->
+<app-modal 
+  [isOpen]="showFeeModal" 
+  [title]="'Manage Fee'" 
+  (closeModal)="closeModals()">
+  <div *ngIf="selectedPatient" class="space-y-4">
+    <p class="text-gray-600">Fee management for {{ selectedPatient.fullName }}</p>
+    <!-- Add fee management form here -->
+  </div>
+</app-modal>
+
+

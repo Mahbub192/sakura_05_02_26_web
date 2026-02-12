@@ -1,0 +1,28 @@
+<div class="min-h-screen flex flex-col">
+  <!-- Header -->
+  <app-header (toggleSidebar)="toggleSidebar()"></app-header>
+
+  <div class="flex flex-1 overflow-hidden relative">
+    <!-- Overlay for mobile -->
+    <div 
+      *ngIf="sidebarOpen"
+      (click)="toggleSidebar()"
+      class="fixed top-16 inset-x-0 bottom-0 bg-black bg-opacity-50 z-30 lg:hidden">
+    </div>
+
+    <!-- Sidebar -->
+    <app-sidebar 
+      [menuItems]="menuItems" 
+      [isCollapsed]="false"
+      [isOpen]="sidebarOpen"
+      (closeSidebar)="closeSidebar()">
+    </app-sidebar>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto bg-gray-50 p-4 md:p-6">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+
+

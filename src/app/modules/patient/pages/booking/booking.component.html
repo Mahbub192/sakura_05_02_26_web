@@ -1,0 +1,172 @@
+<div class="min-h-screen bg-gradient-to-br from-sakura-light via-white to-sakura py-12 px-4">
+  <div class="max-w-4xl mx-auto">
+    <!-- Logo and Title -->
+    <div class="text-center mb-8">
+      <div class="mx-auto h-16 w-16 bg-gradient-to-br from-sakura-light to-sakura rounded-full flex items-center justify-center shadow-lg mb-4">
+        <span class="text-white font-bold text-3xl">S</span>
+      </div>
+      <h1 class="text-3xl font-bold text-gray-900">Book Your Appointment</h1>
+      <p class="text-gray-600 mt-2">Quick and easy online booking</p>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="mb-8">
+      <div class="flex items-center justify-center space-x-4">
+        <div class="flex items-center">
+          <div 
+            class="w-10 h-10 rounded-full flex items-center justify-center font-semibold"
+            [ngClass]="currentStep >= 1 ? 'bg-sakura text-white' : 'bg-gray-300 text-gray-600'">
+            1
+          </div>
+          <span class="ml-2 font-medium" [ngClass]="currentStep >= 1 ? 'text-sakura' : 'text-gray-600'">
+            Select Chamber
+          </span>
+        </div>
+        <div class="w-16 h-1" [ngClass]="currentStep >= 2 ? 'bg-sakura' : 'bg-gray-300'"></div>
+        <div class="flex items-center">
+          <div 
+            class="w-10 h-10 rounded-full flex items-center justify-center font-semibold"
+            [ngClass]="currentStep >= 2 ? 'bg-sakura text-white' : 'bg-gray-300 text-gray-600'">
+            2
+          </div>
+          <span class="ml-2 font-medium" [ngClass]="currentStep >= 2 ? 'text-sakura' : 'text-gray-600'">
+            Personal Info
+          </span>
+        </div>
+        <div class="w-16 h-1" [ngClass]="currentStep >= 3 ? 'bg-sakura' : 'bg-gray-300'"></div>
+        <div class="flex items-center">
+          <div 
+            class="w-10 h-10 rounded-full flex items-center justify-center font-semibold"
+            [ngClass]="currentStep >= 3 ? 'bg-sakura text-white' : 'bg-gray-300 text-gray-600'">
+            3
+          </div>
+          <span class="ml-2 font-medium" [ngClass]="currentStep >= 3 ? 'text-sakura' : 'text-gray-600'">
+            Confirm
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="card">
+      <!-- Step 1: Select Chamber -->
+      <div *ngIf="currentStep === 1" class="space-y-6 animate-fade-in">
+        <h2 class="text-2xl font-semibold text-gray-900">Select Chamber & Date</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div 
+            *ngFor="let chamber of chambers"
+            (click)="bookingForm.patchValue({ chamberId: chamber.id }); selectedChamber = chamber"
+            class="p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md"
+            [ngClass]="{
+              'border-sakura bg-sakura-light bg-opacity-20': bookingForm.get('chamberId')?.value === chamber.id,
+              'border-gray-300': bookingForm.get('chamberId')?.value !== chamber.id
+            }">
+            <h3 class="font-semibold text-gray-900">{{ chamber.name }}</h3>
+            <p class="text-sm text-gray-600 mt-1">Fee: ৳{{ chamber.fee }}</p>
+            <p class="text-sm text-gray-600">Available: {{ chamber.availableDays.join(', ') }}</p>
+          </div>
+        </div>
+
+        <div>
+          <label class="label">Appointment Date *</label>
+          <input type="date" formControlName="appointmentDate" class="input">
+        </div>
+
+        <div class="flex justify-end">
+          <button type="button" (click)="nextStep()" class="btn btn-primary">
+            Next
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Personal Information -->
+      <div *ngIf="currentStep === 2" class="space-y-6 animate-fade-in">
+        <h2 class="text-2xl font-semibold text-gray-900">Personal Information</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="md:col-span-2">
+            <label class="label">Full Name *</label>
+            <input type="text" formControlName="fullName" class="input" placeholder="Enter your full name">
+          </div>
+          <div>
+            <label class="label">Phone Number *</label>
+            <input type="tel" formControlName="phone" class="input" placeholder="01XXXXXXXXX">
+          </div>
+          <div>
+            <label class="label">Age *</label>
+            <input type="number" formControlName="age" class="input" min="0">
+          </div>
+          <div>
+            <label class="label">Gender *</label>
+            <select formControlName="gender" class="input">
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex justify-between">
+          <button type="button" (click)="previousStep()" class="btn btn-secondary">
+            Back
+          </button>
+          <button type="button" (click)="nextStep()" class="btn btn-primary">
+            Next
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Confirm -->
+      <div *ngIf="currentStep === 3" class="space-y-6 animate-fade-in">
+        <h2 class="text-2xl font-semibold text-gray-900">Confirm Your Appointment</h2>
+        
+        <div class="bg-gray-50 rounded-lg p-6 space-y-3">
+          <div class="flex justify-between">
+            <span class="text-gray-600">Chamber:</span>
+            <span class="font-medium">{{ selectedChamber?.name }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Date:</span>
+            <span class="font-medium">{{ bookingForm.get('appointmentDate')?.value }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Name:</span>
+            <span class="font-medium">{{ bookingForm.get('fullName')?.value }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Phone:</span>
+            <span class="font-medium">{{ bookingForm.get('phone')?.value }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">Fee:</span>
+            <span class="font-medium text-sakura">৳{{ selectedChamber?.fee }}</span>
+          </div>
+        </div>
+
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p class="text-sm text-blue-800">
+            <strong>Note:</strong> You will receive an SMS with your appointment token number. Please arrive 15 minutes before your appointment time.
+          </p>
+        </div>
+
+        <div class="flex justify-between">
+          <button type="button" (click)="previousStep()" class="btn btn-secondary">
+            Back
+          </button>
+          <button type="submit" [disabled]="loading" class="btn btn-primary">
+            {{ loading ? 'Booking...' : 'Confirm Booking' }}
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Footer -->
+    <p class="text-center text-sm text-gray-600 mt-8">
+      Need help? <a href="#" class="text-sakura hover:text-sakura-dark">Contact Support</a>
+    </p>
+  </div>
+</div>
+
+

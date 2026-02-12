@@ -1,0 +1,196 @@
+<div class="p-6">
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Appointment History</h1>
+    <p class="text-gray-600 mt-1">View and search past appointments</p>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+    <div class="bg-white p-4 rounded-lg shadow">
+      <div class="text-gray-600 text-sm">Total</div>
+      <div class="text-2xl font-bold text-gray-800">{{getStatistics().total}}</div>
+    </div>
+    <div class="bg-green-50 p-4 rounded-lg shadow">
+      <div class="text-green-600 text-sm">Completed</div>
+      <div class="text-2xl font-bold text-green-700">{{getStatistics().completed}}</div>
+    </div>
+    <div class="bg-red-50 p-4 rounded-lg shadow">
+      <div class="text-red-600 text-sm">Cancelled</div>
+      <div class="text-2xl font-bold text-red-700">{{getStatistics().cancelled}}</div>
+    </div>
+    <div class="bg-yellow-50 p-4 rounded-lg shadow">
+      <div class="text-yellow-600 text-sm">No Show</div>
+      <div class="text-2xl font-bold text-yellow-700">{{getStatistics().noShow}}</div>
+    </div>
+    <div class="bg-sakura-light p-4 rounded-lg shadow">
+      <div class="text-sakura text-sm">Revenue</div>
+      <div class="text-2xl font-bold text-sakura">৳{{getStatistics().totalRevenue}}</div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white p-4 rounded-lg shadow mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <!-- Chamber Filter -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Chamber</label>
+        <select
+          [(ngModel)]="selectedChamberId"
+          (change)="onFilterChange()"
+          class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
+          <option [value]="null">All Chambers</option>
+          <option *ngFor="let chamber of chambers" [value]="chamber.id">
+            {{chamber.name}}
+          </option>
+        </select>
+      </div>
+
+      <!-- Status Filter -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+        <select
+          [(ngModel)]="selectedStatus"
+          (change)="onFilterChange()"
+          class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
+          <option *ngFor="let status of statusOptions" [value]="status.value">
+            {{status.label}}
+          </option>
+        </select>
+      </div>
+
+      <!-- Start Date -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+        <input
+          type="date"
+          [(ngModel)]="startDate"
+          (change)="applyFilters()"
+          class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
+      </div>
+
+      <!-- End Date -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+        <input
+          type="date"
+          [(ngModel)]="endDate"
+          (change)="applyFilters()"
+          class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
+      </div>
+
+      <!-- Search -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          placeholder="Name, phone, ID..."
+          class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex gap-4 mt-4">
+      <button
+        (click)="loadAppointmentHistory()"
+        class="px-4 py-2 bg-sakura text-white rounded-lg hover:bg-sakura-dark transition-colors">
+        <i class="fas fa-refresh mr-2"></i> Refresh
+      </button>
+      <button
+        (click)="exportToCSV()"
+        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+        <i class="fas fa-download mr-2"></i> Export CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sakura"></div>
+    <p class="mt-4 text-gray-600">Loading appointments...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error && !loading" class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-6">
+    {{error}}
+  </div>
+
+  <!-- Appointments Table -->
+  <div *ngIf="!loading && !error" class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serial</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chamber</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fee</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let appointment of filteredAppointments" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{formatDate(appointment.appointmentDate)}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-bold text-gray-900">#{{appointment.serialNumber}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">{{appointment.patient?.fullName}}</div>
+              <div class="text-sm text-gray-500">{{appointment.patient?.patientId}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{appointment.patient?.phone}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{appointment.chamber?.name}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{formatTime(appointment.appointmentTime)}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span 
+                [ngClass]="{
+                  'bg-green-100 text-green-800': getStatusColor(appointment.status) === 'green',
+                  'bg-red-100 text-red-800': getStatusColor(appointment.status) === 'red',
+                  'bg-yellow-100 text-yellow-800': getStatusColor(appointment.status) === 'yellow',
+                  'bg-blue-100 text-blue-800': getStatusColor(appointment.status) === 'blue',
+                  'bg-indigo-100 text-indigo-800': getStatusColor(appointment.status) === 'indigo',
+                  'bg-purple-100 text-purple-800': getStatusColor(appointment.status) === 'purple',
+                  'bg-gray-100 text-gray-800': getStatusColor(appointment.status) === 'gray'
+                }"
+                class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full">
+                {{getStatusLabel(appointment.status)}}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">৳{{appointment.fee || 0}}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              <button
+                (click)="viewDetails(appointment.id)"
+                class="text-sakura hover:text-sakura-dark font-medium">
+                <i class="fas fa-eye mr-1"></i> View
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredAppointments.length === 0" class="text-center py-12">
+      <i class="fas fa-history text-6xl text-gray-300 mb-4"></i>
+      <h3 class="text-xl font-semibold text-gray-700">No Appointments Found</h3>
+      <p class="text-gray-500 mt-2">Try adjusting your filters or date range.</p>
+    </div>
+  </div>
+</div>
+

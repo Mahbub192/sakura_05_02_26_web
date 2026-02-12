@@ -1,0 +1,192 @@
+<div class="max-w-4xl mx-auto space-y-6">
+  <!-- Page Header -->
+  <div class="flex items-center space-x-4">
+    <button 
+      (click)="cancel()"
+      class="btn btn-secondary">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+      </svg>
+    </button>
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">{{ isEditMode ? 'Edit' : 'Create' }} Chamber</h1>
+      <p class="text-gray-600 mt-1">{{ isEditMode ? 'Update chamber details' : 'Add a new chamber location' }}</p>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="chamberForm" (ngSubmit)="onSubmit()" class="card space-y-6">
+    <!-- Basic Information -->
+    <div class="border-b pb-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Basic Information</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="label">Chamber Name *</label>
+          <input type="text" formControlName="name" class="input" placeholder="e.g., Main Chamber - Dhaka">
+        </div>
+        <div>
+          <label class="label">Appointment Number *</label>
+          <input type="text" formControlName="appointmentNumber" class="input" placeholder="e.g., CH-001">
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule -->
+    <div class="border-b pb-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Schedule</h2>
+      
+      <div class="mb-4">
+        <label class="label">Available Days *</label>
+        <div class="grid grid-cols-4 md:grid-cols-7 gap-2">
+          <button
+            *ngFor="let day of days"
+            type="button"
+            (click)="toggleDay(day)"
+            class="btn btn-sm"
+            [ngClass]="{
+              'btn-primary': isDaySelected(day),
+              'btn-secondary': !isDaySelected(day)
+            }">
+            {{ day.substring(0, 3) }}
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="label">Opening Time *</label>
+          <input type="time" formControlName="openingTime" class="input">
+        </div>
+        <div>
+          <label class="label">Report Time</label>
+          <input type="time" formControlName="reportTime" class="input">
+        </div>
+        <div>
+          <label class="label">Closing Time *</label>
+          <input type="time" formControlName="closingTime" class="input">
+        </div>
+      </div>
+    </div>
+
+    <!-- Timing & Fees -->
+    <div class="border-b pb-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Timing & Fees</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="label">Waiting Time - Visit (minutes) *</label>
+          <input type="number" formControlName="waitingTimeVisit" class="input" min="5">
+        </div>
+        <div>
+          <label class="label">Waiting Time - Report (minutes) *</label>
+          <input type="number" formControlName="waitingTimeReport" class="input" min="5">
+        </div>
+        <div>
+          <label class="label">Fee (First Time) *</label>
+          <input type="number" formControlName="feeFirstTime" class="input" min="0" placeholder="৳">
+        </div>
+        <div>
+          <label class="label">Fee (Follow-up) *</label>
+          <input type="number" formControlName="feeFollowup" class="input" min="0" placeholder="৳">
+        </div>
+      </div>
+    </div>
+
+    <!-- Address -->
+    <div class="border-b pb-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Location</h2>
+      <div>
+        <label class="label">Address *</label>
+        <textarea formControlName="address" rows="3" class="input" placeholder="Enter complete chamber address"></textarea>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="border-b pb-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Chamber Settings</h2>
+      <div class="space-y-3">
+        <label class="flex items-center space-x-3 cursor-pointer">
+          <input type="checkbox" formControlName="showSerialsInApp" class="w-4 h-4 text-sakura border-gray-300 rounded focus:ring-sakura">
+          <span class="text-sm text-gray-700">Show serials in app</span>
+        </label>
+        <label class="flex items-center space-x-3 cursor-pointer">
+          <input type="checkbox" formControlName="appUsersCanBook" class="w-4 h-4 text-sakura border-gray-300 rounded focus:ring-sakura">
+          <span class="text-sm text-gray-700">App users can book appointment</span>
+        </label>
+        <label class="flex items-center space-x-3 cursor-pointer">
+          <input type="checkbox" formControlName="autoDeleteDaily" class="w-4 h-4 text-sakura border-gray-300 rounded focus:ring-sakura">
+          <span class="text-sm text-gray-700">Automatically delete appointments daily</span>
+        </label>
+        <label class="flex items-center space-x-3 cursor-pointer">
+          <input type="checkbox" formControlName="useMultipleDevices" class="w-4 h-4 text-sakura border-gray-300 rounded focus:ring-sakura">
+          <span class="text-sm text-gray-700">Use multiple devices</span>
+        </label>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div>
+          <label class="label">Audio Announcements</label>
+          <select formControlName="audioType" class="input">
+            <option *ngFor="let option of audioOptions" [value]="option">{{ option }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="label">Audio Gender</label>
+          <select formControlName="audioGender" class="input">
+            <option *ngFor="let gender of audioGenders" [value]="gender">{{ gender }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Video Settings -->
+    <div>
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Video Settings</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="label">Video URL (YouTube)</label>
+          <input type="url" formControlName="videoUrl" class="input" placeholder="https://www.youtube.com/watch?v=...">
+        </div>
+        <div>
+          <label class="label">Video Volume</label>
+          <select formControlName="videoVolume" class="input">
+            <option *ngFor="let volume of videoVolumes" [value]="volume">{{ volume }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="success" class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg flex items-center">
+      <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+      </svg>
+      {{ success }}
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center">
+      <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+      </svg>
+      {{ error }}
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center py-4">
+      <app-loader message="Loading chamber data..."></app-loader>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex space-x-3 pt-4">
+      <button type="button" (click)="cancel()" class="flex-1 btn btn-secondary" [disabled]="submitting">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="submitting || loading" class="flex-1 btn btn-primary">
+        <span *ngIf="!submitting">{{ isEditMode ? 'Update Chamber' : 'Create Chamber' }}</span>
+        <span *ngIf="submitting">{{ isEditMode ? 'Updating...' : 'Creating...' }}</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+

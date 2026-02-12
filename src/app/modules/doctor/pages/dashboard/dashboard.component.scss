@@ -1,0 +1,68 @@
+// Dashboard Component Styles
+
+.stat-card {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.quick-action-btn {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+// Date picker styling
+input[type="date"] {
+  cursor: pointer;
+  
+  &::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: opacity(0.8);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      filter: opacity(1);
+      transform: scale(1.1);
+    }
+  }
+  
+  &:focus {
+    outline: none;
+  }
+}
+
+// Select dropdown
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+// Custom scrollbar for patient list
+.overflow-y-auto {
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #FF69B4, #FF1493); // Sakura pink gradient
+    border-radius: 10px;
+    &:hover {
+      background: linear-gradient(to bottom, #FF1493, #C71585); // Darker pink on hover
+    }
+  }
+}

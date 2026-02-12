@@ -1,0 +1,114 @@
+<div class="p-6">
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Upcoming Appointments</h1>
+    <p class="text-gray-600 mt-1">{{appointments.length}} appointments scheduled</p>
+  </div>
+
+  <!-- Filter -->
+  <div class="bg-white p-4 rounded-lg shadow mb-6">
+    <div class="flex items-center gap-4">
+      <label class="font-medium text-gray-700">Filter by Chamber:</label>
+      <select
+        [(ngModel)]="selectedChamberId"
+        (change)="onChamberChange()"
+        class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
+        <option [value]="null">All Chambers</option>
+        <option *ngFor="let chamber of chambers" [value]="chamber.id">
+          {{chamber.name}}
+        </option>
+      </select>
+      <button
+        (click)="loadUpcomingAppointments()"
+        class="px-4 py-2 bg-sakura text-white rounded-lg hover:bg-sakura-dark transition-colors">
+        <i class="fas fa-refresh mr-2"></i> Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sakura"></div>
+    <p class="mt-4 text-gray-600">Loading appointments...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error && !loading" class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-6">
+    {{error}}
+  </div>
+
+  <!-- Grouped Appointments -->
+  <div *ngIf="!loading && !error">
+    <div *ngFor="let group of groupByDate(appointments)" class="mb-6">
+      <!-- Date Header -->
+      <div class="bg-gradient-to-r from-sakura to-pink-400 text-white px-6 py-3 rounded-t-lg">
+        <h2 class="text-xl font-semibold">{{formatDate(group.date)}}</h2>
+        <p class="text-sm opacity-90">{{group.appointments.length}} appointments</p>
+      </div>
+
+      <!-- Appointments Card Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-white rounded-b-lg shadow">
+        <div *ngFor="let appointment of group.appointments" 
+             class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+          <!-- Serial and Status -->
+          <div class="flex justify-between items-start mb-3">
+            <div class="text-2xl font-bold text-sakura">
+              #{{appointment.serialNumber}}
+            </div>
+            <span 
+              [ngClass]="{
+                'bg-blue-100 text-blue-800': getStatusColor(appointment.status) === 'blue',
+                'bg-green-100 text-green-800': getStatusColor(appointment.status) === 'green',
+                'bg-red-100 text-red-800': getStatusColor(appointment.status) === 'red',
+                'bg-gray-100 text-gray-800': getStatusColor(appointment.status) === 'gray'
+              }"
+              class="px-3 py-1 text-xs font-semibold rounded-full">
+              {{getStatusLabel(appointment.status)}}
+            </span>
+          </div>
+
+          <!-- Patient Info -->
+          <div class="mb-3">
+            <div class="font-semibold text-gray-900">{{appointment.patient?.fullName}}</div>
+            <div class="text-sm text-gray-600">{{appointment.patient?.phone}}</div>
+            <div class="text-xs text-gray-500">{{appointment.patient?.patientId}}</div>
+          </div>
+
+          <!-- Appointment Details -->
+          <div class="space-y-2 mb-3">
+            <div class="flex items-center text-sm text-gray-700">
+              <i class="fas fa-clock w-5 text-gray-400"></i>
+              <span>{{formatTime(appointment.appointmentTime)}}</span>
+            </div>
+            <div class="flex items-center text-sm text-gray-700">
+              <i class="fas fa-hospital w-5 text-gray-400"></i>
+              <span>{{appointment.chamber?.name}}</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-2 pt-3 border-t">
+            <button
+              (click)="editAppointment(appointment.id)"
+              class="flex-1 px-3 py-2 bg-blue-50 text-blue-600 text-sm font-medium rounded hover:bg-blue-100 transition-colors">
+              <i class="fas fa-edit mr-1"></i> Edit
+            </button>
+            <button
+              (click)="cancelAppointment(appointment.id)"
+              class="flex-1 px-3 py-2 bg-red-50 text-red-600 text-sm font-medium rounded hover:bg-red-100 transition-colors">
+              <i class="fas fa-times mr-1"></i> Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="appointments.length === 0" class="bg-white rounded-lg shadow text-center py-12">
+      <i class="fas fa-calendar-check text-6xl text-gray-300 mb-4"></i>
+      <h3 class="text-xl font-semibold text-gray-700">No Upcoming Appointments</h3>
+      <p class="text-gray-500 mt-2">There are no appointments scheduled for the future.</p>
+    </div>
+  </div>
+</div>
+
