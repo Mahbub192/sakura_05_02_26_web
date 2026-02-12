@@ -39,6 +39,7 @@ export class AppointmentFormComponent implements OnInit {
     this.appointmentForm = this.formBuilder.group({
       chamberId: ['', Validators.required],
       appointmentSlotId: [''],
+      appointmentTime: [''], // Store the selected time slot time
       phone: ['', [Validators.required, Validators.pattern(/^01[3-9]\d{8}$/)]],
       fullName: ['', [Validators.required, Validators.minLength(2)]],
       identifier: ['New', Validators.required],
@@ -132,7 +133,10 @@ export class AppointmentFormComponent implements OnInit {
 
     // Reset selection
     this.selectedSlot = null;
-    this.appointmentForm.patchValue({ appointmentSlotId: null });
+    this.appointmentForm.patchValue({ 
+      appointmentSlotId: null,
+      appointmentTime: null 
+    });
 
     if (!chamberId || !appointmentDate) {
       this.availableSlots = [];
@@ -149,6 +153,15 @@ export class AppointmentFormComponent implements OnInit {
           // Sort by start time
           return a.startTime.localeCompare(b.startTime);
         });
+        
+        // Debug: Log booked times
+        console.log('Available Slots with Booked Times:', this.availableSlots.map((slot: any) => ({
+          slotId: slot.id,
+          startTime: slot.startTime,
+          bookedTimes: slot.bookedTimes,
+          bookedPatients: slot.bookedPatients
+        })));
+        
         this.loadingSlots = false;
       },
       error: (error) => {
@@ -163,11 +176,17 @@ export class AppointmentFormComponent implements OnInit {
     if (this.selectedSlot?.id === slot.id) {
       // Deselect if clicking same slot
       this.selectedSlot = null;
-      this.appointmentForm.patchValue({ appointmentSlotId: null });
+      this.appointmentForm.patchValue({ 
+        appointmentSlotId: null,
+        appointmentTime: null 
+      });
     } else {
       // Select new slot
       this.selectedSlot = slot;
-      this.appointmentForm.patchValue({ appointmentSlotId: slot.id });
+      this.appointmentForm.patchValue({ 
+        appointmentSlotId: slot.id,
+        appointmentTime: slot.startTime // Use slot's start time as default
+      });
     }
   }
 
@@ -196,20 +215,48 @@ export class AppointmentFormComponent implements OnInit {
     
     const totalSlots = Math.floor((end - start) / interval);
     
+    // Get booked times for this slot (from backend response)
+    const bookedTimes = slot.bookedTimes || [];
+    console.log(`Generating time slots for slot ${slot.id}:`, {
+      slotId: slot.id,
+      startTime: slot.startTime,
+      endTime: slot.endTime,
+      bookedTimes: bookedTimes,
+      interval: interval
+    });
+    
     for (let i = 0; i < totalSlots; i++) {
       const timeInMinutes = start + (i * interval);
       const hours = Math.floor(timeInMinutes / 60);
       const minutes = timeInMinutes % 60;
       const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
       
+      // Check if this specific time is booked
+      // Normalize both times for comparison (handle different formats)
+      const normalizedTimeString = timeString; // Already in HH:mm:ss format
+      const isBooked = bookedTimes.some((bookedTime: string) => {
+        // Normalize booked time to HH:mm:ss format
+        let normalizedBookedTime = bookedTime ? bookedTime.trim() : '';
+        if (normalizedBookedTime.length === 5) {
+          normalizedBookedTime = normalizedBookedTime + ':00';
+        }
+        const matches = normalizedBookedTime === normalizedTimeString;
+        if (matches) {
+          console.log(`Time slot ${timeString} is BOOKED (matched with ${normalizedBookedTime})`);
+        }
+        return matches;
+      });
+      
       timeSlots.push({
         time: timeString,
         parentSlotId: slot.id,
         slotIndex: i,
-        isBooked: i < slot.bookedPatients,
+        isBooked: isBooked, // Check actual booked times from backend
         isActive: slot.isActive
       });
     }
+    
+    console.log(`Generated ${timeSlots.length} time slots, ${timeSlots.filter(ts => ts.isBooked).length} booked`);
     
     return timeSlots;
   }
@@ -227,11 +274,17 @@ export class AppointmentFormComponent implements OnInit {
     if (this.selectedSlot?.time === timeSlot.time && this.selectedSlot?.parentSlotId === timeSlot.parentSlotId) {
       // Deselect
       this.selectedSlot = null;
-      this.appointmentForm.patchValue({ appointmentSlotId: null });
+      this.appointmentForm.patchValue({ 
+        appointmentSlotId: null,
+        appointmentTime: null 
+      });
     } else {
-      // Select
+      // Select - store both parent slot ID and the specific time
       this.selectedSlot = timeSlot;
-      this.appointmentForm.patchValue({ appointmentSlotId: parentSlot.id });
+      this.appointmentForm.patchValue({ 
+        appointmentSlotId: parentSlot.id,
+        appointmentTime: timeSlot.time // Store the specific time slot time (e.g., "23:48:00")
+      });
     }
   }
 
@@ -243,8 +296,9 @@ export class AppointmentFormComponent implements OnInit {
       return 'bg-gray-300 text-gray-600 cursor-not-allowed opacity-60';
     }
     
+    // Booked slots - red background, disabled
     if (timeSlot.isBooked) {
-      return 'bg-red-400 text-white cursor-not-allowed opacity-70';
+      return 'bg-red-500 text-white cursor-not-allowed opacity-80 border-2 border-red-600';
     }
     
     if (isSelected) {
@@ -302,7 +356,24 @@ export class AppointmentFormComponent implements OnInit {
     this.error = '';
     this.success = '';
 
-    this.apiService.post('/appointments', this.appointmentForm.value).subscribe({
+    // Prepare form data - ensure appointmentTime is included if time slot is selected
+    const formData = { ...this.appointmentForm.value };
+    
+    // If a time slot is selected, ensure appointmentTime is set
+    if (this.selectedSlot && this.selectedSlot.time && !formData.appointmentTime) {
+      formData.appointmentTime = this.selectedSlot.time;
+    }
+    
+    // Debug: Log form data before submission
+    console.log('Appointment Form Data:', {
+      appointmentSlotId: formData.appointmentSlotId,
+      appointmentTime: formData.appointmentTime,
+      selectedSlot: this.selectedSlot,
+      selectedSlotTime: this.selectedSlot?.time,
+      fullFormData: formData
+    });
+
+    this.apiService.post('/appointments', formData).subscribe({
       next: (response: any) => {
         this.success = `Appointment booked successfully! Serial Number: ${response.serialNumber}`;
         this.submitting = false;

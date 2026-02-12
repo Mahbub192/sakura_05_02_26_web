@@ -316,17 +316,50 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
     
-    // Find the next waiting patient (sorted by serial number)
+    // Helper function to convert time string to minutes for comparison
+    const timeToMinutes = (timeStr: string | null | undefined): number => {
+      if (!timeStr) return Infinity; // Put times without time at end
+      
+      // Normalize time format (handle both HH:mm and HH:mm:ss)
+      let normalizedTime = timeStr.trim();
+      if (normalizedTime.length === 5) {
+        normalizedTime = normalizedTime + ':00';
+      }
+      
+      // Parse HH:mm:ss format
+      const parts = normalizedTime.split(':');
+      if (parts.length < 2) return Infinity;
+      
+      const hours = parseInt(parts[0], 10);
+      const minutes = parseInt(parts[1], 10);
+      
+      if (isNaN(hours) || isNaN(minutes)) return Infinity;
+      
+      return hours * 60 + minutes;
+    };
+    
+    // Find the next waiting patient (sorted by appointment time - soto theke bro)
     const waitingPatients = this.dashboardData.todayAppointments
       .filter(apt => apt.isPresent && (apt.status === 'scheduled' || apt.status === 'confirmed' || apt.status === 'serialized'))
-      .sort((a, b) => (a.serialNumber || 0) - (b.serialNumber || 0)); // Sort by serial number ascending
+      .sort((a, b) => {
+        // Sort by appointment time (soto theke bro - morning to evening)
+        const timeA = timeToMinutes(a.appointmentTime);
+        const timeB = timeToMinutes(b.appointmentTime);
+        
+        if (timeA !== timeB) {
+          return timeA - timeB; // Sort by time (smaller time first)
+        }
+        
+        // If times are equal, sort by serial number
+        return (a.serialNumber || 0) - (b.serialNumber || 0);
+      });
     
     if (waitingPatients.length === 0) {
       alert('No waiting patients!');
       return;
     }
     
-    const nextPatient = waitingPatients[0]; // First patient in serial order
+    const nextPatient = waitingPatients[0]; // First patient by time (soto theke bro)
     
     if (confirm(`Call next patient?\n\nSerial #${nextPatient.serialNumber}\n${nextPatient.patient.fullName}`)) {
       // Update status to 'next' or 'running'
@@ -368,16 +401,49 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Send running patient to test
     this.apiService.put(`/appointments/${runningPatient.id}/status`, { status: 'need_test' }).subscribe({
       next: () => {
-        // Find next waiting patient
+        // Helper function to convert time string to minutes for comparison
+        const timeToMinutes = (timeStr: string | null | undefined): number => {
+          if (!timeStr) return Infinity; // Put times without time at end
+          
+          // Normalize time format (handle both HH:mm and HH:mm:ss)
+          let normalizedTime = timeStr.trim();
+          if (normalizedTime.length === 5) {
+            normalizedTime = normalizedTime + ':00';
+          }
+          
+          // Parse HH:mm:ss format
+          const parts = normalizedTime.split(':');
+          if (parts.length < 2) return Infinity;
+          
+          const hours = parseInt(parts[0], 10);
+          const minutes = parseInt(parts[1], 10);
+          
+          if (isNaN(hours) || isNaN(minutes)) return Infinity;
+          
+          return hours * 60 + minutes;
+        };
+        
+        // Find next waiting patient (sorted by appointment time - soto theke bro)
         const waitingPatients = this.dashboardData!.todayAppointments
           .filter(apt => apt.isPresent && 
             (apt.status === 'scheduled' || 
              apt.status === 'confirmed' || 
              apt.status === 'serialized'))
-          .sort((a, b) => (a.serialNumber || 0) - (b.serialNumber || 0));
+          .sort((a, b) => {
+            // Sort by appointment time (soto theke bro - morning to evening)
+            const timeA = timeToMinutes(a.appointmentTime);
+            const timeB = timeToMinutes(b.appointmentTime);
+            
+            if (timeA !== timeB) {
+              return timeA - timeB; // Sort by time (smaller time first)
+            }
+            
+            // If times are equal, sort by serial number
+            return (a.serialNumber || 0) - (b.serialNumber || 0);
+          });
         
         if (waitingPatients.length > 0) {
-          const nextPatient = waitingPatients[0];
+          const nextPatient = waitingPatients[0]; // First patient by time (soto theke bro)
           
           // Call next patient
           this.apiService.put(`/appointments/${nextPatient.id}/status`, { status: 'running' }).subscribe({
@@ -409,6 +475,55 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
   
+  /**
+   * Get sorted patient list by appointment time (soto theke bro - morning to evening)
+   */
+  getSortedPatients(): Appointment[] {
+    if (!this.dashboardData || !this.dashboardData.todayAppointments) {
+      return [];
+    }
+    
+    // Helper function to convert time string to minutes for comparison
+    const timeToMinutes = (timeStr: string | null | undefined): number => {
+      if (!timeStr) return Infinity; // Put times without time at end
+      
+      // Normalize time format (handle both HH:mm and HH:mm:ss)
+      let normalizedTime = timeStr.trim();
+      if (normalizedTime.length === 5) {
+        normalizedTime = normalizedTime + ':00';
+      }
+      
+      // Parse HH:mm:ss format
+      const parts = normalizedTime.split(':');
+      if (parts.length < 2) return Infinity;
+      
+      const hours = parseInt(parts[0], 10);
+      const minutes = parseInt(parts[1], 10);
+      
+      if (isNaN(hours) || isNaN(minutes)) return Infinity;
+      
+      return hours * 60 + minutes;
+    };
+    
+    // Sort by appointment time (soto theke bro - morning to evening)
+    return [...this.dashboardData.todayAppointments].sort((a, b) => {
+      // Running patients always go to top
+      if (a.status === 'running' && b.status !== 'running') return -1;
+      if (a.status !== 'running' && b.status === 'running') return 1;
+      
+      // If both are running or both are not running, sort by time
+      const timeA = timeToMinutes(a.appointmentTime);
+      const timeB = timeToMinutes(b.appointmentTime);
+      
+      if (timeA !== timeB) {
+        return timeA - timeB; // Sort by time (smaller time first)
+      }
+      
+      // If times are equal, sort by serial number
+      return (a.serialNumber || 0) - (b.serialNumber || 0);
+    });
+  }
+
   getTestPatients(): Appointment[] {
     if (!this.dashboardData || !this.dashboardData.todayAppointments) {
       return [];
