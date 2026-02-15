@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.sakura.com/api'
+  apiUrl: 'https://sakura-api.sakuraentcenter.com/api'
 };
 
 

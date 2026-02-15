@@ -1,29 +1,34 @@
-<div class="min-h-screen bg-gray-50 py-8">
-  <div class="max-w-4xl mx-auto px-4">
-    <!-- Header -->
-    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+<div [ngClass]="{'min-h-screen bg-gradient-to-br from-gray-50 to-gray-100': !modalMode, '': modalMode}">
+  <div [ngClass]="{'w-full px-3 py-4': !modalMode, '': modalMode}" class="flex flex-col">
+    <!-- Header (only show when not in modal mode) -->
+    <div *ngIf="!modalMode" class="bg-gradient-to-r from-pink-500 via-pink-400 to-pink-500 rounded-2xl shadow-xl border border-pink-300 p-6 mb-5">
       <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold text-gray-900">Book New Appointment</h2>
-          <p class="text-gray-600 mt-1">Fill in the patient details to book an appointment</p>
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl border-2 border-white/30">
+            <i class="fas fa-calendar-plus text-white text-xl"></i>
+          </div>
+          <div>
+            <h2 class="text-3xl font-bold text-white drop-shadow-md">Book New Appointment</h2>
+            <p class="text-pink-50 text-sm mt-1 font-medium">Fill in the patient details to book an appointment</p>
+          </div>
         </div>
         <button
           (click)="onCancel()"
-          class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+          class="px-6 py-3 text-gray-700 bg-white rounded-xl hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl font-semibold border-2 border-white/50 backdrop-blur-sm">
           <i class="fas fa-arrow-left mr-2"></i>Back
         </button>
       </div>
     </div>
 
     <!-- Alert Messages -->
-    <div *ngIf="error" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
+    <div *ngIf="error" [ngClass]="{'bg-red-50 border-l-4 border-red-500 p-3 mb-3 rounded-r-lg': !modalMode, 'bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-r-lg': modalMode}">
       <div class="flex items-center">
         <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
         <p class="text-red-800">{{ error }}</p>
       </div>
     </div>
 
-    <div *ngIf="success" class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded-r-lg">
+    <div *ngIf="success" [ngClass]="{'bg-green-50 border-l-4 border-green-500 p-3 mb-3 rounded-r-lg': !modalMode, 'bg-green-50 border-l-4 border-green-500 p-4 mb-4 rounded-r-lg': modalMode}">
       <div class="flex items-center">
         <i class="fas fa-check-circle text-green-500 mr-3"></i>
         <p class="text-green-800">{{ success }}</p>
@@ -31,79 +36,84 @@
     </div>
 
     <!-- Appointment Form -->
-    <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="bg-white rounded-lg shadow-sm p-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" [ngClass]="{'bg-white rounded-2xl shadow-lg border border-gray-200 p-6 w-full': !modalMode, 'bg-white rounded-xl p-6 shadow-sm': modalMode}">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Chamber Selection -->
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+        <div class="sm:col-span-2 lg:col-span-1">
+          <label class="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
+            <i class="fas fa-hospital text-pink-500 text-xs"></i>
             Chamber <span class="text-red-500">*</span>
           </label>
           <select
             formControlName="chamberId"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent"
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white hover:border-gray-300 shadow-sm"
             [class.border-red-300]="f['chamberId'].invalid && f['chamberId'].touched">
             <option value="">Select Chamber</option>
             <option *ngFor="let chamber of chambers" [value]="chamber.id">
               {{ chamber.name }} - {{ chamber.appointmentNumber }}
             </option>
           </select>
-          <p *ngIf="f['chamberId'].invalid && f['chamberId'].touched" class="mt-1 text-sm text-red-600">
+          <p *ngIf="f['chamberId'].invalid && f['chamberId'].touched" class="mt-0.5 text-xs text-red-600">
             Please select a chamber
           </p>
         </div>
 
         <!-- Phone Number -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1">
+            <i class="fas fa-phone text-pink-500 text-xs"></i>
             Phone Number <span class="text-red-500">*</span>
           </label>
           <input
             type="tel"
             formControlName="phone"
             placeholder="01710000000"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent"
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white"
             [class.border-red-300]="f['phone'].invalid && f['phone'].touched">
-          <p *ngIf="f['phone'].invalid && f['phone'].touched" class="mt-1 text-sm text-red-600">
+          <p *ngIf="f['phone'].invalid && f['phone'].touched" class="mt-0.5 text-xs text-red-600">
             Please enter a valid phone number (01XXXXXXXXX)
           </p>
         </div>
 
         <!-- Patient Name -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1">
+            <i class="fas fa-user text-pink-500 text-xs"></i>
             Patient Name <span class="text-red-500">*</span>
           </label>
           <input
             type="text"
             formControlName="fullName"
             placeholder="Enter full name"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent"
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white"
             [class.border-red-300]="f['fullName'].invalid && f['fullName'].touched">
-          <p *ngIf="f['fullName'].invalid && f['fullName'].touched" class="mt-1 text-sm text-red-600">
+          <p *ngIf="f['fullName'].invalid && f['fullName'].touched" class="mt-0.5 text-xs text-red-600">
             Please enter patient name
           </p>
         </div>
 
         <!-- Identifier -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1">
+            <i class="fas fa-tag text-pink-500 text-xs"></i>
             Identifier <span class="text-red-500">*</span>
           </label>
           <select
             formControlName="identifier"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white">
             <option *ngFor="let type of identifierTypes" [value]="type">{{ type }}</option>
           </select>
         </div>
 
         <!-- Gender -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1">
+            <i class="fas fa-venus-mars text-pink-500 text-xs"></i>
             Gender <span class="text-red-500">*</span>
           </label>
           <select
             formControlName="gender"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent"
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white"
             [class.border-red-300]="f['gender'].invalid && f['gender'].touched">
             <option value="">Select Gender</option>
             <option *ngFor="let gender of genders" [value]="gender.value">{{ gender.label }}</option>
@@ -115,7 +125,8 @@
 
         <!-- Age -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1">
+            <i class="fas fa-birthday-cake text-pink-500 text-xs"></i>
             Age (Years) <span class="text-red-500">*</span>
           </label>
           <input
@@ -124,16 +135,16 @@
             placeholder="60"
             min="0"
             max="150"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent"
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white"
             [class.border-red-300]="f['age'].invalid && f['age'].touched">
-          <p *ngIf="f['age'].invalid && f['age'].touched" class="mt-1 text-sm text-red-600">
+          <p *ngIf="f['age'].invalid && f['age'].touched" class="mt-0.5 text-xs text-red-600">
             Please enter a valid age
           </p>
         </div>
 
         <!-- Months -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-xs font-semibold text-gray-700 mb-1.5">
             Months
           </label>
           <input
@@ -142,28 +153,30 @@
             placeholder="6"
             min="0"
             max="11"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
-          <p class="mt-1 text-xs text-gray-500">Additional months (0-11)</p>
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white">
+          <p class="mt-0.5 text-xs text-gray-500">Additional months (0-11)</p>
         </div>
 
         <!-- Appointment Date -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1">
+            <i class="fas fa-calendar-alt text-pink-500 text-xs"></i>
             Appointment Date <span class="text-red-500">*</span>
           </label>
           <input
             type="date"
             formControlName="appointmentDate"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent"
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white"
             [class.border-red-300]="f['appointmentDate'].invalid && f['appointmentDate'].touched">
-          <p *ngIf="f['appointmentDate'].invalid && f['appointmentDate'].touched" class="mt-1 text-sm text-red-600">
+          <p *ngIf="f['appointmentDate'].invalid && f['appointmentDate'].touched" class="mt-0.5 text-xs text-red-600">
             Please select appointment date
           </p>
         </div>
 
         <!-- Appointment Slot -->
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-3">
+        <div class="sm:col-span-2 lg:col-span-4">
+          <label class="block text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+            <i class="fas fa-clock text-pink-500 text-xs"></i>
             Appointment Slot (Optional)
             <span *ngIf="loadingSlots" class="text-xs text-gray-500 ml-2">
               <i class="fas fa-spinner fa-spin"></i> Loading...
@@ -173,8 +186,8 @@
           <!-- Time Slot Buttons Container with Scroll -->
           <div *ngIf="availableSlots.length > 0">
             <!-- Scrollable Container -->
-            <div class="border-2 border-gray-300 rounded-lg p-4 bg-gradient-to-br from-gray-50 to-white overflow-y-auto shadow-inner"
-                 style="max-height: 320px; min-height: 180px;">
+            <div class="border-2 border-gray-200 rounded-xl p-4 bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-y-auto shadow-inner"
+                 style="max-height: 280px; min-height: 150px;">
               <!-- All Time Slot Buttons (Grid Layout: 8 per row) -->
               <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2">
                 <ng-container *ngFor="let slot of availableSlots">
@@ -184,7 +197,7 @@
                     (click)="selectTimeSlot(timeSlot, slot)"
                     [class]="getTimeSlotButtonClass(timeSlot)"
                     [disabled]="timeSlot.isBooked || !timeSlot.isActive"
-                    class="px-3 py-2.5 rounded-lg font-semibold text-xs transition-all duration-200 shadow hover:shadow-lg w-full">
+                    class="px-2.5 py-1.5 rounded-lg font-semibold text-xs transition-all duration-200 shadow hover:shadow-lg w-full">
                     {{ formatTime(timeSlot.time) }}
                   </button>
                 </ng-container>
@@ -227,7 +240,7 @@
           </label>
           <select
             formControlName="district"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white">
             <option value="">Select District</option>
             <option *ngFor="let district of districts" [value]="district">{{ district }}</option>
           </select>
@@ -242,7 +255,7 @@
             type="text"
             formControlName="upazila"
             placeholder="Enter upazila"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white">
         </div>
 
         <!-- Union -->
@@ -254,7 +267,7 @@
             type="text"
             formControlName="union"
             placeholder="Enter union"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white">
         </div>
 
         <!-- Fee -->
@@ -267,7 +280,7 @@
             formControlName="fee"
             placeholder="0"
             min="0"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent bg-gray-50"
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-gray-50"
             readonly>
           <p class="mt-1 text-xs text-gray-500">Auto-calculated based on identifier</p>
         </div>
@@ -281,7 +294,7 @@
             type="text"
             formControlName="refererDoctor"
             placeholder="Enter referer doctor name"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white">
         </div>
 
         <!-- Referer PC -->
@@ -293,39 +306,42 @@
             type="text"
             formControlName="refererPC"
             placeholder="Enter referer PC name"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent">
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white">
         </div>
 
         <!-- Notes -->
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+        <div class="sm:col-span-2 lg:col-span-4">
+          <label class="block text-xs font-semibold text-gray-700 mb-1.5">
             Notes
           </label>
           <textarea
             formControlName="notes"
             rows="3"
             placeholder="Enter any additional notes..."
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent resize-none"></textarea>
+            class="w-full px-3 py-1.5 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white resize-none"></textarea>
         </div>
       </div>
 
       <!-- Form Actions -->
-      <div class="flex items-center justify-end space-x-4 mt-8 pt-6 border-t">
+      <div [ngClass]="{'flex items-center justify-end gap-3 mt-6 pt-5 border-t-2 border-gray-200': !modalMode, 'flex items-center justify-end space-x-3 mt-6 pt-4 border-t border-gray-200': modalMode}" style="width: 100%;">
         <button
           type="button"
           (click)="onCancel()"
-          class="px-6 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-medium">
-          Cancel
+          [ngClass]="{'px-7 py-3 text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all font-semibold shadow-md hover:shadow-lg flex items-center gap-2': !modalMode, 'px-5 py-2.5 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-medium': modalMode}">
+          <i class="fas fa-times"></i>
+          <span>Cancel</span>
         </button>
         <button
           type="submit"
           [disabled]="submitting || loading"
-          class="px-8 py-3 bg-sakura text-white rounded-lg hover:bg-pink-600 transition-colors font-medium shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
-          <span *ngIf="!submitting">
-            <i class="fas fa-calendar-check mr-2"></i>Book Appointment
+          [ngClass]="{'px-8 py-3 bg-gradient-to-r from-pink-500 via-pink-600 to-pink-500 text-white rounded-xl hover:from-pink-600 hover:via-pink-700 hover:to-pink-600 transition-all font-semibold shadow-lg hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transform hover:scale-[1.02] active:scale-[0.98]': !modalMode, 'px-6 py-2.5 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-all font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2': modalMode}">
+          <span *ngIf="!submitting" class="flex items-center gap-2">
+            <i class="fas fa-calendar-check text-lg"></i>
+            <span>Book Appointment</span>
           </span>
-          <span *ngIf="submitting">
-            <i class="fas fa-spinner fa-spin mr-2"></i>Booking...
+          <span *ngIf="submitting" class="flex items-center gap-2">
+            <i class="fas fa-spinner fa-spin text-lg"></i>
+            <span>Booking...</span>
           </span>
         </button>
       </div>

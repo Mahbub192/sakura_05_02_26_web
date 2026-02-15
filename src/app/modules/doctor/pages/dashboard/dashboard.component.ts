@@ -377,6 +377,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
   
+  onAppointmentBooked(): void {
+    // Refresh dashboard data after appointment is booked
+    this.loadDashboardData();
+  }
+
   onTestNext(): void {
     if (!this.dashboardData || this.dashboardData.todayAppointments.length === 0) {
       alert('No patients in queue!');

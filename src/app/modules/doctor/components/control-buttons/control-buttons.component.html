@@ -1,7 +1,7 @@
 <div class="flex flex-wrap gap-3">
   <!-- Appointment Button -->
   <button 
-    routerLink="/doctor/appointments/new"
+    (click)="openAppointmentModal()"
     class="rounded-full bg-pink-500 text-white hover:bg-pink-600 px-5 py-2.5 flex items-center gap-2 shadow-lg hover:shadow-xl transition-all font-semibold text-sm">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -89,6 +89,19 @@
       </button>
     </div>
   </div>
+</app-modal>
+
+<!-- Appointment Modal -->
+<app-modal 
+  [isOpen]="showAppointmentModal" 
+  [title]="'Book New Appointment'" 
+  [size]="'xl'"
+  (closeModal)="closeAppointmentModal()">
+  <app-appointment-form 
+    [modalMode]="true"
+    (appointmentBooked)="onAppointmentBooked()"
+    (cancel)="closeAppointmentModal()">
+  </app-appointment-form>
 </app-modal>
 
 

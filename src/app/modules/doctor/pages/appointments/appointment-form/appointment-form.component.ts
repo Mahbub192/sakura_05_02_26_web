@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../../../core/services/api.service';
@@ -9,6 +9,9 @@ import { ApiService } from '../../../../../core/services/api.service';
   styleUrls: ['./appointment-form.component.scss']
 })
 export class AppointmentFormComponent implements OnInit {
+  @Input() modalMode: boolean = false;
+  @Output() appointmentBooked = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
   appointmentForm: FormGroup;
   chambers: any[] = [];
   availableSlots: any[] = [];
@@ -378,12 +381,23 @@ export class AppointmentFormComponent implements OnInit {
         this.success = `Appointment booked successfully! Serial Number: ${response.serialNumber}`;
         this.submitting = false;
         
-        // Reset form after 2 seconds
-        setTimeout(() => {
-          this.appointmentForm.reset();
-          this.setDefaultDate();
-          this.appointmentForm.patchValue({ identifier: 'New' });
-        }, 2000);
+        // If in modal mode, emit event and reset form
+        if (this.modalMode) {
+          setTimeout(() => {
+            this.appointmentBooked.emit();
+            this.appointmentForm.reset();
+            this.setDefaultDate();
+            this.appointmentForm.patchValue({ identifier: 'New' });
+            this.success = '';
+          }, 2000);
+        } else {
+          // Reset form after 2 seconds (non-modal mode)
+          setTimeout(() => {
+            this.appointmentForm.reset();
+            this.setDefaultDate();
+            this.appointmentForm.patchValue({ identifier: 'New' });
+          }, 2000);
+        }
       },
       error: (error) => {
         this.error = error.error?.message || 'Failed to book appointment';
@@ -393,6 +407,10 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['../'], { relativeTo: this.route });
+    if (this.modalMode) {
+      this.cancel.emit();
+    } else {
+      this.router.navigate(['../'], { relativeTo: this.route });
+    }
   }
 }

@@ -10,8 +10,10 @@ export class ControlButtonsComponent {
   @Output() break = new EventEmitter<{ notes: string; duration: number }>();
   @Output() next = new EventEmitter<void>();
   @Output() testNext = new EventEmitter<void>();
+  @Output() appointmentBooked = new EventEmitter<void>();
 
   showBreakModal = false;
+  showAppointmentModal = false;
   breakNotes = '';
   breakDuration = 15;
 
@@ -40,6 +42,19 @@ export class ControlButtonsComponent {
 
   onTestNext(): void {
     this.testNext.emit();
+  }
+
+  openAppointmentModal(): void {
+    this.showAppointmentModal = true;
+  }
+
+  closeAppointmentModal(): void {
+    this.showAppointmentModal = false;
+  }
+
+  onAppointmentBooked(): void {
+    this.closeAppointmentModal();
+    this.appointmentBooked.emit();
   }
 }
 
