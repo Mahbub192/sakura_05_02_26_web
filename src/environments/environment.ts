@@ -1,6 +1,8 @@
+import { API_BASE_URL } from '../config/api.config';
+
 export const environment = {
   production: false,
-  apiUrl: 'https://sakura-api.sakuraentcenter.com/api'
+  apiUrl: API_BASE_URL
 };
 
 

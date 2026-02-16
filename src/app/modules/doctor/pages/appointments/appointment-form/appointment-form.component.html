@@ -63,6 +63,9 @@
           <label class="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1">
             <i class="fas fa-phone text-pink-500 text-xs"></i>
             Phone Number <span class="text-red-500">*</span>
+            <span *ngIf="searchingPatient" class="ml-2">
+              <i class="fas fa-spinner fa-spin text-blue-500 text-xs"></i>
+            </span>
           </label>
           <input
             type="tel"
@@ -73,6 +76,40 @@
           <p *ngIf="f['phone'].invalid && f['phone'].touched" class="mt-0.5 text-xs text-red-600">
             Please enter a valid phone number (01XXXXXXXXX)
           </p>
+          
+          <!-- Multiple Patients Found - Selection Dropdown -->
+          <div *ngIf="foundPatients.length > 1 && !selectedPatient" class="mt-2 p-3 bg-blue-50 border-2 border-blue-200 rounded-lg">
+            <p class="text-xs font-semibold text-blue-800 mb-2">
+              <i class="fas fa-info-circle"></i> Multiple patients found with this phone number:
+            </p>
+            <div class="space-y-2 max-h-40 overflow-y-auto">
+              <button
+                *ngFor="let patient of foundPatients"
+                type="button"
+                (click)="selectPatient(patient)"
+                class="w-full text-left px-3 py-2 bg-white border-2 border-blue-300 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all text-sm">
+                <div class="font-semibold text-gray-800">{{ patient.fullName }}</div>
+                <div class="text-xs text-gray-600">
+                  Age: {{ patient.age }}{{ patient.months ? '.' + patient.months : '' }} | 
+                  Gender: {{ patient.gender || 'N/A' }} | 
+                  ID: {{ patient.patientId }}
+                </div>
+              </button>
+            </div>
+            <button
+              type="button"
+              (click)="createNewPatient()"
+              class="mt-2 w-full px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all text-sm font-semibold">
+              <i class="fas fa-plus"></i> Create New Patient
+            </button>
+          </div>
+          
+          <!-- Selected Patient Info -->
+          <div *ngIf="selectedPatient" class="mt-2 p-2 bg-green-50 border-2 border-green-300 rounded-lg">
+            <p class="text-xs font-semibold text-green-800">
+              <i class="fas fa-check-circle"></i> Selected: {{ selectedPatient.fullName }}
+            </p>
+          </div>
         </div>
 
         <!-- Patient Name -->
@@ -92,17 +129,22 @@
           </p>
         </div>
 
-        <!-- Identifier -->
+        <!-- Type (Identifier) -->
         <div>
           <label class="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1">
             <i class="fas fa-tag text-pink-500 text-xs"></i>
-            Identifier <span class="text-red-500">*</span>
+            Type <span class="text-red-500">*</span>
           </label>
           <select
             formControlName="identifier"
-            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white">
+            class="w-full px-3 h-9 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all bg-white hover:border-gray-300 shadow-sm"
+            [class.border-red-300]="f['identifier'].invalid && f['identifier'].touched">
+            <option value="">Select Type</option>
             <option *ngFor="let type of identifierTypes" [value]="type">{{ type }}</option>
           </select>
+          <p *ngIf="f['identifier'].invalid && f['identifier'].touched" class="mt-0.5 text-xs text-red-600">
+            Please select a type
+          </p>
         </div>
 
         <!-- Gender -->

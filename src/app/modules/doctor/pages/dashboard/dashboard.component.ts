@@ -25,6 +25,7 @@ interface Appointment {
   appointmentTime: string;
   status: string;
   isPresent: boolean;
+  identifier?: string; // Type: New, Old, Lab, Report, Emergency
   chamber: {
     name: string;
   };
@@ -286,28 +287,62 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
   
+  activeBreak: any = null;
+
   onBreak(breakData: { notes: string; duration: number }): void {
     console.log('Break started:', breakData);
     
-    // Show break notification
-    const breakMessage = breakData.notes 
-      ? `Taking a break: ${breakData.notes} (${breakData.duration} minutes)`
-      : `Taking a ${breakData.duration} minute break`;
-    
-    if (confirm(breakMessage + '\n\nBreak will be displayed on TV screen. Continue?')) {
-      // TODO: Implement break API endpoint to save break status
-      // This will be displayed on TV display
-      alert(`Break started for ${breakData.duration} minutes!\n\nNote: ${breakData.notes || 'No notes'}`);
-      
-      // Optionally pause auto-refresh during break
-      this.stopAutoRefresh();
-      
-      // Auto-resume after break duration
-      setTimeout(() => {
-        this.startAutoRefresh();
-        alert('Break ended! Auto-refresh resumed.');
-      }, breakData.duration * 60 * 1000);
+    // Call API to start break
+    this.apiService.post('/breaks/start', {
+      notes: breakData.notes,
+      duration: breakData.duration,
+      chamberId: this.selectedChamberId || undefined
+    }).subscribe({
+      next: (response: any) => {
+        this.activeBreak = response;
+        this.loadDashboardData(); // Refresh dashboard
+      },
+      error: (error) => {
+        console.error('Error starting break:', error);
+        alert(error.error?.message || 'Failed to start break. Please try again.');
+      }
+    });
+  }
+
+  cancelBreak(): void {
+    if (!this.activeBreak) {
+      return;
     }
+
+    if (confirm('Are you sure you want to cancel the current break?')) {
+      const params = this.selectedChamberId ? `?chamberId=${this.selectedChamberId}` : '';
+      this.apiService.delete(`/breaks/end${params}`).subscribe({
+        next: () => {
+          this.activeBreak = null;
+          this.loadDashboardData(); // Refresh dashboard
+        },
+        error: (error) => {
+          console.error('Error ending break:', error);
+          alert(error.error?.message || 'Failed to cancel break. Please try again.');
+        }
+      });
+    }
+  }
+
+  checkBreakStatus(): void {
+    const params = this.selectedChamberId ? `?chamberId=${this.selectedChamberId}` : '';
+    this.apiService.get(`/breaks/status${params}`).subscribe({
+      next: (response: any) => {
+        if (response.isOnBreak) {
+          this.activeBreak = response;
+        } else {
+          this.activeBreak = null;
+        }
+      },
+      error: (error) => {
+        console.error('Error checking break status:', error);
+      }
+    });
   }
   
   onNextPatient(): void {

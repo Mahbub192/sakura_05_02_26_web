@@ -21,6 +21,9 @@ export class AppointmentFormComponent implements OnInit {
   submitting = false;
   error = '';
   success = '';
+  foundPatients: any[] = [];
+  selectedPatient: any = null;
+  searchingPatient = false;
 
   identifierTypes = ['New', 'Old', 'Lab', 'Report', 'Emergency'];
   genders = [
@@ -79,10 +82,30 @@ export class AppointmentFormComponent implements OnInit {
     });
 
     // Search patient by phone
+    let phoneChangeTimeout: any;
     this.appointmentForm.get('phone')?.valueChanges.subscribe(phone => {
-      if (phone && phone.length === 11) {
-        this.searchPatient(phone);
+      // Clear timeout if user is still typing
+      if (phoneChangeTimeout) {
+        clearTimeout(phoneChangeTimeout);
       }
+      
+      // Clear previous patient selection when phone changes
+      this.selectedPatient = null;
+      this.foundPatients = [];
+      
+      // Debounce the search to avoid too many API calls
+      phoneChangeTimeout = setTimeout(() => {
+        if (phone && phone.length === 11 && /^01[3-9]\d{8}$/.test(phone)) {
+          // Valid phone number - search for patients
+          this.searchPatient(phone);
+        } else if (phone && phone.length === 11) {
+          // Phone number changed but invalid format - clear form
+          this.clearPatientInfo();
+        } else if (!phone || phone.length === 0) {
+          // Phone number cleared - clear form
+          this.clearPatientInfo();
+        }
+      }, 300); // Wait 300ms after user stops typing
     });
   }
 
@@ -106,28 +129,98 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   searchPatient(phone: string): void {
-    this.apiService.get(`/patients/search/${phone}`).subscribe({
+    // Don't search if phone number doesn't match current form value
+    const currentPhone = this.appointmentForm.get('phone')?.value;
+    if (currentPhone !== phone) {
+      return; // Phone number changed while searching
+    }
+    
+    this.searchingPatient = true;
+    this.apiService.get(`/patients/by-phone/${phone}`).subscribe({
       next: (patients: any) => {
+        this.searchingPatient = false;
+        
+        // Double-check phone number hasn't changed during search
+        const currentPhoneAfterSearch = this.appointmentForm.get('phone')?.value;
+        if (currentPhoneAfterSearch !== phone) {
+          return; // Phone number changed during search, ignore this result
+        }
+        
         if (patients && Array.isArray(patients) && patients.length > 0) {
-          const patient = patients[0];
-          this.appointmentForm.patchValue({
-            fullName: patient.fullName,
-            gender: patient.gender,
-            age: patient.age,
-            months: patient.months || 0,
-            district: patient.district,
-            upazila: patient.upazila,
-            union: patient.unionName,
-            identifier: patient.isNewPatient ? 'New' : 'Old'
-          });
-          this.success = 'Patient information loaded';
-          setTimeout(() => this.success = '', 3000);
+          this.foundPatients = patients;
+          
+          // If only one patient found, auto-select it and update form immediately
+          if (patients.length === 1) {
+            this.selectPatient(patients[0]);
+          } else {
+            // Multiple patients found - user needs to select one
+            this.selectedPatient = null;
+            // Don't clear form - let user select from dropdown
+          }
+        } else {
+          // No patients found - clear form for new patient
+          this.foundPatients = [];
+          this.selectedPatient = null;
+          this.clearPatientInfo();
         }
       },
       error: () => {
+        this.searchingPatient = false;
         // Patient not found, continue with new registration
+        this.foundPatients = [];
+        this.selectedPatient = null;
+        this.clearPatientInfo();
       }
     });
+  }
+
+  selectPatient(patient: any): void {
+    this.selectedPatient = patient;
+    // Get current identifier value to preserve user's selection
+    const currentIdentifier = this.appointmentForm.get('identifier')?.value || 'New';
+    
+    // Use patchValue to update form without triggering phone change event
+    this.appointmentForm.patchValue({
+      fullName: patient.fullName || '',
+      gender: patient.gender || '',
+      age: patient.age || 0,
+      months: patient.months || 0,
+      district: patient.district || '',
+      upazila: patient.upazila || '',
+      union: patient.unionName || '',
+      // Don't override identifier - keep user's selection or use patient's default only if not set
+      identifier: currentIdentifier || (patient.isNewPatient ? 'New' : 'Old')
+    }, { emitEvent: false }); // Don't emit events to prevent triggering phone change
+    
+    this.success = 'Patient information loaded';
+    setTimeout(() => this.success = '', 3000);
+  }
+
+  clearPatientInfo(): void {
+    // Clear patient info but keep phone number and identifier (user's selection)
+    const phone = this.appointmentForm.get('phone')?.value;
+    const currentIdentifier = this.appointmentForm.get('identifier')?.value || 'New';
+    
+    this.appointmentForm.patchValue({
+      fullName: '',
+      gender: '',
+      age: 0,
+      months: 0,
+      district: '',
+      upazila: '',
+      union: '',
+      identifier: currentIdentifier // Preserve user's type selection
+    }, { emitEvent: false }); // Don't emit events to prevent triggering phone change
+    // Restore phone number if it exists
+    if (phone) {
+      this.appointmentForm.patchValue({ phone }, { emitEvent: false });
+    }
+  }
+
+  createNewPatient(): void {
+    // Allow creating a new patient even if phone number exists
+    this.selectedPatient = null;
+    this.clearPatientInfo();
   }
 
   loadAvailableSlots(): void {
@@ -362,6 +455,11 @@ export class AppointmentFormComponent implements OnInit {
     // Prepare form data - ensure appointmentTime is included if time slot is selected
     const formData = { ...this.appointmentForm.value };
     
+    // Ensure identifier (type) is included and valid
+    if (!formData.identifier || formData.identifier === '') {
+      formData.identifier = 'New'; // Default to 'New' if not set
+    }
+    
     // If a time slot is selected, ensure appointmentTime is set
     if (this.selectedSlot && this.selectedSlot.time && !formData.appointmentTime) {
       formData.appointmentTime = this.selectedSlot.time;
@@ -371,6 +469,7 @@ export class AppointmentFormComponent implements OnInit {
     console.log('Appointment Form Data:', {
       appointmentSlotId: formData.appointmentSlotId,
       appointmentTime: formData.appointmentTime,
+      identifier: formData.identifier, // Log identifier to verify it's being sent
       selectedSlot: this.selectedSlot,
       selectedSlotTime: this.selectedSlot?.time,
       fullFormData: formData
