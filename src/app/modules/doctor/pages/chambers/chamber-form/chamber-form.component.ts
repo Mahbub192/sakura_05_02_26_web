@@ -73,10 +73,19 @@ export class ChamberFormComponent implements OnInit {
           return time.substring(0, 5); // Get HH:MM from HH:MM:SS
         };
 
+        // Ensure availableDays is a valid array with proper enum values
+        let availableDays = chamber.availableDays || [];
+        if (!Array.isArray(availableDays)) {
+          availableDays = [];
+        }
+        // Filter to only include valid day names
+        const validDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        availableDays = availableDays.filter((day: string) => validDays.includes(day));
+
         this.chamberForm.patchValue({
           name: chamber.name,
           appointmentNumber: chamber.appointmentNumber,
-          availableDays: chamber.availableDays,
+          availableDays: availableDays,
           openingTime: formatTime(chamber.openingTime),
           reportTime: formatTime(chamber.reportTime),
           closingTime: formatTime(chamber.closingTime),
@@ -85,21 +94,25 @@ export class ChamberFormComponent implements OnInit {
           feeFirstTime: chamber.feeFirstTime,
           feeFollowup: chamber.feeFollowup,
           address: chamber.address,
-          showSerialsInApp: chamber.showSerialsInApp,
-          appUsersCanBook: chamber.appUsersCanBook,
-          autoDeleteDaily: chamber.autoDeleteDaily,
-          useMultipleDevices: chamber.useMultipleDevices,
-          audioType: chamber.audioType,
-          audioGender: chamber.audioGender,
-          videoUrl: chamber.videoUrl,
-          videoVolume: chamber.videoVolume
+          showSerialsInApp: chamber.showSerialsInApp ?? true,
+          appUsersCanBook: chamber.appUsersCanBook ?? true,
+          autoDeleteDaily: chamber.autoDeleteDaily ?? false,
+          useMultipleDevices: chamber.useMultipleDevices ?? true,
+          audioType: chamber.audioType || 'Bangla',
+          audioGender: chamber.audioGender || 'Male',
+          videoUrl: chamber.videoUrl || '',
+          videoVolume: chamber.videoVolume || 'Medium'
         });
         
         this.loading = false;
       },
       error: (error) => {
         console.error('Error loading chamber:', error);
-        this.error = 'Failed to load chamber data';
+        if (error.status === 401) {
+          this.error = 'Session expired. Please login again.';
+        } else {
+          this.error = error.error?.message || 'Failed to load chamber data';
+        }
         this.loading = false;
       }
     });
@@ -132,11 +145,25 @@ export class ChamberFormComponent implements OnInit {
       return;
     }
 
+    // Validate availableDays
+    const availableDays = this.chamberForm.get('availableDays')?.value || [];
+    if (!Array.isArray(availableDays) || availableDays.length === 0) {
+      this.error = 'Please select at least one available day';
+      return;
+    }
+
     this.submitting = true;
     this.error = '';
     this.success = '';
 
-    const formData = this.prepareFormData();
+    let formData;
+    try {
+      formData = this.prepareFormData();
+    } catch (e: any) {
+      this.error = e.message || 'Invalid form data';
+      this.submitting = false;
+      return;
+    }
 
     if (this.isEditMode && this.chamberId) {
       // Update existing chamber
@@ -150,7 +177,19 @@ export class ChamberFormComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error updating chamber:', error);
-          this.error = error.error?.message || 'Failed to update chamber';
+          if (error.status === 401) {
+            this.error = 'Session expired. Please login again.';
+          } else if (error.status === 400) {
+            // Parse validation errors
+            const errorMessage = error.error?.message || error.error?.error || 'Validation error';
+            if (Array.isArray(error.error?.message)) {
+              this.error = error.error.message.join(', ');
+            } else {
+              this.error = errorMessage;
+            }
+          } else {
+            this.error = error.error?.message || 'Failed to update chamber';
+          }
           this.submitting = false;
         }
       });
@@ -166,7 +205,19 @@ export class ChamberFormComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error creating chamber:', error);
-          this.error = error.error?.message || 'Failed to create chamber';
+          if (error.status === 401) {
+            this.error = 'Session expired. Please login again.';
+          } else if (error.status === 400) {
+            // Parse validation errors
+            const errorMessage = error.error?.message || error.error?.error || 'Validation error';
+            if (Array.isArray(error.error?.message)) {
+              this.error = error.error.message.join(', ');
+            } else {
+              this.error = errorMessage;
+            }
+          } else {
+            this.error = error.error?.message || 'Failed to create chamber';
+          }
           this.submitting = false;
         }
       });
@@ -182,10 +233,35 @@ export class ChamberFormComponent implements OnInit {
       return time.includes(':') ? `${time}:00` : time;
     };
 
+    // Validate and clean availableDays
+    let availableDays = formValue.availableDays || [];
+    if (!Array.isArray(availableDays)) {
+      availableDays = [];
+    }
+    // Ensure only valid enum values are sent
+    const validDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    availableDays = availableDays.filter((day: string) => validDays.includes(day));
+    
+    // Ensure at least one day is selected
+    if (availableDays.length === 0) {
+      throw new Error('Please select at least one available day');
+    }
+
+    // Clean video URL - remove empty strings
+    let videoUrl = formValue.videoUrl;
+    if (videoUrl && typeof videoUrl === 'string') {
+      videoUrl = videoUrl.trim();
+      if (videoUrl === '') {
+        videoUrl = null;
+      }
+    } else {
+      videoUrl = null;
+    }
+
     return {
       name: formValue.name,
       appointmentNumber: formValue.appointmentNumber,
-      availableDays: formValue.availableDays,
+      availableDays: availableDays,
       openingTime: formatTime(formValue.openingTime),
       closingTime: formatTime(formValue.closingTime),
       reportTime: formatTime(formValue.reportTime),
@@ -194,14 +270,14 @@ export class ChamberFormComponent implements OnInit {
       feeFirstTime: Number(formValue.feeFirstTime),
       feeFollowup: Number(formValue.feeFollowup),
       address: formValue.address,
-      showSerialsInApp: formValue.showSerialsInApp,
-      appUsersCanBook: formValue.appUsersCanBook,
-      autoDeleteDaily: formValue.autoDeleteDaily,
-      useMultipleDevices: formValue.useMultipleDevices,
-      audioType: formValue.audioType,
-      audioGender: formValue.audioGender,
-      videoUrl: formValue.videoUrl || null,
-      videoVolume: formValue.videoVolume,
+      showSerialsInApp: formValue.showSerialsInApp ?? true,
+      appUsersCanBook: formValue.appUsersCanBook ?? true,
+      autoDeleteDaily: formValue.autoDeleteDaily ?? false,
+      useMultipleDevices: formValue.useMultipleDevices ?? true,
+      audioType: formValue.audioType || 'Bangla',
+      audioGender: formValue.audioGender || 'Male',
+      videoUrl: videoUrl,
+      videoVolume: formValue.videoVolume || 'Medium',
       doctorId: 1 // This will be set from authenticated user in backend
     };
   }
