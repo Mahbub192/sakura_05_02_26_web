@@ -7,6 +7,7 @@ interface Chamber {
   name: string;
   appointmentNumber: string;
   feeFirstTime: number;
+  feeFollowup?: number;
   availableDays: string[];
   openingTime: string;
   closingTime: string;
