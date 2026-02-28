@@ -7,14 +7,7 @@ import { AuthService } from '../../../../core/services/auth.service';
   styleUrls: ['./patient-dashboard.component.scss'],
 })
 export class PatientDashboardComponent {
-  /** Which sidebar section with sub-items is expanded: 'appointment' | 'health-record' | null (all minimized) */
-  expandedNav: 'appointment' | 'health-record' | null = null;
-
   constructor(public authService: AuthService) {}
-
-  toggleNav(key: 'appointment' | 'health-record'): void {
-    this.expandedNav = this.expandedNav === key ? null : key;
-  }
 
   get user() {
     return this.authService.currentUserValue;
@@ -25,12 +18,4 @@ export class PatientDashboardComponent {
     return name;
   }
 
-  get patientIdDisplay(): string {
-    const id = this.user?.id;
-    return id ? `#ENT${id}` : '';
-  }
-
-  logout(): void {
-    this.authService.logout();
-  }
 }
