@@ -1,6 +1,6 @@
-<app-public-nav></app-public-nav>
+<app-public-nav *ngIf="!isPatientDashboard"></app-public-nav>
 <main class="min-h-screen bg-background-light flex flex-col">
   <router-outlet></router-outlet>
 </main>
-<app-public-footer></app-public-footer>
-<app-scroll-to-top></app-scroll-to-top>
+<app-public-footer *ngIf="!isPatientDashboard"></app-public-footer>
+<app-scroll-to-top *ngIf="!isPatientDashboard"></app-scroll-to-top>
