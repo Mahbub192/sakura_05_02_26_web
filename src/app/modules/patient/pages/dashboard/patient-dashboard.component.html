@@ -35,28 +35,34 @@
           <span class="text-sm font-semibold">Dashboard</span>
         </a>
         <div class="flex flex-col gap-1">
-          <div class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-3 text-white/90 transition-colors hover:bg-white/5">
+          <div
+            (click)="toggleNav('appointment')"
+            class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-3 text-white/90 transition-colors hover:bg-white/5"
+          >
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined">calendar_today</span>
               <span class="text-sm font-medium">Appointment List</span>
             </div>
-            <span class="material-symbols-outlined text-sm">expand_more</span>
+            <span class="material-symbols-outlined text-sm transition-transform" [class.rotate-180]="expandedNav === 'appointment'">expand_more</span>
           </div>
-          <div class="flex flex-col gap-1 py-1 pl-12">
+          <div *ngIf="expandedNav === 'appointment'" class="flex flex-col gap-1 py-1 pl-12">
             <a class="py-1.5 text-sm transition-colors hover:text-white" href="#">Today</a>
             <a class="py-1.5 text-sm transition-colors hover:text-white" href="#">Future</a>
             <a class="py-1.5 text-sm transition-colors hover:text-white" href="#">Old Appointment</a>
           </div>
         </div>
         <div class="flex flex-col gap-1">
-          <div class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-3 text-white/90 transition-colors hover:bg-white/5">
+          <div
+            (click)="toggleNav('health-record')"
+            class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-3 text-white/90 transition-colors hover:bg-white/5"
+          >
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined">description</span>
               <span class="text-sm font-medium">My Health Record</span>
             </div>
-            <span class="material-symbols-outlined text-sm">expand_more</span>
+            <span class="material-symbols-outlined text-sm transition-transform" [class.rotate-180]="expandedNav === 'health-record'">expand_more</span>
           </div>
-          <div class="flex flex-col gap-1 py-1 pl-12">
+          <div *ngIf="expandedNav === 'health-record'" class="flex flex-col gap-1 py-1 pl-12">
             <a class="py-1.5 text-sm transition-colors hover:text-white" href="#">Doctor Prescription</a>
             <a class="py-1.5 text-sm transition-colors hover:text-white" href="#">Upload Image</a>
           </div>
