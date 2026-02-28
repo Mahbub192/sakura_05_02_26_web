@@ -1,0 +1,158 @@
+<div class="mx-auto flex max-w-6xl flex-col gap-8">
+  <!-- Page header -->
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-black tracking-tight text-dark-green mb-1">Today's Appointments</h2>
+      <div class="flex items-center gap-2 text-slate-600">
+        <span class="material-symbols-outlined text-base">event</span>
+        <span class="text-sm font-medium">{{ todayLabel }}</span>
+      </div>
+    </div>
+    <div class="flex bg-slate-200/50 p-1 rounded-xl">
+      <button
+        type="button"
+        (click)="setTab('upcoming')"
+        class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
+        [ngClass]="activeTab === 'upcoming' ? 'bg-white shadow-sm text-dark-green' : 'text-slate-500 hover:text-slate-700'"
+      >
+        Upcoming (4)
+      </button>
+      <button
+        type="button"
+        (click)="setTab('completed')"
+        class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
+        [ngClass]="activeTab === 'completed' ? 'bg-white shadow-sm text-dark-green' : 'text-slate-500 hover:text-slate-700'"
+      >
+        Completed (12)
+      </button>
+    </div>
+  </div>
+
+  <!-- Appointment cards -->
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+    <!-- Card 1: Virtual appointment -->
+    <div class="bg-white border border-dark-green/5 rounded-xl p-5 shadow-xl shadow-slate-200/50 flex flex-col gap-4">
+      <div class="flex justify-between items-start">
+        <div class="flex gap-3">
+          <div class="h-12 w-12 rounded-lg bg-ent-primary/10 flex items-center justify-center text-ent-primary">
+            <span class="material-symbols-outlined text-3xl">medical_services</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="inline-flex items-center rounded-md bg-accent-green/10 px-1.5 py-0.5 text-[10px] font-bold text-accent-green ring-1 ring-inset ring-accent-green/20">Checked-in</span>
+              <span class="text-slate-400 text-[10px] font-medium">• 09:00 AM - 09:30 AM</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 leading-tight">Dr. Sarah Jenkins</h3>
+            <p class="text-slate-500 text-xs font-medium">Ear Department • Specialist Consultation</p>
+          </div>
+        </div>
+        <button type="button" class="text-slate-400 hover:text-ent-primary p-1.5">
+          <span class="material-symbols-outlined text-xl">more_vert</span>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="aspect-video rounded-lg overflow-hidden relative bg-slate-100">
+          <img alt="Video feed" class="object-cover w-full h-full" src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=400"/>
+          <div class="absolute inset-0 bg-black/20 flex items-center justify-center">
+            <div class="h-8 w-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
+              <span class="material-symbols-outlined text-lg">videocam</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col justify-center gap-2">
+          <button type="button" class="w-full bg-ent-primary hover:bg-ent-primary/90 text-white text-xs font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-transform active:scale-95 shadow-lg shadow-ent-primary/20">
+            <span class="material-symbols-outlined text-lg">video_call</span>
+            Join Virtual Consultation
+          </button>
+          <button type="button" class="w-full border border-slate-200 text-slate-600 text-xs font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 hover:bg-slate-50 transition-colors">
+            <span class="material-symbols-outlined text-lg">schedule_send</span>
+            Reschedule
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: In-clinic appointment -->
+    <div class="bg-white border border-dark-green/5 rounded-xl p-5 shadow-xl shadow-slate-200/50 flex flex-col gap-4">
+      <div class="flex justify-between items-start">
+        <div class="flex gap-3">
+          <div class="h-12 w-12 rounded-lg bg-dark-green/10 flex items-center justify-center text-dark-green">
+            <span class="material-symbols-outlined text-3xl">stethoscope</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="inline-flex items-center rounded-md bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-bold text-amber-500 ring-1 ring-inset ring-amber-500/20">Awaiting Arrival</span>
+              <span class="text-slate-400 text-[10px] font-medium">• 11:15 AM - 12:00 PM</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 leading-tight">Dr. Marcus Thorne</h3>
+            <p class="text-slate-500 text-xs font-medium">Nose & Sinus • Pre-Op Evaluation</p>
+          </div>
+        </div>
+        <button type="button" class="text-slate-400 hover:text-ent-primary p-1.5">
+          <span class="material-symbols-outlined text-xl">more_vert</span>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="aspect-video rounded-lg overflow-hidden bg-slate-100 flex flex-col items-center justify-center text-slate-400 p-3">
+          <span class="material-symbols-outlined text-2xl mb-0.5">map</span>
+          <p class="text-[10px] font-bold uppercase">Medical Plaza A • Level 3</p>
+        </div>
+        <div class="flex flex-col justify-center gap-2">
+          <button type="button" class="w-full bg-dark-green hover:bg-dark-green/90 text-white text-xs font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-transform active:scale-95 shadow-lg shadow-dark-green/20">
+            <span class="material-symbols-outlined text-lg">directions</span>
+            View Clinic Map
+          </button>
+          <button type="button" class="w-full border border-slate-200 text-slate-600 text-xs font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 hover:bg-slate-50 transition-colors">
+            <span class="material-symbols-outlined text-lg">schedule_send</span>
+            Reschedule
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: Next patient -->
+    <div class="bg-white border border-dark-green/5 rounded-xl p-5 shadow-xl shadow-slate-200/50 flex flex-col gap-4">
+      <div class="flex justify-between items-start">
+        <div class="flex gap-3">
+          <div class="h-12 w-12 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
+            <span class="material-symbols-outlined text-3xl">hearing</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="inline-flex items-center rounded-md bg-slate-500/10 px-1.5 py-0.5 text-[10px] font-bold text-slate-500 ring-1 ring-inset ring-slate-500/20">Confirmed</span>
+              <span class="text-slate-400 text-[10px] font-medium">• 02:30 PM - 03:00 PM</span>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 leading-tight">Dr. Elena Rodriguez</h3>
+            <p class="text-slate-500 text-xs font-medium">Throat & Vocal • Follow-up</p>
+          </div>
+        </div>
+        <button type="button" class="text-slate-400 hover:text-ent-primary p-1.5">
+          <span class="material-symbols-outlined text-xl">more_vert</span>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="flex items-center gap-2 p-2.5 bg-slate-50 rounded-lg">
+          <span class="material-symbols-outlined text-blue-500 text-lg">info</span>
+          <p class="text-[10px] font-medium text-slate-600">Bring latest audiogram results to this session.</p>
+        </div>
+        <div class="flex flex-col justify-center gap-2">
+          <button type="button" class="w-full bg-ent-primary hover:bg-ent-primary/90 text-white text-xs font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-transform active:scale-95 shadow-lg shadow-ent-primary/20">
+            <span class="material-symbols-outlined text-lg">video_call</span>
+            Virtual Link Available
+          </button>
+          <button type="button" class="w-full border border-slate-200 text-slate-600 text-xs font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 hover:bg-slate-50 transition-colors">
+            <span class="material-symbols-outlined text-lg">schedule_send</span>
+            Reschedule
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty slot placeholder -->
+    <div class="border-2 border-dashed border-slate-300 rounded-xl p-5 flex flex-col items-center justify-center gap-2 bg-transparent opacity-60">
+      <span class="material-symbols-outlined text-3xl text-slate-400">add_circle</span>
+      <p class="text-slate-500 text-sm font-bold">Available Slot</p>
+      <a routerLink="/patient/book" class="text-ent-primary font-bold text-xs hover:underline">Book new appointment</a>
+    </div>
+  </div>
+</div>

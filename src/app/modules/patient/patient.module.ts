@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PatientRoutingModule } from './patient-routing.module';
 import { PatientLayoutComponent } from './layout/patient-layout.component';
+import { AppointmentsTodayComponent } from './pages/appointments-today/appointments-today.component';
 import { BookingComponent } from './pages/booking/booking.component';
 import { PatientDashboardComponent } from './pages/dashboard/patient-dashboard.component';
 import { SharedModule } from '../../shared/shared.module';
@@ -13,6 +14,7 @@ import { SharedModule } from '../../shared/shared.module';
     PatientLayoutComponent,
     BookingComponent,
     PatientDashboardComponent,
+    AppointmentsTodayComponent,
   ],
   imports: [
     CommonModule,

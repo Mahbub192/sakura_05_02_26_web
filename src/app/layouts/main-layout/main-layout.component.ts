@@ -9,8 +9,8 @@ import { Router } from '@angular/router';
 export class MainLayoutComponent {
   constructor(private router: Router) {}
 
-  get isPatientDashboard(): boolean {
-    const url = this.router.url;
-    return url.startsWith('/patient/dashboard');
+  /** Hide public nav/footer when inside patient portal (dashboard, today, book, etc.) */
+  get isPatientPortal(): boolean {
+    return this.router.url.startsWith('/patient');
   }
 }

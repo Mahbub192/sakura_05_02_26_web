@@ -1,14 +1,14 @@
 <div class="mx-auto flex max-w-5xl flex-col gap-8">
   <!-- Welcome -->
   <div class="flex flex-col gap-1">
-    <h2 class="text-3xl font-black tracking-tight text-dark-green">Welcome back, {{ welcomeName }}!</h2>
-    <p class="text-slate-600">Here's an overview of your health status and upcoming clinic visits.</p>
+    <h2 class="text-2xl font-black tracking-tight text-dark-green">Welcome back, {{ welcomeName }}!</h2>
+    <p class="text-sm text-slate-600">Here's an overview of your health status and upcoming clinic visits.</p>
   </div>
 
   <!-- Upcoming Appointment -->
   <section>
-    <h3 class="mb-4 flex items-center gap-2 text-lg font-bold text-dark-green">
-      <span class="material-symbols-outlined">event</span>
+    <h3 class="mb-3 flex items-center gap-2 text-base font-bold text-dark-green">
+      <span class="material-symbols-outlined text-lg">event</span>
       Upcoming Appointment
     </h3>
     <div class="flex overflow-hidden rounded-xl border-l-8 border-accent-green bg-white shadow-sm">
@@ -25,13 +25,13 @@
             <span class="rounded-full bg-accent-green/20 px-3 py-1 text-xs font-bold uppercase text-dark-green">Next Appointment</span>
             <span class="font-bold text-dark-green">—</span>
           </div>
-          <h4 class="mb-1 text-xl font-bold text-slate-900">No upcoming appointment</h4>
-          <p class="mt-2 text-sm text-slate-600">Book a new visit from the button above when you're ready.</p>
+          <h4 class="mb-1 text-lg font-bold text-slate-900">No upcoming appointment</h4>
+          <p class="mt-2 text-xs text-slate-600">Book a new visit from the button above when you're ready.</p>
         </div>
-        <div class="mt-6 flex gap-3">
+        <div class="mt-4 flex gap-3">
           <a
             routerLink="/patient/book"
-            class="rounded-lg bg-dark-green px-6 py-2 text-sm font-bold text-white transition-colors hover:opacity-90"
+            class="rounded-lg bg-dark-green px-5 py-2 text-xs font-bold text-white transition-colors hover:opacity-90"
           >
             Book Visit
           </a>
@@ -43,9 +43,9 @@
   <!-- Two columns: Activity + Summary -->
   <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
     <!-- Recent Activity -->
-    <div class="flex flex-col gap-4 lg:col-span-2">
-      <h3 class="flex items-center gap-2 text-lg font-bold text-dark-green">
-        <span class="material-symbols-outlined">history</span>
+    <div class="flex flex-col gap-3 lg:col-span-2">
+      <h3 class="flex items-center gap-2 text-base font-bold text-dark-green">
+        <span class="material-symbols-outlined text-lg">history</span>
         Recent Activity
       </h3>
       <div class="rounded-xl bg-white p-2 shadow-sm">
@@ -56,49 +56,49 @@
             </div>
             <div class="flex-1">
               <div class="flex justify-between">
-                <p class="text-sm font-bold text-slate-900">Welcome to Patient Portal</p>
+                <p class="text-xs font-bold text-slate-900">Welcome to Patient Portal</p>
                 <span class="text-xs text-slate-400">Just now</span>
               </div>
-              <p class="text-sm text-slate-600">You can view appointments and health info here.</p>
+              <p class="text-xs text-slate-600">You can view appointments and health info here.</p>
             </div>
           </div>
         </div>
-        <div class="p-4 text-center">
-          <button type="button" class="text-sm font-bold text-dark-green hover:underline">View All Activities</button>
+        <div class="p-3 text-center">
+          <button type="button" class="text-xs font-bold text-dark-green hover:underline">View All Activities</button>
         </div>
       </div>
     </div>
 
     <!-- Side widgets -->
-    <div class="flex flex-col gap-6">
-      <h3 class="text-lg font-bold text-dark-green">Health Summary</h3>
-      <div class="rounded-xl bg-dark-green p-6 text-white shadow-lg">
-        <p class="mb-2 text-xs font-medium uppercase opacity-70">Current Status</p>
-        <h4 class="mb-4 text-xl font-bold">Your dashboard</h4>
-        <p class="mb-4 text-sm opacity-90">Manage appointments and health records from this portal.</p>
+    <div class="flex flex-col gap-4">
+      <h3 class="text-base font-bold text-dark-green">Health Summary</h3>
+      <div class="rounded-xl bg-dark-green p-5 text-white shadow-lg">
+        <p class="mb-1 text-[10px] font-medium uppercase opacity-70">Current Status</p>
+        <h4 class="mb-3 text-lg font-bold">Your dashboard</h4>
+        <p class="mb-3 text-xs opacity-90">Manage appointments and health records from this portal.</p>
         <a
           routerLink="/patient/book"
-          class="block w-full rounded-lg bg-white py-2 text-center text-sm font-bold text-dark-green transition-colors hover:bg-white/90"
+          class="block w-full rounded-lg bg-white py-2 text-center text-xs font-bold text-dark-green transition-colors hover:bg-white/90"
         >
           Book New Visit
         </a>
       </div>
-      <div class="rounded-xl border border-slate-100 bg-white p-6 shadow-sm">
-        <h4 class="mb-4 flex items-center gap-2 text-sm font-bold text-slate-900">
-          <span class="material-symbols-outlined text-ent-primary">info</span>
+      <div class="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+        <h4 class="mb-3 flex items-center gap-2 text-xs font-bold text-slate-900">
+          <span class="material-symbols-outlined text-ent-primary text-lg">info</span>
           Quick Links
         </h4>
-        <p class="mb-4 text-sm text-slate-600">Book an appointment or view clinic location.</p>
+        <p class="mb-3 text-xs text-slate-600">Book an appointment or view clinic location.</p>
         <div class="flex flex-col gap-2">
           <a
             routerLink="/patient/book"
-            class="w-full rounded-lg border border-ent-primary py-2 text-center text-sm font-bold text-ent-primary transition-colors hover:bg-ent-primary/5"
+            class="w-full rounded-lg border border-ent-primary py-2 text-center text-xs font-bold text-ent-primary transition-colors hover:bg-ent-primary/5"
           >
             Book Appointment
           </a>
           <a
             routerLink="/location"
-            class="w-full rounded-lg border border-slate-200 py-2 text-center text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50"
+            class="w-full rounded-lg border border-slate-200 py-2 text-center text-xs font-bold text-slate-600 transition-colors hover:bg-slate-50"
           >
             Clinic Location
           </a>

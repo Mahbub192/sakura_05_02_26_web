@@ -27,7 +27,7 @@
       <nav class="flex flex-1 flex-col gap-1 px-4 pb-4">
         <a
           routerLink="/patient/dashboard"
-          routerLinkActive="bg-white/10 text-white"
+          routerLinkActive="patient-nav-active"
           [routerLinkActiveOptions]="{ exact: true }"
           class="flex cursor-pointer items-center gap-3 rounded-lg px-4 py-3 transition-colors hover:bg-white/5"
         >
@@ -46,9 +46,8 @@
             <span class="material-symbols-outlined text-sm transition-transform" [class.rotate-180]="expandedNav === 'appointment'">expand_more</span>
           </div>
           <div *ngIf="expandedNav === 'appointment'" class="flex flex-col gap-1 py-1 pl-12">
-            <a class="py-1.5 text-sm transition-colors hover:text-white" href="#">Today</a>
-            <a class="py-1.5 text-sm transition-colors hover:text-white" href="#">Future</a>
-            <a class="py-1.5 text-sm transition-colors hover:text-white" href="#">Old Appointment</a>
+            <a routerLink="/patient/appointments/today" routerLinkActive="patient-nav-active-sub" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white">Today</a>
+           <a class="py-2 px-3 rounded-lg text-sm text-white/80 transition-colors hover:bg-white/10 hover:text-white cursor-pointer">Alll Appointment</a>
           </div>
         </div>
         <div class="flex flex-col gap-1">
