@@ -101,15 +101,15 @@
         <p class="mt-1 text-sm text-slate-500">Get started by booking a new appointment</p>
         <a
           routerLink="/doctor/appointments/new"
-          class="mt-3 inline-flex items-center gap-2 rounded-lg bg-ent-primary text-white hover:opacity-90 px-5 py-2.5 text-sm font-bold shadow-lg">
-          <span class="material-symbols-outlined text-lg">add</span>
+          class="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-ent-primary text-white hover:opacity-90 px-3 py-1.5 text-xs font-bold shadow-md">
+          <span class="material-symbols-outlined text-base">add</span>
           Book Appointment
         </a>
       </div>
 
       <!-- Patient Table with Fixed Height & Scrollbar -->
       <div *ngIf="dashboardData.todayAppointments.length > 0" class="overflow-x-auto" style="max-height: 400px; overflow-y: auto;">
-        <table class="min-w-full divide-y divide-gray-200">
+        <table class="min-w-full divide-y divide-slate-200">
           <thead class="bg-slate-50 sticky top-0 z-10">
             <tr>
               <th class="px-3 py-1.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">SL</th>
@@ -122,30 +122,30 @@
           </thead>
           <tbody class="bg-white divide-y divide-slate-200">
             <tr *ngFor="let apt of getSortedPatients(); let i = index" 
-                class="hover:bg-gray-50 transition-colors"
-                [class.bg-green-50]="apt.status === 'running'">
+                class="hover:bg-slate-50 transition-colors"
+                [ngClass]="{'dashboard-row-running': apt.status === 'running'}">
               <!-- Serial Number -->
               <td class="px-3 py-1.5 whitespace-nowrap">
-                <div class="text-sm font-bold text-gray-900">#{{ apt.serialNumber }}</div>
+                <div class="text-sm font-bold text-slate-900">#{{ apt.serialNumber }}</div>
               </td>
 
               <!-- Patient Info -->
               <td class="px-3 py-1.5 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">{{ apt.patient.fullName }}</div>
-                <div class="text-xs text-gray-500">{{ apt.patient.patientId }}</div>
-                <div class="text-xs text-gray-500">{{ apt.patient.phone }}</div>
+                <div class="text-sm font-medium text-slate-900">{{ apt.patient.fullName }}</div>
+                <div class="text-xs text-slate-500">{{ apt.patient.patientId }}</div>
+                <div class="text-xs text-slate-500">{{ apt.patient.phone }}</div>
               </td>
 
               <!-- Type Badge -->
               <td class="px-3 py-1.5 whitespace-nowrap">
                 <span class="px-2 py-0.5 text-xs font-semibold rounded-full"
                       [ngClass]="{
-                        'bg-green-100 text-green-800': apt.identifier === 'New',
-                        'bg-blue-100 text-blue-800': apt.identifier === 'Old',
-                        'bg-purple-100 text-purple-800': apt.identifier === 'Lab',
-                        'bg-orange-100 text-orange-800': apt.identifier === 'Report',
+                        'bg-accent-green/20 text-dark-green': apt.identifier === 'New',
+                        'bg-dark-green/10 text-dark-green': apt.identifier === 'Old',
+                        'bg-ent-primary/10 text-ent-primary': apt.identifier === 'Lab',
+                        'bg-amber-100 text-amber-800': apt.identifier === 'Report',
                         'bg-red-100 text-red-800': apt.identifier === 'Emergency',
-                        'bg-gray-100 text-gray-800': !apt.identifier || apt.identifier === ''
+                        'bg-slate-100 text-slate-700': !apt.identifier || apt.identifier === ''
                       }">
                   {{ apt.identifier || 'New' }}
                 </span>
@@ -155,13 +155,13 @@
               <td class="px-3 py-1.5 whitespace-nowrap">
                 <span class="px-2 py-0.5 text-xs font-semibold rounded-full"
                       [ngClass]="{
-                        'bg-blue-100 text-blue-800': apt.status === 'scheduled',
-                        'bg-green-100 text-green-800': apt.status === 'confirmed',
-                        'bg-purple-100 text-purple-800': apt.status === 'running' || apt.status === 'next',
-                        'bg-orange-100 text-orange-800': apt.status === 'need_test',
-                        'bg-gray-100 text-gray-800': apt.status === 'completed' || apt.status === 'seen',
-                        'bg-red-100 text-red-800': apt.status === 'cancelled',
-                        'bg-yellow-100 text-yellow-800': apt.status === 'absent' || apt.status === 'no_show'
+                        'bg-slate-100 text-slate-700': apt.status === 'scheduled',
+                        'bg-accent-green/20 text-dark-green': apt.status === 'confirmed',
+                        'bg-dark-green/20 text-dark-green': apt.status === 'running' || apt.status === 'next',
+                        'bg-amber-100 text-amber-800': apt.status === 'need_test',
+                        'bg-slate-100 text-slate-600': apt.status === 'completed' || apt.status === 'seen',
+                        'bg-red-100 text-red-700': apt.status === 'cancelled',
+                        'bg-amber-100 text-amber-700': apt.status === 'absent' || apt.status === 'no_show'
                       }">
                   {{ getStatusLabel(apt.status) }}
                 </span>
@@ -171,20 +171,22 @@
               <td class="px-3 py-1.5 whitespace-nowrap">
                 <button
                   (click)="togglePresent(apt.id)"
-                  [ngClass]="apt.isPresent ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-700'"
-                  class="px-2 py-0.5 text-xs font-medium rounded-full hover:opacity-80 transition-opacity">
-                  {{ apt.isPresent ? '✓' : '○' }}
+                  [ngClass]="apt.isPresent ? 'bg-accent-green text-dark-green' : 'bg-slate-200 text-slate-600'"
+                  class="px-2.5 py-1 text-xs font-bold rounded-lg hover:opacity-80 transition-opacity flex items-center gap-0.5">
+                  <span class="material-symbols-outlined text-sm" *ngIf="apt.isPresent">check</span>
+                  <span class="material-symbols-outlined text-sm" *ngIf="!apt.isPresent">radio_button_unchecked</span>
+                  {{ apt.isPresent ? 'Yes' : 'No' }}
                 </button>
               </td>
 
               <!-- Actions -->
               <td class="px-3 py-1.5 whitespace-nowrap text-xs">
-                <div class="flex items-center gap-1">
+                <div class="flex items-center gap-1.5">
                   <!-- Change Status -->
                   <select
                     (change)="changeStatus(apt.id, $any($event.target).value); $any($event.target).value = apt.status"
                     [value]="apt.status"
-                    class="text-xs px-1.5 py-0.5 border rounded hover:bg-gray-50">
+                    class="text-xs px-2 py-1 border border-slate-200 rounded-lg focus:ring-2 focus:ring-accent-green focus:border-transparent bg-white text-slate-700 font-medium">
                     <option value="scheduled">Scheduled</option>
                     <option value="confirmed">Confirmed</option>
                     <option value="running">Running</option>
@@ -196,21 +198,17 @@
 
                   <!-- Edit -->
                   <button
-                    class="text-blue-600 hover:text-blue-800 p-0.5"
+                    class="text-dark-green hover:text-accent-green p-1 rounded hover:bg-accent-green/10 transition-colors"
                     title="Edit">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                    </svg>
+                    <span class="material-symbols-outlined text-lg">edit</span>
                   </button>
 
                   <!-- Delete -->
                   <button
                     (click)="cancelAppointment(apt.id)"
-                    class="text-red-600 hover:text-red-800 p-0.5"
+                    class="text-red-600 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors"
                     title="Cancel">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
+                    <span class="material-symbols-outlined text-lg">delete</span>
                   </button>
                 </div>
               </td>
@@ -239,7 +237,7 @@
 
       <!-- Test Patient Table -->
       <div class="overflow-x-auto" style="max-height: 300px; overflow-y: auto;">
-        <table class="min-w-full divide-y divide-gray-200">
+        <table class="min-w-full divide-y divide-slate-200">
           <thead class="bg-accent-green/10 sticky top-0 z-10">
             <tr>
               <th class="px-3 py-1.5 text-left text-xs font-semibold text-dark-green uppercase tracking-wider">Serial</th>
@@ -250,22 +248,22 @@
           </thead>
           <tbody class="bg-white divide-y divide-slate-200">
             <tr *ngFor="let apt of getTestPatients(); let i = index" 
-                class="hover:bg-purple-50 transition-colors cursor-pointer"
+                class="hover:bg-accent-green/5 transition-colors cursor-pointer"
                 (click)="assignTestSerial(apt)">
               <!-- Serial Number -->
               <td class="px-3 py-1.5 whitespace-nowrap">
-                <div class="text-sm font-bold text-purple-700">#{{ apt.serialNumber }}</div>
+                <div class="text-sm font-bold text-dark-green">#{{ apt.serialNumber }}</div>
               </td>
 
               <!-- Patient Info -->
               <td class="px-3 py-1.5 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">{{ apt.patient.fullName }}</div>
-                <div class="text-xs text-gray-500">{{ apt.patient.patientId }}</div>
+                <div class="text-sm font-medium text-slate-900">{{ apt.patient.fullName }}</div>
+                <div class="text-xs text-slate-500">{{ apt.patient.patientId }}</div>
               </td>
 
               <!-- Test Type -->
               <td class="px-3 py-1.5 whitespace-nowrap">
-                <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
+                <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-accent-green/20 text-dark-green">
                   Lab Test
                 </span>
               </td>
@@ -274,7 +272,8 @@
               <td class="px-3 py-1.5 whitespace-nowrap">
                 <button
                   (click)="assignTestSerial(apt); $event.stopPropagation()"
-                  class="rounded-lg px-3 py-1.5 text-xs font-bold bg-dark-green text-white hover:opacity-90 transition-opacity shadow-md">
+                  class="rounded-lg px-3 py-1.5 text-xs font-bold bg-dark-green text-white hover:opacity-90 transition-opacity shadow-md flex items-center gap-1">
+                  <span class="material-symbols-outlined text-base">campaign</span>
                   Call for Test
                 </button>
               </td>
