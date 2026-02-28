@@ -1,31 +1,29 @@
-<div class="space-y-4">
+<div class="mx-auto max-w-6xl flex flex-col gap-6">
   <!-- Header with Filters -->
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-2">
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-        <span class="text-sakura">●</span> Doctor Dashboard
+      <h1 class="text-2xl font-black tracking-tight text-dark-green flex items-center gap-2">
+        <span class="material-symbols-outlined text-dark-green text-2xl">dashboard</span>
+        Doctor Dashboard
       </h1>
-      <p class="text-gray-500 text-sm mt-0.5">Manage your appointments and patients</p>
+      <p class="text-slate-600 text-sm mt-1">Manage your appointments and patients</p>
     </div>
     
     <!-- Filter Controls -->
     <div class="flex flex-col sm:flex-row gap-2">
-      <!-- Date Picker -->
-      <div class="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-3 py-1.5 shadow-sm hover:border-sakura transition-colors">
-        <i class="fas fa-calendar-day text-sakura text-sm"></i>
+      <div class="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 shadow-sm hover:border-dark-green/30 transition-colors">
+        <span class="material-symbols-outlined text-dark-green text-lg">calendar_today</span>
         <input
           type="date"
           [(ngModel)]="selectedDate"
           (change)="onDateChange()"
-          class="border-0 focus:ring-0 text-sm font-medium text-gray-700 cursor-pointer"
+          class="border-0 focus:ring-0 text-sm font-medium text-slate-700 cursor-pointer bg-transparent"
           style="outline: none;">
       </div>
-      
-      <!-- Chamber Selector -->
       <select
         [(ngModel)]="selectedChamberId"
         (change)="onChamberChange()"
-        class="px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sakura focus:border-transparent text-sm font-medium text-gray-700 shadow-sm hover:border-sakura transition-colors">
+        class="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-accent-green focus:border-transparent text-sm font-medium text-slate-700 shadow-sm hover:border-dark-green/30 transition-colors bg-white">
         <option [value]="null">All Chambers</option>
         <option *ngFor="let chamber of chambers" [value]="chamber.id">
           {{chamber.name}}
@@ -44,31 +42,31 @@
   </app-control-buttons>
 
   <!-- Active Break Notice -->
-  <div *ngIf="activeBreak" class="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4 mb-4 flex items-center justify-between">
+  <div *ngIf="activeBreak" class="bg-amber-50 border-2 border-amber-400 rounded-xl p-4 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <i class="fas fa-clock text-yellow-600 text-xl"></i>
+      <span class="material-symbols-outlined text-amber-600 text-2xl">schedule</span>
       <div>
-        <p class="font-semibold text-yellow-800">Break Active</p>
-        <p class="text-sm text-yellow-700" *ngIf="activeBreak.notes">{{ activeBreak.notes }}</p>
-        <p class="text-xs text-yellow-600">Duration: {{ activeBreak.duration }} minutes</p>
+        <p class="font-semibold text-amber-800">Break Active</p>
+        <p class="text-sm text-amber-700" *ngIf="activeBreak.notes">{{ activeBreak.notes }}</p>
+        <p class="text-xs text-amber-600">Duration: {{ activeBreak.duration }} minutes</p>
       </div>
     </div>
     <button 
       (click)="cancelBreak()"
-      class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium flex items-center gap-2">
-      <i class="fas fa-times"></i>
+      class="px-4 py-2 bg-ent-primary text-white rounded-lg hover:opacity-90 transition-opacity font-medium flex items-center gap-2 text-sm">
+      <span class="material-symbols-outlined text-lg">close</span>
       <span>Cancel Break</span>
     </button>
   </div>
 
   <!-- Loading State -->
   <div *ngIf="loading" class="text-center py-12">
-    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sakura"></div>
-    <p class="mt-4 text-gray-600">Loading dashboard...</p>
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-dark-green"></div>
+    <p class="mt-4 text-slate-600 text-sm">Loading dashboard...</p>
   </div>
 
   <!-- Error State -->
-  <div *ngIf="error && !loading" class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">
+  <div *ngIf="error && !loading" class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-sm">
     {{error}}
   </div>
 
@@ -79,53 +77,50 @@
     <app-chamber-stats [stats]="getStats()"></app-chamber-stats>
 
     <!-- Patient List -->
-    <div class="rounded-xl bg-white shadow-lg">
-      <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+    <div class="rounded-xl bg-white shadow-sm border border-dark-green/5">
+      <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
         <div>
-          <h2 class="text-lg font-semibold text-gray-900">Patients</h2>
-          <p class="text-xs text-gray-600 mt-0.5">
-            <i class="fas fa-calendar text-sakura mr-1"></i>
+          <h2 class="text-base font-bold text-dark-green">Patients</h2>
+          <p class="text-xs text-slate-600 mt-0.5 flex items-center gap-1">
+            <span class="material-symbols-outlined text-dark-green text-sm">event</span>
             {{ getFormattedDate(selectedDate) }}
           </p>
         </div>
         <button
           (click)="loadDashboardData()"
-          class="text-sakura hover:text-sakura-dark text-sm font-medium flex items-center gap-1.5">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-          </svg>
+          class="text-dark-green hover:text-accent-green text-sm font-medium flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-lg">refresh</span>
           Refresh
         </button>
       </div>
 
       <!-- Empty State -->
       <div *ngIf="dashboardData.todayAppointments.length === 0" class="text-center py-8">
-        <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-        </svg>
-        <h3 class="mt-3 text-base font-medium text-gray-900">No appointments today</h3>
-        <p class="mt-1 text-sm text-gray-500">Get started by booking a new appointment</p>
-        <button
+        <span class="material-symbols-outlined text-5xl text-slate-300">calendar_today</span>
+        <h3 class="mt-3 text-base font-bold text-slate-900">No appointments today</h3>
+        <p class="mt-1 text-sm text-slate-500">Get started by booking a new appointment</p>
+        <a
           routerLink="/doctor/appointments/new"
-          class="mt-3 rounded-full bg-pink-500 text-white hover:bg-pink-600 px-4 py-2 text-sm font-semibold shadow-lg">
+          class="mt-3 inline-flex items-center gap-2 rounded-lg bg-ent-primary text-white hover:opacity-90 px-5 py-2.5 text-sm font-bold shadow-lg">
+          <span class="material-symbols-outlined text-lg">add</span>
           Book Appointment
-        </button>
+        </a>
       </div>
 
       <!-- Patient Table with Fixed Height & Scrollbar -->
       <div *ngIf="dashboardData.todayAppointments.length > 0" class="overflow-x-auto" style="max-height: 400px; overflow-y: auto;">
         <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50 sticky top-0 z-10">
+          <thead class="bg-slate-50 sticky top-0 z-10">
             <tr>
-              <th class="px-3 py-1.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">SL</th>
-              <th class="px-3 py-1.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Patient</th>
-              <th class="px-3 py-1.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Type</th>
-              <th class="px-3 py-1.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-              <th class="px-3 py-1.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Present</th>
-              <th class="px-3 py-1.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">SL</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Patient</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Type</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Status</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Present</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
+          <tbody class="bg-white divide-y divide-slate-200">
             <tr *ngFor="let apt of getSortedPatients(); let i = index" 
                 class="hover:bg-gray-50 transition-colors"
                 [class.bg-green-50]="apt.status === 'running'">
@@ -226,36 +221,34 @@
     </div>
 
     <!-- Test Patient List (Shows when showTestList is true) -->
-    <div *ngIf="showTestList" class="rounded-xl bg-white shadow-lg">
-      <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+    <div *ngIf="showTestList" class="rounded-xl bg-white shadow-sm border border-dark-green/5">
+      <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
         <div>
-          <h2 class="text-lg font-semibold text-purple-900">Test Patient List</h2>
-          <p class="text-xs text-purple-600 mt-0.5">
-            <i class="fas fa-flask mr-1"></i>
+          <h2 class="text-base font-bold text-dark-green">Test Patient List</h2>
+          <p class="text-xs text-slate-600 mt-0.5 flex items-center gap-1">
+            <span class="material-symbols-outlined text-accent-green text-sm">science</span>
             Patients waiting for tests
           </p>
         </div>
         <button
           (click)="showTestList = false"
-          class="text-gray-500 hover:text-gray-700 p-1">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
+          class="text-slate-500 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100">
+          <span class="material-symbols-outlined text-xl">close</span>
         </button>
       </div>
 
       <!-- Test Patient Table -->
       <div class="overflow-x-auto" style="max-height: 300px; overflow-y: auto;">
         <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-purple-50 sticky top-0 z-10">
+          <thead class="bg-accent-green/10 sticky top-0 z-10">
             <tr>
-              <th class="px-3 py-1.5 text-left text-xs font-semibold text-purple-700 uppercase tracking-wider">Serial</th>
-              <th class="px-3 py-1.5 text-left text-xs font-semibold text-purple-700 uppercase tracking-wider">Patient</th>
-              <th class="px-3 py-1.5 text-left text-xs font-semibold text-purple-700 uppercase tracking-wider">Test Type</th>
-              <th class="px-3 py-1.5 text-left text-xs font-semibold text-purple-700 uppercase tracking-wider">Action</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-dark-green uppercase tracking-wider">Serial</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-dark-green uppercase tracking-wider">Patient</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-dark-green uppercase tracking-wider">Test Type</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-dark-green uppercase tracking-wider">Action</th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
+          <tbody class="bg-white divide-y divide-slate-200">
             <tr *ngFor="let apt of getTestPatients(); let i = index" 
                 class="hover:bg-purple-50 transition-colors cursor-pointer"
                 (click)="assignTestSerial(apt)">
@@ -281,7 +274,7 @@
               <td class="px-3 py-1.5 whitespace-nowrap">
                 <button
                   (click)="assignTestSerial(apt); $event.stopPropagation()"
-                  class="rounded-full px-3 py-1 text-xs font-semibold bg-purple-500 text-white hover:bg-purple-600 transition-colors shadow-md">
+                  class="rounded-lg px-3 py-1.5 text-xs font-bold bg-dark-green text-white hover:opacity-90 transition-opacity shadow-md">
                   Call for Test
                 </button>
               </td>
