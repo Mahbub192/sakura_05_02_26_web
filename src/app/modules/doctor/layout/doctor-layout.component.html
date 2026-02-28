@@ -46,7 +46,7 @@
             <span class="material-symbols-outlined text-sm transition-transform" [class.rotate-180]="expandedNav === 'chambers'">expand_more</span>
           </div>
           <div *ngIf="expandedNav === 'chambers'" class="flex flex-col gap-1 py-1 pl-12">
-            <a routerLink="/doctor/chambers" routerLinkActive="doctor-nav-active-sub" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white">All Chambers</a>
+            <a routerLink="/doctor/chambers" routerLinkActive="doctor-nav-active-sub" [routerLinkActiveOptions]="{ exact: true }" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white">All Chambers</a>
             <a routerLink="/doctor/chambers/new" routerLinkActive="doctor-nav-active-sub" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white">Add Chamber</a>
           </div>
         </div>
