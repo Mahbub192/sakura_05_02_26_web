@@ -7,6 +7,7 @@ import { PatientLayoutComponent } from './layout/patient-layout.component';
 import { AppointmentsTodayComponent } from './pages/appointments-today/appointments-today.component';
 import { BookingComponent } from './pages/booking/booking.component';
 import { PatientDashboardComponent } from './pages/dashboard/patient-dashboard.component';
+import { UploadImageComponent } from './pages/upload-image/upload-image.component';
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
@@ -15,6 +16,7 @@ import { SharedModule } from '../../shared/shared.module';
     BookingComponent,
     PatientDashboardComponent,
     AppointmentsTodayComponent,
+    UploadImageComponent,
   ],
   imports: [
     CommonModule,

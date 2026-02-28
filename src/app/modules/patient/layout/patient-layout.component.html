@@ -62,8 +62,8 @@
             <span class="material-symbols-outlined text-sm transition-transform" [class.rotate-180]="expandedNav === 'health-record'">expand_more</span>
           </div>
           <div *ngIf="expandedNav === 'health-record'" class="flex flex-col gap-1 py-1 pl-12">
-            <a class="py-1.5 text-sm transition-colors hover:text-white" href="#">Doctor Prescription</a>
-            <a class="py-1.5 text-sm transition-colors hover:text-white" href="#">Upload Image</a>
+            <a routerLink="/patient/dashboard" class="rounded-lg px-3 py-2 text-sm transition-colors hover:bg-white/10 hover:text-white">Doctor Prescription</a>
+            <a routerLink="/patient/health-record/upload-image" routerLinkActive="patient-nav-active-sub" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white">Upload Image</a>
           </div>
         </div>
         <div class="flex cursor-pointer items-center gap-3 rounded-lg px-4 py-3 text-white/90 transition-colors hover:bg-white/5">
