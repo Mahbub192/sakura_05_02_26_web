@@ -217,8 +217,8 @@ export class SlotManagementComponent implements OnInit {
 
   getUtilizationColor(percentage: number): string {
     if (percentage >= 90) return 'text-red-600';
-    if (percentage >= 70) return 'text-yellow-600';
-    return 'text-green-600';
+    if (percentage >= 70) return 'text-amber-600';
+    return 'text-accent-green';
   }
 
   viewMode: 'buttons' | 'table' = 'buttons';
@@ -284,14 +284,12 @@ export class SlotManagementComponent implements OnInit {
 
   getTimeSlotButtonClass(timeSlot: any): string {
     if (!timeSlot.isActive) {
-      return 'bg-gray-300 text-gray-600 opacity-60 cursor-not-allowed';
+      return 'bg-slate-300 text-slate-500 opacity-60 cursor-not-allowed';
     }
-    
     if (timeSlot.isBooked) {
-      return 'bg-red-400 text-white opacity-70 cursor-not-allowed';
+      return 'bg-red-500 text-white opacity-80 cursor-not-allowed border border-red-600';
     }
-    
-    return 'bg-green-600 text-white hover:bg-green-700 cursor-pointer';
+    return 'bg-accent-green text-dark-green hover:opacity-90 cursor-pointer border border-accent-green/30';
   }
 
   getSlotButtonClass(slot: any): string {

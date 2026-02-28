@@ -1,415 +1,262 @@
-<div class="min-h-screen bg-gray-50 py-6">
-  <div class="max-w-7xl mx-auto px-4">
-    <!-- Header -->
-    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold text-gray-900">📅 Appointment Slot Management</h2>
-          <p class="text-gray-600 mt-1">Create and manage time slots for appointments</p>
-        </div>
-        <div class="flex space-x-3">
-          <button
-            (click)="autoGenerateSlots()"
-            [disabled]="!selectedChamberId || submitting"
-            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
-            <i class="fas fa-magic mr-2"></i>
-            Auto Generate from Chamber
-          </button>
-          <button
-            (click)="toggleForm()"
-            class="px-6 py-3 bg-sakura text-white rounded-lg hover:bg-pink-600 transition-colors shadow-md">
-            <i class="fas" [ngClass]="showForm ? 'fa-times' : 'fa-plus'"></i>
-            {{ showForm ? 'Cancel' : 'Create Manually' }}
-          </button>
-        </div>
-      </div>
+<div class="mx-auto max-w-full flex flex-col gap-5">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-black tracking-tight text-dark-green flex items-center gap-2">
+        <span class="material-symbols-outlined text-dark-green text-2xl">schedule</span>
+        Appointment Slot Management
+      </h1>
+      <p class="text-slate-600 text-sm mt-1">Create and manage time slots for appointments</p>
     </div>
-
-    <!-- Alert Messages -->
-    <div *ngIf="error" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
-      <div class="flex items-center">
-        <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
-        <p class="text-red-800">{{ error }}</p>
-      </div>
+    <div class="flex flex-wrap gap-2">
+      <button
+        (click)="autoGenerateSlots()"
+        [disabled]="!selectedChamberId || submitting"
+        class="inline-flex items-center gap-2 rounded-lg bg-dark-green text-white hover:opacity-90 px-4 py-2 text-sm font-bold shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
+        <span class="material-symbols-outlined text-lg">auto_awesome</span>
+        Auto Generate from Chamber
+      </button>
+      <button
+        (click)="toggleForm()"
+        class="inline-flex items-center gap-2 rounded-lg bg-ent-primary text-white hover:opacity-90 px-4 py-2 text-sm font-bold shadow-md transition-opacity">
+        <span class="material-symbols-outlined text-lg">{{ showForm ? 'close' : 'add' }}</span>
+        {{ showForm ? 'Cancel' : 'Create Manually' }}
+      </button>
     </div>
+  </div>
 
-    <div *ngIf="success" class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded-r-lg">
-      <div class="flex items-center">
-        <i class="fas fa-check-circle text-green-500 mr-3"></i>
-        <p class="text-green-800">{{ success }}</p>
-      </div>
-    </div>
+  <!-- Error -->
+  <div *ngIf="error" class="rounded-xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 flex items-center gap-2 text-sm">
+    <span class="material-symbols-outlined text-red-600">error</span>
+    <p>{{ error }}</p>
+  </div>
 
-    <!-- Create/Edit Slot Form -->
-    <div *ngIf="showForm" class="bg-white rounded-lg shadow-sm p-6 mb-6">
-      <h3 class="text-xl font-bold text-gray-900 mb-6">
+  <!-- Success -->
+  <div *ngIf="success" class="rounded-xl bg-accent-green/10 border border-accent-green/30 text-dark-green px-4 py-3 flex items-center gap-2 text-sm">
+    <span class="material-symbols-outlined text-accent-green">check_circle</span>
+    <p>{{ success }}</p>
+  </div>
+
+  <!-- Create/Edit Slot Form -->
+  <div *ngIf="showForm" class="rounded-xl bg-white border border-dark-green/5 shadow-sm overflow-hidden">
+    <div class="px-4 py-3 border-b border-slate-200">
+      <h3 class="text-base font-bold text-dark-green">
         {{ editingSlot ? 'Edit Slot' : 'Create New Slot' }}
       </h3>
-      
-      <form [formGroup]="slotForm" (ngSubmit)="onSubmit()">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Chamber -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Chamber <span class="text-red-500">*</span>
-            </label>
-            <select
-              formControlName="chamberId"
-              class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura"
-              [class.border-red-300]="f['chamberId'].invalid && f['chamberId'].touched">
-              <option value="">Select Chamber</option>
-              <option *ngFor="let chamber of chambers" [value]="chamber.id">
-                {{ chamber.name }}
-              </option>
-            </select>
-          </div>
-
-          <!-- Date -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Date <span class="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              formControlName="slotDate"
-              class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura"
-              [class.border-red-300]="f['slotDate'].invalid && f['slotDate'].touched">
-          </div>
-
-          <!-- Start Time -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Start Time <span class="text-red-500">*</span>
-            </label>
-            <input
-              type="time"
-              formControlName="startTime"
-              class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura"
-              [class.border-red-300]="f['startTime'].invalid && f['startTime'].touched">
-          </div>
-
-          <!-- End Time -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              End Time <span class="text-red-500">*</span>
-            </label>
-            <input
-              type="time"
-              formControlName="endTime"
-              class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura"
-              [class.border-red-300]="f['endTime'].invalid && f['endTime'].touched">
-          </div>
-
-          <!-- Max Patients -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Max Patients <span class="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              formControlName="maxPatients"
-              min="1"
-              max="100"
-              class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura"
-              [class.border-red-300]="f['maxPatients'].invalid && f['maxPatients'].touched">
-          </div>
-
-          <!-- Notes -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Notes (Optional)
-            </label>
-            <input
-              type="text"
-              formControlName="notes"
-              placeholder="E.g., Morning slot"
-              class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura">
-          </div>
-        </div>
-
-        <!-- Form Actions -->
-        <div class="flex items-center justify-end space-x-4 mt-6 pt-6 border-t">
-          <button
-            type="button"
-            (click)="toggleForm()"
-            class="px-6 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
-            Cancel
-          </button>
-          <button
-            type="submit"
-            [disabled]="submitting"
-            class="px-8 py-3 bg-sakura text-white rounded-lg hover:bg-pink-600 shadow-md disabled:opacity-50">
-            <span *ngIf="!submitting">
-              <i class="fas fa-save mr-2"></i>{{ editingSlot ? 'Update' : 'Create' }} Slot
-            </span>
-            <span *ngIf="submitting">
-              <i class="fas fa-spinner fa-spin mr-2"></i>Saving...
-            </span>
-          </button>
-        </div>
-      </form>
     </div>
-
-    <!-- Filters -->
-    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <form [formGroup]="slotForm" (ngSubmit)="onSubmit()" class="p-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Chamber</label>
-          <select
-            [(ngModel)]="selectedChamberId"
-            (change)="onChamberChange($event)"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura">
-            <option *ngFor="let chamber of chambers" [value]="chamber.id">
-              {{ chamber.name }}
-            </option>
+          <label class="slot-form-label">Chamber <span class="text-red-500">*</span></label>
+          <select formControlName="chamberId" class="slot-form-input" [class.border-red-300]="f['chamberId'].invalid && f['chamberId'].touched">
+            <option value="">Select Chamber</option>
+            <option *ngFor="let chamber of chambers" [value]="chamber.id">{{ chamber.name }}</option>
           </select>
         </div>
-
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
-          <input
-            type="date"
-            [(ngModel)]="selectedDate"
-            (change)="onDateChange($event)"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-sakura">
+          <label class="slot-form-label">Date <span class="text-red-500">*</span></label>
+          <input type="date" formControlName="slotDate" class="slot-form-input" [class.border-red-300]="f['slotDate'].invalid && f['slotDate'].touched">
+        </div>
+        <div>
+          <label class="slot-form-label">Start Time <span class="text-red-500">*</span></label>
+          <input type="time" formControlName="startTime" class="slot-form-input" [class.border-red-300]="f['startTime'].invalid && f['startTime'].touched">
+        </div>
+        <div>
+          <label class="slot-form-label">End Time <span class="text-red-500">*</span></label>
+          <input type="time" formControlName="endTime" class="slot-form-input" [class.border-red-300]="f['endTime'].invalid && f['endTime'].touched">
+        </div>
+        <div>
+          <label class="slot-form-label">Max Patients <span class="text-red-500">*</span></label>
+          <input type="number" formControlName="maxPatients" min="1" max="100" class="slot-form-input" [class.border-red-300]="f['maxPatients'].invalid && f['maxPatients'].touched">
+        </div>
+        <div>
+          <label class="slot-form-label">Notes (Optional)</label>
+          <input type="text" formControlName="notes" placeholder="E.g., Morning slot" class="slot-form-input">
         </div>
       </div>
-    </div>
-
-    <!-- Statistics -->
-    <div *ngIf="statistics" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Total Slots</p>
-            <p class="text-2xl font-bold text-gray-900 mt-1">{{ statistics.totalSlots }}</p>
-          </div>
-          <i class="fas fa-calendar text-3xl text-blue-500"></i>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Available</p>
-            <p class="text-2xl font-bold text-green-600 mt-1">{{ statistics.available }}</p>
-          </div>
-          <i class="fas fa-check-circle text-3xl text-green-500"></i>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Booked</p>
-            <p class="text-2xl font-bold text-blue-600 mt-1">{{ statistics.totalBooked }}</p>
-          </div>
-          <i class="fas fa-users text-3xl text-blue-500"></i>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-600">Utilization</p>
-            <p class="text-2xl font-bold mt-1" [ngClass]="getUtilizationColor(statistics.utilizationPercentage)">
-              {{ statistics.utilizationPercentage | number:'1.0-0' }}%
-            </p>
-          </div>
-          <i class="fas fa-chart-pie text-3xl text-purple-500"></i>
-        </div>
-      </div>
-    </div>
-
-    <!-- Slots Button View -->
-    <div class="bg-white rounded-lg shadow-sm p-6 mb-6" *ngIf="!loading && slots.length > 0">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-bold text-gray-900">Available Time Slots</h3>
-        <button
-          (click)="viewMode = viewMode === 'buttons' ? 'table' : 'buttons'"
-          class="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50">
-          <i class="fas" [ngClass]="viewMode === 'buttons' ? 'fa-table' : 'fa-th'"></i>
-          {{ viewMode === 'buttons' ? 'Table View' : 'Button View' }}
+      <div class="flex items-center justify-end gap-3 mt-4 pt-4 border-t border-slate-200">
+        <button type="button" (click)="toggleForm()" class="slot-form-btn slot-form-btn-cancel">Cancel</button>
+        <button type="submit" [disabled]="submitting" class="slot-form-btn slot-form-btn-submit">
+          <span *ngIf="!submitting" class="flex items-center gap-2"><span class="material-symbols-outlined text-lg">save</span>{{ editingSlot ? 'Update' : 'Create' }} Slot</span>
+          <span *ngIf="submitting" class="flex items-center gap-2"><span class="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>Saving...</span>
         </button>
       </div>
+    </form>
+  </div>
 
-      <!-- Button Style View -->
-      <div *ngIf="viewMode === 'buttons'">
-        <!-- Scrollable Container for Time Slots -->
-        <div class="border-2 border-gray-300 rounded-lg p-4 bg-gradient-to-br from-gray-50 to-white overflow-y-auto shadow-inner mb-4"
-             style="max-height: 400px; min-height: 200px;">
-          <!-- Grid Layout: 8 per row -->
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2">
-            <ng-container *ngFor="let slot of slots">
-              <button
-                *ngFor="let timeSlot of generateTimeSlots(slot)"
-                type="button"
-                [class]="getTimeSlotButtonClass(timeSlot)"
-                (click)="selectSlotForView(slot)"
-                class="px-3 py-2.5 rounded-lg font-semibold text-xs transition-all duration-200 shadow hover:shadow-lg w-full">
-                {{ formatTime(timeSlot.time) }}
-              </button>
-            </ng-container>
-          </div>
-        </div>
-
-        <!-- Selected Slot Details -->
-        <div *ngIf="selectedSlotView" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div class="flex items-start justify-between">
-            <div>
-              <h4 class="font-bold text-blue-900 mb-2">
-                <i class="fas fa-clock mr-2"></i>
-                {{ formatTime(selectedSlotView.startTime) }} - {{ formatTime(selectedSlotView.endTime) }}
-              </h4>
-              <div class="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span class="text-blue-600">Max Patients:</span>
-                  <span class="font-bold ml-2">{{ selectedSlotView.maxPatients }}</span>
-                </div>
-                <div>
-                  <span class="text-blue-600">Booked:</span>
-                  <span class="font-bold ml-2">{{ selectedSlotView.bookedPatients }}</span>
-                </div>
-                <div>
-                  <span class="text-blue-600">Available:</span>
-                  <span class="font-bold ml-2 text-green-600">
-                    {{ selectedSlotView.maxPatients - selectedSlotView.bookedPatients }}
-                  </span>
-                </div>
-                <div>
-                  <span class="text-blue-600">Status:</span>
-                  <span class="font-bold ml-2" [ngClass]="{
-                    'text-green-600': selectedSlotView.isActive,
-                    'text-red-600': !selectedSlotView.isActive
-                  }">
-                    {{ selectedSlotView.isActive ? 'Active' : 'Inactive' }}
-                  </span>
-                </div>
-              </div>
-              <div *ngIf="selectedSlotView.notes" class="mt-2 text-sm text-blue-700">
-                <i class="fas fa-sticky-note mr-1"></i>{{ selectedSlotView.notes }}
-              </div>
-            </div>
-            <div class="flex space-x-2">
-              <button
-                (click)="editSlot(selectedSlotView)"
-                class="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
-                <i class="fas fa-edit mr-1"></i>Edit
-              </button>
-              <button
-                (click)="toggleSlotStatus(selectedSlotView)"
-                class="px-3 py-1 text-xs border rounded hover:bg-gray-50">
-                {{ selectedSlotView.isActive ? 'Disable' : 'Enable' }}
-              </button>
-              <button
-                (click)="deleteSlot(selectedSlotView)"
-                class="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700">
-                <i class="fas fa-trash mr-1"></i>Delete
-              </button>
-            </div>
-          </div>
-        </div>
+  <!-- Filters -->
+  <div class="rounded-xl bg-white border border-dark-green/5 shadow-sm p-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl">
+      <div>
+        <label class="slot-form-label">Chamber</label>
+        <select [(ngModel)]="selectedChamberId" (change)="onChamberChange($event)" class="slot-form-input">
+          <option *ngFor="let chamber of chambers" [value]="chamber.id">{{ chamber.name }}</option>
+        </select>
       </div>
-    </div>
-
-    <!-- Slots Table -->
-    <div class="bg-white rounded-lg shadow-sm overflow-hidden" *ngIf="viewMode === 'table' || slots.length === 0">
-      <div class="p-6 border-b">
-        <h3 class="text-lg font-bold text-gray-900">Appointment Slots - Table View</h3>
-      </div>
-
-      <div *ngIf="loading" class="p-12 text-center">
-        <i class="fas fa-spinner fa-spin text-4xl text-gray-400"></i>
-        <p class="text-gray-600 mt-4">Loading slots...</p>
-      </div>
-
-      <div *ngIf="!loading && slots.length === 0" class="p-12 text-center">
-        <i class="fas fa-calendar-times text-6xl text-gray-300 mb-4"></i>
-        <p class="text-gray-600">No slots found for this date</p>
-        <button
-          (click)="toggleForm()"
-          class="mt-4 px-6 py-2 bg-sakura text-white rounded-lg hover:bg-pink-600">
-          Create First Slot
-        </button>
-      </div>
-
-      <div *ngIf="!loading && slots.length > 0" class="overflow-x-auto">
-        <table class="w-full">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Capacity</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Booked</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Available</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Notes</th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <tr *ngFor="let slot of slots" [ngClass]="getSlotStatusClass(slot)">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <i class="fas fa-clock text-gray-400 mr-2"></i>
-                  <span class="font-medium">{{ slot.startTime }} - {{ slot.endTime }}</span>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="text-sm font-medium text-gray-900">{{ slot.maxPatients }}</span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="text-sm font-medium text-blue-600">{{ slot.bookedPatients }}</span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="text-sm font-medium text-green-600">
-                  {{ slot.maxPatients - slot.bookedPatients }}
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-3 py-1 text-xs font-medium rounded-full"
-                      [ngClass]="{
-                        'bg-green-100 text-green-800': slot.isActive && slot.bookedPatients < slot.maxPatients,
-                        'bg-red-100 text-red-800': slot.bookedPatients >= slot.maxPatients,
-                        'bg-gray-100 text-gray-800': !slot.isActive
-                      }">
-                  {{ !slot.isActive ? 'Disabled' : (slot.bookedPatients >= slot.maxPatients ? 'Full' : 'Available') }}
-                </span>
-              </td>
-              <td class="px-6 py-4">
-                <span class="text-sm text-gray-600">{{ slot.notes || '-' }}</span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div class="flex items-center justify-end space-x-2">
-                  <button
-                    (click)="editSlot(slot)"
-                    class="text-blue-600 hover:text-blue-900"
-                    title="Edit">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button
-                    (click)="toggleSlotStatus(slot)"
-                    [class.text-green-600]="!slot.isActive"
-                    [class.text-yellow-600]="slot.isActive"
-                    class="hover:opacity-75"
-                    [title]="slot.isActive ? 'Disable' : 'Enable'">
-                    <i class="fas" [ngClass]="slot.isActive ? 'fa-pause-circle' : 'fa-play-circle'"></i>
-                  </button>
-                  <button
-                    (click)="deleteSlot(slot)"
-                    class="text-red-600 hover:text-red-900"
-                    [disabled]="slot.bookedPatients > 0"
-                    [class.opacity-50]="slot.bookedPatients > 0"
-                    [class.cursor-not-allowed]="slot.bookedPatients > 0"
-                    title="Delete">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div>
+        <label class="slot-form-label">Date</label>
+        <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange($event)" class="slot-form-input">
       </div>
     </div>
   </div>
-</div>
 
+  <!-- Statistics -->
+  <div *ngIf="statistics" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+    <div class="rounded-lg bg-dark-green text-white px-3 py-2 flex items-center justify-between gap-2 border border-dark-green/20">
+      <span class="text-xs font-semibold opacity-90">Total Slots</span>
+      <span class="text-lg font-bold">{{ statistics.totalSlots }}</span>
+    </div>
+    <div class="rounded-lg bg-accent-green/20 text-dark-green px-3 py-2 flex items-center justify-between gap-2 border border-accent-green/30">
+      <span class="text-xs font-semibold">Available</span>
+      <span class="text-lg font-bold">{{ statistics.available }}</span>
+    </div>
+    <div class="rounded-lg bg-ent-primary/10 text-ent-primary px-3 py-2 flex items-center justify-between gap-2 border border-ent-primary/20">
+      <span class="text-xs font-semibold">Booked</span>
+      <span class="text-lg font-bold">{{ statistics.totalBooked }}</span>
+    </div>
+    <div class="rounded-lg bg-slate-100 text-slate-700 px-3 py-2 flex items-center justify-between gap-2 border border-slate-200">
+      <span class="text-xs font-semibold">Utilization</span>
+      <span class="text-lg font-bold" [ngClass]="getUtilizationColor(statistics.utilizationPercentage)">{{ statistics.utilizationPercentage | number:'1.0-0' }}%</span>
+    </div>
+  </div>
+
+  <!-- Slots Button View -->
+  <div *ngIf="!loading && slots.length > 0" class="rounded-xl bg-white border border-dark-green/5 shadow-sm overflow-hidden">
+    <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between flex-wrap gap-2">
+      <h3 class="text-base font-bold text-dark-green flex items-center gap-2">
+        <span class="material-symbols-outlined text-lg">schedule</span>
+        Available Time Slots
+      </h3>
+      <button
+        (click)="viewMode = viewMode === 'buttons' ? 'table' : 'buttons'"
+        class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors">
+        <span class="material-symbols-outlined text-lg">{{ viewMode === 'buttons' ? 'table_chart' : 'grid_view' }}</span>
+        {{ viewMode === 'buttons' ? 'Table View' : 'Button View' }}
+      </button>
+    </div>
+    <div class="p-4">
+      <div *ngIf="viewMode === 'buttons'" class="rounded-xl border border-slate-200 bg-slate-50/50 p-3 overflow-y-auto" style="max-height: 380px; min-height: 180px;">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-1.5">
+          <ng-container *ngFor="let slot of slots">
+            <button
+              *ngFor="let timeSlot of generateTimeSlots(slot)"
+              type="button"
+              [class]="getTimeSlotButtonClass(timeSlot)"
+              (click)="selectSlotForView(slot)"
+              class="px-2.5 py-1.5 rounded-lg font-semibold text-xs transition-all w-full">
+              {{ formatTime(timeSlot.time) }}
+            </button>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Selected Slot Details -->
+      <div *ngIf="viewMode === 'buttons' && selectedSlotView" class="mt-4 rounded-lg bg-accent-green/10 border border-accent-green/30 p-4">
+        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+          <div>
+            <h4 class="font-bold text-dark-green mb-2 flex items-center gap-2">
+              <span class="material-symbols-outlined text-dark-green">schedule</span>
+              {{ formatTime(selectedSlotView.startTime) }} - {{ formatTime(selectedSlotView.endTime) }}
+            </h4>
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+              <div><span class="text-slate-600">Max Patients:</span> <span class="font-bold text-slate-900">{{ selectedSlotView.maxPatients }}</span></div>
+              <div><span class="text-slate-600">Booked:</span> <span class="font-bold text-dark-green">{{ selectedSlotView.bookedPatients }}</span></div>
+              <div><span class="text-slate-600">Available:</span> <span class="font-bold text-accent-green">{{ selectedSlotView.maxPatients - selectedSlotView.bookedPatients }}</span></div>
+              <div><span class="text-slate-600">Status:</span> <span class="font-bold" [ngClass]="selectedSlotView.isActive ? 'text-accent-green' : 'text-red-600'">{{ selectedSlotView.isActive ? 'Active' : 'Inactive' }}</span></div>
+            </div>
+            <p *ngIf="selectedSlotView.notes" class="mt-2 text-sm text-slate-600 flex items-center gap-1">
+              <span class="material-symbols-outlined text-base">note</span>{{ selectedSlotView.notes }}
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2 shrink-0">
+            <button (click)="editSlot(selectedSlotView)" class="inline-flex items-center gap-1 rounded-lg border border-dark-green text-dark-green hover:bg-dark-green/5 px-3 py-1.5 text-xs font-bold">
+              <span class="material-symbols-outlined text-base">edit</span>Edit
+            </button>
+            <button (click)="toggleSlotStatus(selectedSlotView)" class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-bold bg-amber-500 text-white hover:opacity-90">
+              <span class="material-symbols-outlined text-base">toggle_on</span>{{ selectedSlotView.isActive ? 'Disable' : 'Enable' }}
+            </button>
+            <button (click)="deleteSlot(selectedSlotView)" class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-bold bg-red-500 text-white hover:opacity-90">
+              <span class="material-symbols-outlined text-base">delete</span>Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table View -->
+  <div class="rounded-xl bg-white border border-dark-green/5 shadow-sm overflow-hidden" *ngIf="viewMode === 'table' || slots.length === 0">
+    <div class="px-4 py-3 border-b border-slate-200">
+      <h3 class="text-base font-bold text-dark-green flex items-center gap-2">
+        <span class="material-symbols-outlined text-lg">table_chart</span>
+        Appointment Slots - Table View
+      </h3>
+    </div>
+
+    <div *ngIf="loading" class="flex flex-col items-center justify-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-dark-green"></div>
+      <p class="mt-4 text-slate-600 text-sm">Loading slots...</p>
+    </div>
+
+    <div *ngIf="!loading && slots.length === 0" class="text-center py-12 px-4">
+      <span class="material-symbols-outlined text-5xl text-slate-300">event_busy</span>
+      <p class="mt-3 text-slate-600 text-sm">No slots found for this date</p>
+      <button (click)="toggleForm()" class="mt-4 inline-flex items-center gap-2 rounded-lg bg-ent-primary text-white hover:opacity-90 px-4 py-2 text-sm font-bold shadow-md">
+        <span class="material-symbols-outlined text-lg">add</span>Create First Slot
+      </button>
+    </div>
+
+    <div *ngIf="!loading && slots.length > 0" class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-200">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Time</th>
+            <th class="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Capacity</th>
+            <th class="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Booked</th>
+            <th class="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Available</th>
+            <th class="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Status</th>
+            <th class="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Notes</th>
+            <th class="px-3 py-2 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <tr *ngFor="let slot of slots" [ngClass]="getSlotStatusClass(slot)" class="hover:bg-slate-50/50 transition-colors">
+            <td class="px-3 py-2 whitespace-nowrap">
+              <div class="flex items-center gap-2 text-sm font-medium text-slate-900">
+                <span class="material-symbols-outlined text-dark-green text-lg">schedule</span>
+                {{ slot.startTime }} - {{ slot.endTime }}
+              </div>
+            </td>
+            <td class="px-3 py-2 whitespace-nowrap text-sm text-slate-700">{{ slot.maxPatients }}</td>
+            <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-dark-green">{{ slot.bookedPatients }}</td>
+            <td class="px-3 py-2 whitespace-nowrap text-sm font-medium text-accent-green">{{ slot.maxPatients - slot.bookedPatients }}</td>
+            <td class="px-3 py-2 whitespace-nowrap">
+              <span class="px-2 py-0.5 text-xs font-semibold rounded-full"
+                    [ngClass]="{
+                      'bg-accent-green/20 text-dark-green': slot.isActive && slot.bookedPatients < slot.maxPatients,
+                      'bg-red-100 text-red-700': slot.bookedPatients >= slot.maxPatients,
+                      'bg-slate-100 text-slate-600': !slot.isActive
+                    }">
+                {{ !slot.isActive ? 'Disabled' : (slot.bookedPatients >= slot.maxPatients ? 'Full' : 'Available') }}
+              </span>
+            </td>
+            <td class="px-3 py-2 text-sm text-slate-600">{{ slot.notes || '–' }}</td>
+            <td class="px-3 py-2 whitespace-nowrap text-right">
+              <div class="flex items-center justify-end gap-1">
+                <button (click)="editSlot(slot)" class="p-1.5 rounded text-dark-green hover:bg-accent-green/10 transition-colors" title="Edit">
+                  <span class="material-symbols-outlined text-lg">edit</span>
+                </button>
+                <button (click)="toggleSlotStatus(slot)" class="p-1.5 rounded text-amber-600 hover:bg-amber-50 transition-colors" [title]="slot.isActive ? 'Disable' : 'Enable'">
+                  <span class="material-symbols-outlined text-lg">{{ slot.isActive ? 'toggle_off' : 'toggle_on' }}</span>
+                </button>
+                <button (click)="deleteSlot(slot)" [disabled]="slot.bookedPatients > 0" class="p-1.5 rounded text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" title="Delete">
+                  <span class="material-symbols-outlined text-lg">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
