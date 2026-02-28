@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { StorageService } from './storage.service';
 import { environment } from '../../../environments/environment';
+import { StorageService } from './storage.service';
 
 export interface User {
   id: number;
@@ -27,7 +27,7 @@ export interface LoginResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
@@ -36,10 +36,10 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private storage: StorageService
+    private storage: StorageService,
   ) {
     this.currentUserSubject = new BehaviorSubject<User | null>(
-      this.storage.getUser()
+      this.storage.getUser(),
     );
     this.currentUser = this.currentUserSubject.asObservable();
   }
@@ -53,39 +53,52 @@ export class AuthService {
   }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, credentials)
+    return this.http
+      .post<LoginResponse>(`${environment.apiUrl}/auth/login`, credentials)
       .pipe(
-        tap(response => {
+        tap((response) => {
           this.storage.setToken(response.token);
           this.storage.setRefreshToken(response.refreshToken);
           this.storage.setUser(response.user);
           this.currentUserSubject.next(response.user);
-        })
+        }),
       );
   }
 
   logout(): void {
     this.storage.clearAll();
     this.currentUserSubject.next(null);
-    this.router.navigate(['/auth/login']);
+    // this.router.navigate(['/auth/login']);
+    this.router.navigate(['/']);
   }
 
   refreshToken(): Observable<any> {
     const refreshToken = this.storage.getRefreshToken();
-    return this.http.post<any>(`${environment.apiUrl}/auth/refresh-token`, { refreshToken })
+    return this.http
+      .post<any>(`${environment.apiUrl}/auth/refresh-token`, { refreshToken })
       .pipe(
-        tap(response => {
+        tap((response) => {
           this.storage.setToken(response.token);
-        })
+        }),
       );
   }
 
   forgotPassword(phone: string): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/auth/forgot-password`, { phone });
+    return this.http.post(`${environment.apiUrl}/auth/forgot-password`, {
+      phone,
+    });
   }
 
-  resetPassword(phone: string, otp: string, newPassword: string): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/auth/reset-password`, { phone, otp, newPassword });
+  resetPassword(
+    phone: string,
+    otp: string,
+    newPassword: string,
+  ): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/auth/reset-password`, {
+      phone,
+      otp,
+      newPassword,
+    });
   }
 
   hasRole(role: string): boolean {
@@ -93,5 +106,3 @@ export class AuthService {
     return user?.role === role;
   }
 }
-
-

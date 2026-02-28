@@ -27,7 +27,7 @@
         >Location</a
       >
       <a
-        routerLink="/patient/book"
+        routerLink="/appointment"
         routerLinkActive="nav-active"
         class="text-sm font-semibold text-dark-green hover:text-ent-primary transition-colors py-1 px-2 rounded"
         >Appointment</a
@@ -59,11 +59,21 @@
     </nav>
     <div class="flex items-center gap-4">
       <a
+        *ngIf="!authService.isAuthenticated"
         routerLink="/auth/login"
         class="rounded-full bg-ent-primary px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-ent-primary/20 hover:scale-105 active:scale-95 transition-all"
       >
         Login
       </a>
+      <button
+        *ngIf="authService.isAuthenticated"
+        type="button"
+        (click)="logout()"
+        class="flex items-center gap-2 rounded-full bg-ent-primary px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-ent-primary/20 hover:scale-105 active:scale-95 transition-all"
+      >
+        <span class="material-symbols-outlined text-lg">logout</span>
+        Logout
+      </button>
     </div>
   </div>
 </header>

@@ -1,0 +1,28 @@
+:host {
+  display: block;
+  overflow: visible;
+}
+
+/* Ensure native select dropdowns are not clipped and appear above other content */
+::ng-deep select {
+  position: relative;
+  z-index: 1;
+}
+
+::ng-deep select:focus {
+  z-index: 100;
+}
+
+/* Grid cells - allow dropdown to overflow */
+::ng-deep .grid > div {
+  overflow: visible;
+}
+
+/* Custom dropdown panel options */
+.dropdown-option {
+  color: var(--tw-dark-green, #325a46);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.dropdown-option:last-child {
+  border-bottom: none;
+}
