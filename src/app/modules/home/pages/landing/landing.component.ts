@@ -1,5 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-landing',
@@ -10,7 +11,17 @@ import { ActivatedRoute } from '@angular/router';
 export class LandingComponent implements AfterViewInit {
   currentYear = new Date().getFullYear();
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    public authService: AuthService
+  ) {}
+
+  /** Dashboard route based on logged-in user role */
+  get dashboardRoute(): string {
+    const user = this.authService.currentUserValue;
+    if (!user) return '';
+    return `/${user.role}/dashboard`;
+  }
 
   ngAfterViewInit(): void {
     this.route.fragment.subscribe((fragment) => {

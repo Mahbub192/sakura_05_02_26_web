@@ -35,6 +35,13 @@
                 Book a Consultation
               </a>
               <a
+                *ngIf="authService.isAuthenticated && dashboardRoute"
+                [routerLink]="dashboardRoute"
+                class="rounded-lg border-2 border-dark-green px-8 py-4 text-lg font-bold text-dark-green hover:bg-dark-green hover:text-white transition-all"
+              >
+                Dashboard
+              </a>
+              <a
                 (click)="scrollTo('services')"
                 class="rounded-lg border-2 border-dark-green px-8 py-4 text-lg font-bold text-dark-green hover:bg-dark-green hover:text-white transition-all cursor-pointer"
               >
