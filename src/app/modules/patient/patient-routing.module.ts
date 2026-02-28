@@ -2,9 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../../core/guards/auth.guard';
 import { PatientLayoutComponent } from './layout/patient-layout.component';
+import { AppointmentsAllComponent } from './pages/appointments-all/appointments-all.component';
 import { AppointmentsTodayComponent } from './pages/appointments-today/appointments-today.component';
 import { BookingComponent } from './pages/booking/booking.component';
 import { DoctorPrescriptionsComponent } from './pages/doctor-prescriptions/doctor-prescriptions.component';
+import { HealthCartComponent } from './pages/health-cart/health-cart.component';
 import { PatientDashboardComponent } from './pages/dashboard/patient-dashboard.component';
 import { UploadImageComponent } from './pages/upload-image/upload-image.component';
 
@@ -27,6 +29,12 @@ const routes: Routes = [
         data: { role: 'patient' },
       },
       {
+        path: 'appointments/all',
+        component: AppointmentsAllComponent,
+        canActivate: [AuthGuard],
+        data: { role: 'patient' },
+      },
+      {
         path: 'health-record/upload-image',
         component: UploadImageComponent,
         canActivate: [AuthGuard],
@@ -35,6 +43,12 @@ const routes: Routes = [
       {
         path: 'health-record/doctor-prescriptions',
         component: DoctorPrescriptionsComponent,
+        canActivate: [AuthGuard],
+        data: { role: 'patient' },
+      },
+      {
+        path: 'health-cart',
+        component: HealthCartComponent,
         canActivate: [AuthGuard],
         data: { role: 'patient' },
       },

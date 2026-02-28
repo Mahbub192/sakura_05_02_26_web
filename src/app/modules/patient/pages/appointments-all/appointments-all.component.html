@@ -1,0 +1,98 @@
+<div class="mx-auto flex max-w-5xl flex-col gap-6">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-black tracking-tight text-dark-green">All Appointments</h1>
+      <p class="text-slate-600 text-sm mt-1">View and manage all your upcoming and past appointments.</p>
+    </div>
+    <a routerLink="/patient/book" class="flex items-center gap-2 bg-ent-primary text-white px-4 py-2 rounded-lg font-bold text-xs hover:opacity-90 transition-opacity w-fit">
+      <span class="material-symbols-outlined text-lg">add</span>
+      Book New
+    </a>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex bg-slate-200/50 p-1 rounded-xl">
+    <button
+      type="button"
+      (click)="setTab('upcoming')"
+      class="flex-1 md:flex-none px-5 py-2 rounded-lg text-sm font-bold transition-all min-w-[100px]"
+      [ngClass]="activeTab === 'upcoming' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'"
+    >
+      Upcoming ({{ upcomingList.length }})
+    </button>
+    <button
+      type="button"
+      (click)="setTab('past')"
+      class="flex-1 md:flex-none px-5 py-2 rounded-lg text-sm font-bold transition-all min-w-[100px]"
+      [ngClass]="activeTab === 'past' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'"
+    >
+      Past ({{ pastList.length }})
+    </button>
+  </div>
+
+  <!-- Upcoming list -->
+  <div *ngIf="activeTab === 'upcoming'" class="space-y-3">
+    <div
+      *ngFor="let apt of upcomingList"
+      class="bg-white border border-dark-green/5 rounded-xl p-4 shadow-sm flex flex-col sm:flex-row sm:items-center gap-4"
+    >
+      <div class="flex gap-3 flex-1 min-w-0">
+        <div class="h-11 w-11 rounded-lg flex items-center justify-center shrink-0"
+          [ngClass]="apt.type === 'virtual' ? 'bg-ent-primary/10 text-ent-primary' : 'bg-dark-green/10 text-dark-green'">
+          <span class="material-symbols-outlined text-2xl">{{ apt.type === 'virtual' ? 'video_call' : 'stethoscope' }}</span>
+        </div>
+        <div class="min-w-0">
+          <h3 class="text-sm font-bold text-slate-900 truncate">{{ apt.doctorName }}</h3>
+          <p class="text-xs text-slate-500">{{ apt.department }}</p>
+          <p class="text-[10px] text-slate-400 mt-0.5">{{ apt.date }} • {{ apt.time }}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 flex-wrap">
+        <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold ring-1 ring-inset" [ngClass]="getStatusClass(apt.status)">
+          {{ getStatusLabel(apt.status) }}
+        </span>
+        <div class="flex gap-2">
+          <a *ngIf="apt.status === 'checked-in' || apt.status === 'upcoming'" routerLink="/patient/appointments/today" class="inline-flex items-center gap-1 rounded-lg border border-dark-green/30 px-3 py-1.5 text-xs font-bold text-dark-green hover:bg-dark-green/5 transition-colors">
+            <span class="material-symbols-outlined text-sm">visibility</span>
+            View
+          </a>
+          <a routerLink="/patient/book" class="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors">
+            <span class="material-symbols-outlined text-sm">schedule_send</span>
+            Reschedule
+          </a>
+        </div>
+      </div>
+    </div>
+    <p *ngIf="upcomingList.length === 0" class="text-sm text-slate-500 text-center py-8">No upcoming appointments. <a routerLink="/patient/book" class="text-dark-green font-bold hover:underline">Book one now</a>.</p>
+  </div>
+
+  <!-- Past list -->
+  <div *ngIf="activeTab === 'past'" class="space-y-3">
+    <div
+      *ngFor="let apt of pastList"
+      class="bg-white border border-dark-green/5 rounded-xl p-4 shadow-sm flex flex-col sm:flex-row sm:items-center gap-4 opacity-90"
+    >
+      <div class="flex gap-3 flex-1 min-w-0">
+        <div class="h-11 w-11 rounded-lg flex items-center justify-center shrink-0 bg-slate-100 text-slate-500">
+          <span class="material-symbols-outlined text-2xl">{{ apt.type === 'virtual' ? 'video_call' : 'stethoscope' }}</span>
+        </div>
+        <div class="min-w-0">
+          <h3 class="text-sm font-bold text-slate-900 truncate">{{ apt.doctorName }}</h3>
+          <p class="text-xs text-slate-500">{{ apt.department }}</p>
+          <p class="text-[10px] text-slate-400 mt-0.5">{{ apt.date }} • {{ apt.time }}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 flex-wrap">
+        <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold ring-1 ring-inset" [ngClass]="getStatusClass(apt.status)">
+          {{ getStatusLabel(apt.status) }}
+        </span>
+        <button type="button" class="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors">
+          <span class="material-symbols-outlined text-sm">description</span>
+          Summary
+        </button>
+      </div>
+    </div>
+    <p *ngIf="pastList.length === 0" class="text-sm text-slate-500 text-center py-8">No past appointments.</p>
+  </div>
+</div>
