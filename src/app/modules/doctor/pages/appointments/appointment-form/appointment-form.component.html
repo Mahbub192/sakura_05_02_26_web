@@ -141,7 +141,7 @@
         </div>
 
         <!-- Months -->
-        <div class="book-form-field">
+        <div class="book-form-field mt-2">
           <label class="book-form-label">Months</label>
           <input type="number" formControlName="months" placeholder="6" min="0" max="11" class="book-form-input">
           <div class="book-form-msg"><p class="text-xs text-slate-500">Additional months (0-11)</p></div>
@@ -261,13 +261,13 @@
           <span class="material-symbols-outlined text-lg">close</span>
           <span>Cancel</span>
         </button>
-        <button type="submit" [disabled]="submitting || loading" [ngClass]="!modalMode ? 'book-form-btn book-form-btn-submit' : 'px-6 py-2.5 bg-ent-primary text-white rounded-lg hover:opacity-90 font-bold disabled:opacity-50 flex items-center gap-2'">
+        <button type="submit" [disabled]="submitting || loading" [ngClass]="!modalMode ? 'book-form-btn book-form-btn-submit' : 'px-6 py-2.5 bg-ent-primary text-white rounded-lg hover:opacity-90 font-bold disabled:opacity-50 flex items-center gap-2'" class="disabled:cursor-not-allowed">
           <span *ngIf="!submitting" class="flex items-center gap-2">
             <span class="material-symbols-outlined text-lg">event_available</span>
             <span>Book Appointment</span>
           </span>
           <span *ngIf="submitting" class="flex items-center gap-2">
-            <span class="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+            <span class="material-symbols-outlined text-lg animate-spin">progress_activity</span>
             <span>Booking...</span>
           </span>
         </button>
