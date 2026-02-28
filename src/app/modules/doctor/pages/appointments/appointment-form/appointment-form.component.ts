@@ -385,23 +385,22 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   getTimeSlotButtonClass(timeSlot: any): string {
-    const isSelected = this.selectedSlot?.time === timeSlot.time && 
+    const isSelected = this.selectedSlot?.time === timeSlot.time &&
                       this.selectedSlot?.parentSlotId === timeSlot.parentSlotId;
-    
+
     if (!timeSlot.isActive) {
-      return 'bg-gray-300 text-gray-600 cursor-not-allowed opacity-60';
+      return 'bg-slate-300 text-slate-500 cursor-not-allowed opacity-60';
     }
-    
-    // Booked slots - red background, disabled
+
     if (timeSlot.isBooked) {
       return 'bg-red-500 text-white cursor-not-allowed opacity-80 border-2 border-red-600';
     }
-    
+
     if (isSelected) {
-      return 'bg-blue-600 text-white border-2 border-blue-700 ring-2 ring-blue-300';
+      return 'bg-dark-green text-white border-2 border-dark-green ring-2 ring-accent-green/40';
     }
-    
-    return 'bg-green-600 text-white hover:bg-green-700 cursor-pointer';
+
+    return 'bg-accent-green text-dark-green hover:opacity-90 cursor-pointer border border-accent-green/30';
   }
 
   getSlotButtonClass(slot: any): string {
