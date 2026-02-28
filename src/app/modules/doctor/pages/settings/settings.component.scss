@@ -1,3 +1,84 @@
-// Settings styles
+// Settings – project theme
+.settings-section {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
 
+  &.settings-section-last {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
 
+.settings-section-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #325A46;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.75rem;
+}
+
+.settings-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 0.25rem;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 0.375rem 0.625rem;
+  font-size: 0.875rem;
+  color: #0f172a;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #9DBD68;
+    box-shadow: 0 0 0 2px rgba(157, 189, 104, 0.2);
+  }
+}
+
+.settings-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+}
+
+.settings-checkbox-input {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: #325A46;
+  cursor: pointer;
+}
+
+.settings-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  transition: opacity 0.15s ease;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.settings-btn-submit {
+  background-color: #EA2E00;
+  color: #fff;
+  border: none;
+
+  &:not(:disabled):hover {
+    opacity: 0.9;
+  }
+}

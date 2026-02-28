@@ -1,79 +1,101 @@
-<div class="max-w-4xl mx-auto space-y-6">
+<div class="mx-auto max-w-full flex flex-col gap-5">
   <div>
-    <h1 class="text-3xl font-bold text-gray-900">Settings</h1>
-    <p class="text-gray-600 mt-1">Configure your system preferences</p>
+    <h1 class="text-2xl font-black tracking-tight text-dark-green flex items-center gap-2">
+      <span class="material-symbols-outlined text-dark-green text-2xl">settings</span>
+      Settings
+    </h1>
+    <p class="text-slate-600 text-sm mt-1">Configure your system preferences</p>
   </div>
 
-  <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="card space-y-6">
-    <div *ngIf="success" class="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg">
-      {{ success }}
-    </div>
-
-    <div class="border-b pb-6">
-      <h2 class="text-xl font-semibold text-gray-900 mb-4">Appointment Settings</h2>
-      <div class="space-y-3">
-        <label class="flex items-center space-x-3 cursor-pointer">
-          <input type="checkbox" formControlName="patientsCanBook" class="w-4 h-4 text-sakura border-gray-300 rounded">
-          <span class="text-sm text-gray-700">Patients can book appointment</span>
-        </label>
-        <label class="flex items-center space-x-3 cursor-pointer">
-          <input type="checkbox" formControlName="showSerialsInApp" class="w-4 h-4 text-sakura border-gray-300 rounded">
-          <span class="text-sm text-gray-700">Show serials in app</span>
-        </label>
-        <label class="flex items-center space-x-3 cursor-pointer">
-          <input type="checkbox" formControlName="useMultipleDevices" class="w-4 h-4 text-sakura border-gray-300 rounded">
-          <span class="text-sm text-gray-700">Use multiple devices</span>
-        </label>
+  <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="rounded-xl bg-white border border-dark-green/5 shadow-sm overflow-hidden">
+    <div class="p-5 lg:p-6 space-y-6">
+      <div *ngIf="success" class="rounded-lg bg-accent-green/10 border border-accent-green/30 text-dark-green px-4 py-3 flex items-center gap-2 text-sm font-medium">
+        <span class="material-symbols-outlined text-accent-green">check_circle</span>
+        {{ success }}
       </div>
-    </div>
 
-    <div class="border-b pb-6">
-      <h2 class="text-xl font-semibold text-gray-900 mb-4">Audio Settings</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="label">Audio Type</label>
-          <select formControlName="audioType" class="input">
-            <option value="None">None</option>
-            <option value="Bangla">Bangla</option>
-            <option value="English">English (Robotic)</option>
-          </select>
+      <section class="settings-section">
+        <h2 class="settings-section-title flex items-center gap-2">
+          <span class="material-symbols-outlined text-lg">event</span>
+          Appointment Settings
+        </h2>
+        <div class="flex flex-col gap-3">
+          <label class="settings-checkbox">
+            <input type="checkbox" formControlName="patientsCanBook" class="settings-checkbox-input">
+            <span>Patients can book appointment</span>
+          </label>
+          <label class="settings-checkbox">
+            <input type="checkbox" formControlName="showSerialsInApp" class="settings-checkbox-input">
+            <span>Show serials in app</span>
+          </label>
+          <label class="settings-checkbox">
+            <input type="checkbox" formControlName="useMultipleDevices" class="settings-checkbox-input">
+            <span>Use multiple devices</span>
+          </label>
         </div>
-        <div>
-          <label class="label">Audio Gender</label>
-          <select formControlName="audioGender" class="input">
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
+      </section>
+
+      <section class="settings-section">
+        <h2 class="settings-section-title flex items-center gap-2">
+          <span class="material-symbols-outlined text-lg">volume_up</span>
+          Audio Settings
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="settings-label">Audio Type</label>
+            <select formControlName="audioType" class="settings-input">
+              <option value="None">None</option>
+              <option value="Bangla">Bangla</option>
+              <option value="English">English (Robotic)</option>
+            </select>
+          </div>
+          <div>
+            <label class="settings-label">Audio Gender</label>
+            <select formControlName="audioGender" class="settings-input">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
         </div>
+      </section>
+
+      <section class="settings-section settings-section-last">
+        <h2 class="settings-section-title flex items-center gap-2">
+          <span class="material-symbols-outlined text-lg">display_settings</span>
+          Display Settings
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="settings-label">Language</label>
+            <select formControlName="language" class="settings-input">
+              <option value="English">English</option>
+              <option value="বাংলা">বাংলা</option>
+            </select>
+          </div>
+          <div>
+            <label class="settings-label">Video Volume</label>
+            <select formControlName="videoVolume" class="settings-input">
+              <option value="Off">Off</option>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <div class="flex flex-wrap gap-3 pt-2 border-t border-slate-200">
+        <button type="submit" [disabled]="loading" class="settings-btn settings-btn-submit">
+          <span *ngIf="!loading" class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">save</span>
+            Save Settings
+          </span>
+          <span *ngIf="loading" class="flex items-center gap-2">
+            <span class="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+            Saving...
+          </span>
+        </button>
       </div>
-    </div>
-
-    <div>
-      <h2 class="text-xl font-semibold text-gray-900 mb-4">Display Settings</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="label">Language</label>
-          <select formControlName="language" class="input">
-            <option value="English">English</option>
-            <option value="বাংলা">বাংলা</option>
-          </select>
-        </div>
-        <div>
-          <label class="label">Video Volume</label>
-          <select formControlName="videoVolume" class="input">
-            <option value="Off">Off</option>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex space-x-3 pt-4">
-      <button type="submit" [disabled]="loading" class="btn btn-primary">
-        {{ loading ? 'Saving...' : 'Save Settings' }}
-      </button>
     </div>
   </form>
 </div>
