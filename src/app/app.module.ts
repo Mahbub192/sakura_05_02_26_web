@@ -13,6 +13,9 @@ import { CoreModule } from './core/core.module';
 // Shared Module
 import { SharedModule } from './shared/shared.module';
 
+// Layout (for routes that show public nav)
+import { MainLayoutModule } from './layouts/main-layout/main-layout.module';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -25,7 +28,8 @@ import { SharedModule } from './shared/shared.module';
     ReactiveFormsModule,
     AppRoutingModule,
     CoreModule,
-    SharedModule
+    SharedModule,
+    MainLayoutModule
   ],
   providers: [],
   bootstrap: [AppComponent]

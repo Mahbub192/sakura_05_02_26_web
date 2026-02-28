@@ -1,73 +1,95 @@
-<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light font-display text-slate-900">
-  <!-- Navigation -->
-  <header class="sticky top-0 z-50 w-full border-b border-beige bg-background-light/95 backdrop-blur-sm px-6 lg:px-20 py-4">
-    <div class="mx-auto flex max-w-7xl items-center justify-between">
-      <a routerLink="/" class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-dark-green text-white">
-          <span class="material-symbols-outlined text-2xl">medical_services</span>
-        </div>
-        <h2 class="text-xl font-bold tracking-tight text-dark-green">ENT Specialist</h2>
-      </a>
-      <nav class="hidden md:flex items-center gap-10">
-        <a class="text-sm font-semibold text-dark-green hover:text-ent-primary transition-colors cursor-pointer" (click)="scrollTo('hero')">Home</a>
-        <a class="text-sm font-semibold text-dark-green hover:text-ent-primary transition-colors cursor-pointer" (click)="scrollTo('services')">Services</a>
-        <a class="text-sm font-semibold text-dark-green hover:text-ent-primary transition-colors cursor-pointer" (click)="scrollTo('doctor')">Meet the Doctor</a>
-        <a class="text-sm font-semibold text-dark-green hover:text-ent-primary transition-colors cursor-pointer" (click)="scrollTo('reviews')">Reviews</a>
-      </nav>
-      <div class="flex items-center gap-4">
-        <a routerLink="/patient/book" class="rounded-full bg-ent-primary px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-ent-primary/20 hover:scale-105 active:scale-95 transition-all">
-          Book Appointment
-        </a>
-      </div>
-    </div>
-  </header>
-
+<div
+  class="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light font-display text-slate-900"
+>
   <main class="flex-1 bg-background-light">
     <!-- Hero Section -->
-    <section id="hero" class="relative overflow-hidden bg-background-light px-6 lg:px-20 py-12 md:py-24">
+    <section
+      id="hero"
+      class="relative overflow-hidden bg-background-light px-6 lg:px-20 py-12 md:py-24"
+    >
       <div class="mx-auto max-w-7xl">
         <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
           <div class="flex flex-col gap-8">
-            <div class="inline-flex w-fit items-center gap-2 rounded-full bg-accent-green/20 px-4 py-1 text-sm font-bold text-dark-green">
-              <span class="material-symbols-outlined text-sm">verified</span>
+            <div
+              class="inline-flex w-fit items-center gap-2 rounded-full bg-accent-green/20 px-3 py-1 text-xs font-bold text-dark-green"
+            >
+              <span class="material-symbols-outlined text-xs">verified</span>
               Certified Otorhinolaryngology Care
             </div>
-            <h1 class="text-5xl font-black leading-[1.1] text-dark-green md:text-7xl">
-              Expert Care for <span class="text-ent-primary">Ear, Nose,</span> &amp; Throat.
+            <h1
+              class="text-4xl font-black leading-[1.15] text-dark-green md:text-5xl"
+            >
+              Expert Care for
+              <span class="text-ent-primary">Ear, Nose,</span> &amp; Throat.
             </h1>
-            <p class="max-w-[540px] text-lg leading-relaxed text-slate-700 dark:text-slate-300">
-              Experience world-class medical attention for your sinus, hearing, and throat health. We combine modern technology with compassionate care.
+            <p class="max-w-[540px] text-lg leading-relaxed text-slate-700">
+              Experience world-class medical attention for your sinus, hearing,
+              and throat health. We combine modern technology with compassionate
+              care.
             </p>
             <div class="flex flex-wrap gap-4">
-              <a routerLink="/patient/book" class="rounded-lg bg-ent-primary px-8 py-4 text-lg font-bold text-white shadow-xl shadow-ent-primary/30 transition-transform hover:-translate-y-1">
+              <a
+                routerLink="/patient/book"
+                class="rounded-lg bg-ent-primary px-8 py-4 text-lg font-bold text-white shadow-xl shadow-ent-primary/30 transition-transform hover:-translate-y-1"
+              >
                 Book a Consultation
               </a>
-              <a (click)="scrollTo('services')" class="rounded-lg border-2 border-dark-green px-8 py-4 text-lg font-bold text-dark-green hover:bg-dark-green hover:text-white transition-all cursor-pointer">
+              <a
+                (click)="scrollTo('services')"
+                class="rounded-lg border-2 border-dark-green px-8 py-4 text-lg font-bold text-dark-green hover:bg-dark-green hover:text-white transition-all cursor-pointer"
+              >
                 Our Services
               </a>
             </div>
             <div class="flex items-center gap-6 pt-4">
               <div class="flex -space-x-3">
-                <div class="h-10 w-10 rounded-full border-2 border-background-light bg-slate-300"></div>
-                <div class="h-10 w-10 rounded-full border-2 border-background-light bg-slate-400"></div>
-                <div class="h-10 w-10 rounded-full border-2 border-background-light bg-slate-500"></div>
+                <div
+                  class="h-10 w-10 rounded-full border-2 border-background-light bg-slate-300"
+                ></div>
+                <div
+                  class="h-10 w-10 rounded-full border-2 border-background-light bg-slate-400"
+                ></div>
+                <div
+                  class="h-10 w-10 rounded-full border-2 border-background-light bg-slate-500"
+                ></div>
               </div>
-              <div class="text-sm font-medium text-slate-600 dark:text-slate-400">
-                <span class="font-bold text-dark-green">5,000+</span> Happy Patients
+              <div
+                class="text-sm font-medium text-slate-600 dark:text-slate-400"
+              >
+                <span class="font-bold text-dark-green">5,000+</span> Happy
+                Patients
               </div>
             </div>
           </div>
           <div class="relative">
-            <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent-green/20 blur-3xl"></div>
-            <div class="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-slate-200 shadow-2xl">
-              <div class="h-full w-full bg-slate-300 rounded-2xl flex items-end">
-                <div class="absolute bottom-6 left-6 right-6 rounded-xl bg-white/90 dark:bg-slate-800/90 p-4 backdrop-blur-md">
+            <div
+              class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent-green/20 blur-3xl"
+            ></div>
+            <div
+              class="relative aspect-[4/5] w-full max-h-[550px] overflow-hidden rounded-2xl bg-slate-200 shadow-2xl"
+            >
+              <div
+                class="h-full w-full bg-slate-300 rounded-2xl flex items-end"
+              >
+                <div
+                  class="absolute bottom-6 left-6 right-6 rounded-xl bg-white/90 dark:bg-slate-800/90 p-4 backdrop-blur-md"
+                >
                   <div class="flex items-center justify-between">
                     <div>
-                      <p class="text-xs font-bold uppercase tracking-wider text-ent-primary">Chief Medical Officer</p>
-                      <p class="text-lg font-bold text-dark-green dark:text-accent-green">Dr. Julianne Rivers</p>
+                      <p
+                        class="text-xs font-bold uppercase tracking-wider text-ent-primary"
+                      >
+                        Chief Medical Officer
+                      </p>
+                      <p
+                        class="text-lg font-bold text-dark-green dark:text-accent-green"
+                      >
+                        Dr. Julianne Rivers
+                      </p>
                     </div>
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-ent-primary text-white">
+                    <div
+                      class="flex h-10 w-10 items-center justify-center rounded-full bg-ent-primary text-white"
+                    >
                       <span class="material-symbols-outlined">stethoscope</span>
                     </div>
                   </div>
@@ -83,34 +105,82 @@
     <section class="bg-background-light px-6 lg:px-20 py-24" id="services">
       <div class="mx-auto max-w-7xl">
         <div class="mb-16 flex flex-col items-center text-center">
-          <h2 class="text-sm font-black uppercase tracking-[0.2em] text-ent-primary">What We Do</h2>
-          <h3 class="mt-4 text-4xl font-bold text-dark-green">Specialized ENT Services</h3>
-          <p class="mt-4 max-w-2xl text-slate-600">Comprehensive diagnostic and surgical solutions tailored to your unique needs using the latest medical advancements.</p>
+          <h2
+            class="text-sm font-black uppercase tracking-[0.2em] text-ent-primary"
+          >
+            What We Do
+          </h2>
+          <h3 class="mt-4 text-4xl font-bold text-dark-green">
+            Specialized ENT Services
+          </h3>
+          <p class="mt-4 max-w-2xl text-slate-600">
+            Comprehensive diagnostic and surgical solutions tailored to your
+            unique needs using the latest medical advancements.
+          </p>
         </div>
         <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div class="group flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm transition-all hover:shadow-xl hover:-translate-y-2 border border-beige/50">
-            <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-accent-green/10 text-accent-green transition-colors group-hover:bg-accent-green group-hover:text-white">
+          <div
+            class="group flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm transition-all hover:shadow-xl hover:-translate-y-2 border border-beige/50"
+          >
+            <div
+              class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-accent-green/10 text-accent-green transition-colors group-hover:bg-accent-green group-hover:text-white"
+            >
               <span class="material-symbols-outlined text-4xl">hearing</span>
             </div>
-            <h4 class="text-xl font-bold text-dark-green dark:text-white">Ear &amp; Hearing</h4>
-            <p class="mt-4 text-slate-600 dark:text-slate-400">Treatment for hearing loss, chronic ear infections, balance disorders, and tinnitus management.</p>
-            <a (click)="scrollTo('services')" class="mt-6 font-bold text-ent-primary hover:underline cursor-pointer">Learn more</a>
+            <h4 class="text-xl font-bold text-dark-green dark:text-white">
+              Ear &amp; Hearing
+            </h4>
+            <p class="mt-4 text-slate-600 dark:text-slate-400">
+              Treatment for hearing loss, chronic ear infections, balance
+              disorders, and tinnitus management.
+            </p>
+            <a
+              (click)="scrollTo('services')"
+              class="mt-6 font-bold text-ent-primary hover:underline cursor-pointer"
+              >Learn more</a
+            >
           </div>
-          <div class="group flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm transition-all hover:shadow-xl hover:-translate-y-2 border border-beige/50">
-            <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-accent-green/10 text-accent-green transition-colors group-hover:bg-accent-green group-hover:text-white">
+          <div
+            class="group flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm transition-all hover:shadow-xl hover:-translate-y-2 border border-beige/50"
+          >
+            <div
+              class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-accent-green/10 text-accent-green transition-colors group-hover:bg-accent-green group-hover:text-white"
+            >
               <span class="material-symbols-outlined text-4xl">air</span>
             </div>
-            <h4 class="text-xl font-bold text-dark-green dark:text-white">Nose &amp; Sinus</h4>
-            <p class="mt-4 text-slate-600 dark:text-slate-400">Expert care for allergies, sinusitis, nasal obstructions, and minimally invasive sinus surgery.</p>
-            <a (click)="scrollTo('services')" class="mt-6 font-bold text-ent-primary hover:underline cursor-pointer">Learn more</a>
+            <h4 class="text-xl font-bold text-dark-green dark:text-white">
+              Nose &amp; Sinus
+            </h4>
+            <p class="mt-4 text-slate-600 dark:text-slate-400">
+              Expert care for allergies, sinusitis, nasal obstructions, and
+              minimally invasive sinus surgery.
+            </p>
+            <a
+              (click)="scrollTo('services')"
+              class="mt-6 font-bold text-ent-primary hover:underline cursor-pointer"
+              >Learn more</a
+            >
           </div>
-          <div class="group flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm transition-all hover:shadow-xl hover:-translate-y-2 border border-beige/50">
-            <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-accent-green/10 text-accent-green transition-colors group-hover:bg-accent-green group-hover:text-white">
+          <div
+            class="group flex flex-col items-center rounded-2xl bg-white p-10 text-center shadow-sm transition-all hover:shadow-xl hover:-translate-y-2 border border-beige/50"
+          >
+            <div
+              class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-accent-green/10 text-accent-green transition-colors group-hover:bg-accent-green group-hover:text-white"
+            >
               <span class="material-symbols-outlined text-4xl">ecg_heart</span>
             </div>
-            <h4 class="text-xl font-bold text-dark-green dark:text-white">Throat &amp; Voice</h4>
-            <p class="mt-4 text-slate-600 dark:text-slate-400">Diagnosis of voice disorders, tonsillitis treatment, swallowing problems, and throat cancer screenings.</p>
-            <a (click)="scrollTo('services')" class="mt-6 font-bold text-ent-primary hover:underline cursor-pointer">Learn more</a>
+            <h4 class="text-xl font-bold text-dark-green dark:text-white">
+              Throat &amp; Voice
+            </h4>
+            <p class="mt-4 text-slate-600 dark:text-slate-400">
+              Diagnosis of voice disorders, tonsillitis treatment, swallowing
+              problems, and throat cancer screenings.
+            </p>
+            <a
+              (click)="scrollTo('services')"
+              class="mt-6 font-bold text-ent-primary hover:underline cursor-pointer"
+              >Learn more</a
+            >
           </div>
         </div>
       </div>
@@ -122,37 +192,63 @@
         <div class="flex flex-col gap-16 lg:flex-row lg:items-center">
           <div class="flex-1">
             <div class="grid grid-cols-2 gap-4">
-              <div class="aspect-square rounded-2xl bg-slate-300 dark:bg-slate-600"></div>
-              <div class="mt-8 aspect-square rounded-2xl bg-slate-300 dark:bg-slate-600"></div>
+              <div
+                class="aspect-square rounded-2xl bg-slate-300 dark:bg-slate-600"
+              ></div>
+              <div
+                class="mt-8 aspect-square rounded-2xl bg-slate-300 dark:bg-slate-600"
+              ></div>
             </div>
           </div>
           <div class="flex-1 flex flex-col gap-6">
-            <h2 class="text-4xl font-bold text-dark-green dark:text-white">The Lead Specialist</h2>
-            <p class="text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-              Dr. Julianne Rivers is a board-certified ENT specialist with over 15 years of clinical experience. She specializes in advanced endoscopic sinus surgery and pediatric otolaryngology.
+            <h2 class="text-4xl font-bold text-dark-green dark:text-white">
+              The Lead Specialist
+            </h2>
+            <p
+              class="text-lg leading-relaxed text-slate-600 dark:text-slate-400"
+            >
+              Dr. Julianne Rivers is a board-certified ENT specialist with over
+              15 years of clinical experience. She specializes in advanced
+              endoscopic sinus surgery and pediatric otolaryngology.
             </p>
             <div class="flex flex-col gap-4">
               <div class="flex items-start gap-4">
-                <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent-green/20 text-dark-green">
+                <div
+                  class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent-green/20 text-dark-green"
+                >
                   <span class="material-symbols-outlined text-xl">school</span>
                 </div>
                 <div>
-                  <h5 class="font-bold text-dark-green dark:text-white">Harvard Medical School</h5>
+                  <h5 class="font-bold text-dark-green dark:text-white">
+                    Harvard Medical School
+                  </h5>
                   <p class="text-sm text-slate-500">M.D. in Otolaryngology</p>
                 </div>
               </div>
               <div class="flex items-start gap-4">
-                <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent-green/20 text-dark-green">
-                  <span class="material-symbols-outlined text-xl">workspace_premium</span>
+                <div
+                  class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent-green/20 text-dark-green"
+                >
+                  <span class="material-symbols-outlined text-xl"
+                    >workspace_premium</span
+                  >
                 </div>
                 <div>
-                  <h5 class="font-bold text-dark-green dark:text-white">Board Certified</h5>
-                  <p class="text-sm text-slate-500">American Board of Otolaryngology</p>
+                  <h5 class="font-bold text-dark-green dark:text-white">
+                    Board Certified
+                  </h5>
+                  <p class="text-sm text-slate-500">
+                    American Board of Otolaryngology
+                  </p>
                 </div>
               </div>
             </div>
             <div class="mt-4">
-              <button type="button" (click)="scrollTo('reviews')" class="rounded-lg bg-dark-green px-8 py-4 font-bold text-white transition-colors hover:bg-slate-800">
+              <button
+                type="button"
+                (click)="scrollTo('reviews')"
+                class="rounded-lg bg-dark-green px-8 py-4 font-bold text-white transition-colors hover:bg-slate-800"
+              >
                 View Full Bio
               </button>
             </div>
@@ -166,10 +262,14 @@
       <div class="mx-auto max-w-7xl">
         <div class="mb-16 text-center">
           <h3 class="text-4xl font-bold">Patient Stories</h3>
-          <p class="mt-4 text-accent-green">Real experiences from those who trusted us with their care.</p>
+          <p class="mt-4 text-accent-green">
+            Real experiences from those who trusted us with their care.
+          </p>
         </div>
         <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
-          <div class="rounded-2xl bg-white/5 p-8 backdrop-blur-sm border border-white/10">
+          <div
+            class="rounded-2xl bg-white/5 p-8 backdrop-blur-sm border border-white/10"
+          >
             <div class="mb-4 flex gap-1 text-ent-primary">
               <span class="material-symbols-outlined">star</span>
               <span class="material-symbols-outlined">star</span>
@@ -177,16 +277,24 @@
               <span class="material-symbols-outlined">star</span>
               <span class="material-symbols-outlined">star</span>
             </div>
-            <p class="italic text-slate-300">"The sinus surgery changed my life. I haven't breathed this clearly in years. Dr. Rivers and her staff were exceptional throughout the entire process."</p>
+            <p class="italic text-slate-300">
+              "The sinus surgery changed my life. I haven't breathed this
+              clearly in years. Dr. Rivers and her staff were exceptional
+              throughout the entire process."
+            </p>
             <div class="mt-8 flex items-center gap-4">
-              <div class="h-12 w-12 rounded-full bg-accent-green/20 border border-accent-green/30"></div>
+              <div
+                class="h-12 w-12 rounded-full bg-accent-green/20 border border-accent-green/30"
+              ></div>
               <div>
                 <p class="font-bold text-white">Michael Thompson</p>
                 <p class="text-xs text-accent-green">Sinus Patient</p>
               </div>
             </div>
           </div>
-          <div class="rounded-2xl bg-white/5 p-8 backdrop-blur-sm border border-white/10">
+          <div
+            class="rounded-2xl bg-white/5 p-8 backdrop-blur-sm border border-white/10"
+          >
             <div class="mb-4 flex gap-1 text-ent-primary">
               <span class="material-symbols-outlined">star</span>
               <span class="material-symbols-outlined">star</span>
@@ -194,16 +302,24 @@
               <span class="material-symbols-outlined">star</span>
               <span class="material-symbols-outlined">star</span>
             </div>
-            <p class="italic text-slate-300">"Excellent with children! My daughter was nervous about her tonsillectomy, but the doctor made her feel so safe and comfortable. Highly recommend."</p>
+            <p class="italic text-slate-300">
+              "Excellent with children! My daughter was nervous about her
+              tonsillectomy, but the doctor made her feel so safe and
+              comfortable. Highly recommend."
+            </p>
             <div class="mt-8 flex items-center gap-4">
-              <div class="h-12 w-12 rounded-full bg-accent-green/20 border border-accent-green/30"></div>
+              <div
+                class="h-12 w-12 rounded-full bg-accent-green/20 border border-accent-green/30"
+              ></div>
               <div>
                 <p class="font-bold text-white">Sarah Jenkins</p>
                 <p class="text-xs text-accent-green">Pediatric Care</p>
               </div>
             </div>
           </div>
-          <div class="rounded-2xl bg-white/5 p-8 backdrop-blur-sm border border-white/10">
+          <div
+            class="rounded-2xl bg-white/5 p-8 backdrop-blur-sm border border-white/10"
+          >
             <div class="mb-4 flex gap-1 text-ent-primary">
               <span class="material-symbols-outlined">star</span>
               <span class="material-symbols-outlined">star</span>
@@ -211,9 +327,15 @@
               <span class="material-symbols-outlined">star</span>
               <span class="material-symbols-outlined">star</span>
             </div>
-            <p class="italic text-slate-300">"Professional, modern clinic, and very short wait times. They diagnosed my hearing issue quickly and the treatment has been incredibly effective."</p>
+            <p class="italic text-slate-300">
+              "Professional, modern clinic, and very short wait times. They
+              diagnosed my hearing issue quickly and the treatment has been
+              incredibly effective."
+            </p>
             <div class="mt-8 flex items-center gap-4">
-              <div class="h-12 w-12 rounded-full bg-accent-green/20 border border-accent-green/30"></div>
+              <div
+                class="h-12 w-12 rounded-full bg-accent-green/20 border border-accent-green/30"
+              ></div>
               <div>
                 <p class="font-bold text-white">Robert Chen</p>
                 <p class="text-xs text-accent-green">Hearing Care</p>
@@ -225,64 +347,34 @@
     </section>
 
     <!-- Call to Action -->
-    <section class="bg-background-light px-6 lg:px-20 py-24">
-      <div class="mx-auto max-w-4xl rounded-[2rem] bg-accent-green p-12 text-center text-dark-green md:p-20">
-        <h2 class="text-4xl font-black md:text-5xl">Ready to breathe better?</h2>
-        <p class="mt-6 text-xl font-medium text-dark-green/80">Schedule your consultation today and take the first step towards better health.</p>
-        <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <a routerLink="/patient/book" class="w-full rounded-xl bg-ent-primary px-10 py-5 text-xl font-bold text-white shadow-2xl shadow-ent-primary/40 hover:scale-105 active:scale-95 transition-all sm:w-auto text-center">
+    <section class="bg-background-light px-6 lg:px-20 py-16" id="faq">
+      <div
+        class="mx-auto max-w-3xl rounded-2xl bg-accent-green p-8 text-center text-dark-green md:p-12"
+      >
+        <h2 class="text-3xl font-black md:text-4xl">
+          Ready to breathe better?
+        </h2>
+        <p class="mt-4 text-lg font-medium text-dark-green/80">
+          Schedule your consultation today and take the first step towards
+          better health.
+        </p>
+        <div
+          class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row"
+        >
+          <a
+            routerLink="/patient/book"
+            class="w-full rounded-xl bg-ent-primary px-8 py-4 text-lg font-bold text-white shadow-xl shadow-ent-primary/40 hover:scale-105 active:scale-95 transition-all sm:w-auto text-center"
+          >
             Book Appointment
           </a>
-          <a href="tel:+15551234567" class="w-full rounded-xl bg-white px-10 py-5 text-xl font-bold text-dark-green hover:bg-beige transition-all sm:w-auto text-center">
+          <a
+            href="tel:+15551234567"
+            class="w-full rounded-xl bg-white px-8 py-4 text-lg font-bold text-dark-green hover:bg-beige transition-all sm:w-auto text-center"
+          >
             Call (555) 123-4567
           </a>
         </div>
       </div>
     </section>
   </main>
-
-  <!-- Footer -->
-  <footer class="bg-background-light border-t border-beige px-6 lg:px-20 py-16">
-    <div class="mx-auto max-w-7xl">
-      <div class="grid grid-cols-1 gap-12 md:grid-cols-4">
-        <div class="flex flex-col gap-6">
-          <div class="flex items-center gap-3">
-            <div class="flex h-8 w-8 items-center justify-center rounded bg-dark-green text-white">
-              <span class="material-symbols-outlined text-sm">medical_services</span>
-            </div>
-            <h2 class="text-lg font-bold text-dark-green dark:text-accent-green">ENT Specialist</h2>
-          </div>
-          <p class="text-sm text-slate-600 dark:text-slate-400">Leading provider of specialized ear, nose, and throat treatments with a focus on patient comfort and results.</p>
-        </div>
-        <div>
-          <h4 class="font-bold text-dark-green dark:text-white">Quick Links</h4>
-          <ul class="mt-4 flex flex-col gap-2 text-sm text-slate-600 dark:text-slate-400">
-            <li><a (click)="scrollTo('services')" class="hover:text-ent-primary cursor-pointer">Services</a></li>
-            <li><a (click)="scrollTo('doctor')" class="hover:text-ent-primary cursor-pointer">About Dr. Rivers</a></li>
-            <li><a href="#" class="hover:text-ent-primary">Insurance</a></li>
-            <li><a routerLink="/auth/login" class="hover:text-ent-primary">Patient Portal</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-bold text-dark-green dark:text-white">Location</h4>
-          <ul class="mt-4 flex flex-col gap-2 text-sm text-slate-600 dark:text-slate-400">
-            <li>123 Medical Plaza</li>
-            <li>Suite 405</li>
-            <li>Chicago, IL 60601</li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-bold text-dark-green dark:text-white">Office Hours</h4>
-          <ul class="mt-4 flex flex-col gap-2 text-sm text-slate-600 dark:text-slate-400">
-            <li>Mon - Fri: 8:00 AM - 5:00 PM</li>
-            <li>Sat: 9:00 AM - 1:00 PM</li>
-            <li>Sun: Closed</li>
-          </ul>
-        </div>
-      </div>
-      <div class="mt-16 border-t border-beige dark:border-white/10 pt-8 text-center text-sm text-slate-500 dark:text-slate-400">
-        <p>© {{ currentYear }} ENT Specialist Medical Group. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
 </div>

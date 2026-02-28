@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+/* Active nav item – easy to spot */
+::ng-deep a.nav-active {
+  color: #ea2e00 !important;
+  font-weight: 700;
+  border-bottom: 2px solid #ea2e00;
+  padding-bottom: 2px;
+  margin-bottom: -2px;
+}

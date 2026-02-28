@@ -1,0 +1,9 @@
+<button
+  *ngIf="showButton"
+  type="button"
+  (click)="scrollToTop()"
+  class="scroll-to-top-btn fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-dark-green text-white shadow-lg transition-all hover:bg-dark-green/90 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-accent-green focus:ring-offset-2"
+  aria-label="Scroll to top"
+>
+  <span class="material-symbols-outlined text-2xl">arrow_upward</span>
+</button>

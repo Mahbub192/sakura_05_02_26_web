@@ -10,6 +10,9 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ModalComponent } from './components/modal/modal.component';
 import { StatusBadgeComponent } from './components/status-badge/status-badge.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { PublicNavComponent } from './components/public-nav/public-nav.component';
+import { PublicFooterComponent } from './components/public-footer/public-footer.component';
+import { ScrollToTopComponent } from './components/scroll-to-top/scroll-to-top.component';
 
 // Pipes
 import { BengaliNumberPipe } from './pipes/bengali-number.pipe';
@@ -22,7 +25,10 @@ const components = [
   SidebarComponent,
   ModalComponent,
   StatusBadgeComponent,
-  ConfirmDialogComponent
+  ConfirmDialogComponent,
+  PublicNavComponent,
+  PublicFooterComponent,
+  ScrollToTopComponent
 ];
 
 const pipes = [

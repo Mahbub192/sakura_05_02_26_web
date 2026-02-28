@@ -1,0 +1,128 @@
+<div class="flex flex-1 flex-col items-center bg-background-light font-display text-slate-900 min-h-screen">
+  <div class="flex flex-col max-w-[960px] w-full px-6 py-12">
+    <!-- Hero Section & Title -->
+    <div class="flex flex-wrap justify-between items-end gap-6 mb-10">
+      <div class="flex min-w-72 flex-col gap-4">
+        <h1 class="text-dark-green text-5xl font-black leading-tight tracking-tight">Frequently Asked Questions</h1>
+        <p class="text-dark-green/70 text-lg font-medium max-w-xl">Find expert answers to common questions about ear, nose, and throat health, and learn how to prepare for your visit.</p>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="mb-12">
+      <div class="group relative flex w-full items-stretch rounded-xl h-14 bg-white shadow-sm border border-dark-green/10 transition-all focus-within:ring-2 focus-within:ring-accent-green/50">
+        <div class="text-accent-green flex items-center justify-center pl-5">
+          <span class="material-symbols-outlined text-2xl">search</span>
+        </div>
+        <input
+          [(ngModel)]="searchQuery"
+          type="text"
+          class="w-full border-none bg-transparent focus:ring-0 text-dark-green placeholder-dark-green/40 px-4 text-base font-medium"
+          placeholder="Search for symptoms, treatments, or clinic info..."
+        />
+        <div class="flex items-center pr-3">
+          <button type="button" class="bg-dark-green text-white rounded-lg px-6 h-10 font-bold text-sm hover:bg-dark-green/90 transition-colors">Search</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="flex flex-col gap-4">
+      <details class="group border border-dark-green/10 bg-white rounded-xl overflow-hidden transition-all duration-300" open>
+        <summary class="flex cursor-pointer list-none items-center justify-between p-6 bg-white group-open:bg-dark-green transition-colors">
+          <span class="text-dark-green group-open:text-white text-lg font-bold">What should I bring to my first appointment?</span>
+          <div class="text-accent-green flex items-center">
+            <span class="material-symbols-outlined group-open:hidden">add_circle</span>
+            <span class="material-symbols-outlined hidden group-open:inline-block">do_not_disturb_on</span>
+          </div>
+        </summary>
+        <div class="p-6 text-dark-green/80 bg-white leading-relaxed border-t border-dark-green/5">
+          For your initial consultation, please bring a valid photo ID, your current insurance card, a comprehensive list of medications you are taking, and any relevant medical records or diagnostic images (X-rays, CT scans) from previous evaluations.
+        </div>
+      </details>
+
+      <details class="group border border-dark-green/10 bg-white rounded-xl overflow-hidden transition-all duration-300">
+        <summary class="flex cursor-pointer list-none items-center justify-between p-6 bg-white group-open:bg-dark-green transition-colors">
+          <span class="text-dark-green group-open:text-white text-lg font-bold">Do you accept my insurance provider?</span>
+          <div class="text-accent-green flex items-center">
+            <span class="material-symbols-outlined group-open:hidden">add_circle</span>
+            <span class="material-symbols-outlined hidden group-open:inline-block">do_not_disturb_on</span>
+          </div>
+        </summary>
+        <div class="p-6 text-dark-green/80 bg-white leading-relaxed border-t border-dark-green/5">
+          We accept most major private insurance plans, Medicare, and several regional PPO/HMO networks. Please contact our billing office or check our 'Insurance' page for a full list of participating providers. We recommend verifying coverage with your insurer prior to your visit.
+        </div>
+      </details>
+
+      <details class="group border border-dark-green/10 bg-white rounded-xl overflow-hidden transition-all duration-300">
+        <summary class="flex cursor-pointer list-none items-center justify-between p-6 bg-white group-open:bg-dark-green transition-colors">
+          <span class="text-dark-green group-open:text-white text-lg font-bold">How do I manage chronic sinusitis at home?</span>
+          <div class="text-accent-green flex items-center">
+            <span class="material-symbols-outlined group-open:hidden">add_circle</span>
+            <span class="material-symbols-outlined hidden group-open:inline-block">do_not_disturb_on</span>
+          </div>
+        </summary>
+        <div class="p-6 text-dark-green/80 bg-white leading-relaxed border-t border-dark-green/5">
+          Management strategies include saline nasal irrigation, using a humidifier, staying hydrated, and avoiding known allergens. However, if symptoms persist for more than 12 weeks, we recommend a specialized evaluation to discuss advanced treatment options like balloon sinuplasty.
+        </div>
+      </details>
+
+      <details class="group border border-dark-green/10 bg-white rounded-xl overflow-hidden transition-all duration-300">
+        <summary class="flex cursor-pointer list-none items-center justify-between p-6 bg-white group-open:bg-dark-green transition-colors">
+          <span class="text-dark-green group-open:text-white text-lg font-bold">When should I see an ENT for hearing loss?</span>
+          <div class="text-accent-green flex items-center">
+            <span class="material-symbols-outlined group-open:hidden">add_circle</span>
+            <span class="material-symbols-outlined hidden group-open:inline-block">do_not_disturb_on</span>
+          </div>
+        </summary>
+        <div class="p-6 text-dark-green/80 bg-white leading-relaxed border-t border-dark-green/5">
+          You should schedule an appointment if you experience sudden hearing loss in one or both ears, persistent ringing (tinnitus), difficulty following conversations in noisy environments, or if you find yourself frequently asking others to repeat themselves.
+        </div>
+      </details>
+
+      <details class="group border border-dark-green/10 bg-white rounded-xl overflow-hidden transition-all duration-300">
+        <summary class="flex cursor-pointer list-none items-center justify-between p-6 bg-white group-open:bg-dark-green transition-colors">
+          <span class="text-dark-green group-open:text-white text-lg font-bold">What are the common treatments for sleep apnea?</span>
+          <div class="text-accent-green flex items-center">
+            <span class="material-symbols-outlined group-open:hidden">add_circle</span>
+            <span class="material-symbols-outlined hidden group-open:inline-block">do_not_disturb_on</span>
+          </div>
+        </summary>
+        <div class="p-6 text-dark-green/80 bg-white leading-relaxed border-t border-dark-green/5">
+          Treatments range from lifestyle changes and CPAP therapy to custom oral appliances and minimally invasive surgical procedures. Our specialists will perform a diagnostic sleep study to determine the most effective approach for your specific condition.
+        </div>
+      </details>
+
+      <details class="group border border-dark-green/10 bg-white rounded-xl overflow-hidden transition-all duration-300">
+        <summary class="flex cursor-pointer list-none items-center justify-between p-6 bg-white group-open:bg-dark-green transition-colors">
+          <span class="text-dark-green group-open:text-white text-lg font-bold">How do I prepare for a tonsillectomy?</span>
+          <div class="text-accent-green flex items-center">
+            <span class="material-symbols-outlined group-open:hidden">add_circle</span>
+            <span class="material-symbols-outlined hidden group-open:inline-block">do_not_disturb_on</span>
+          </div>
+        </summary>
+        <div class="p-6 text-dark-green/80 bg-white leading-relaxed border-t border-dark-green/5">
+          Pre-operative care includes fasting after midnight before surgery and avoiding medications like aspirin that can increase bleeding risk. We will provide a detailed instruction packet and schedule a pre-op phone call to answer any final questions.
+        </div>
+      </details>
+    </div>
+
+    <!-- Still have questions? Section -->
+    <div class="mt-20">
+      <div class="rounded-3xl bg-dark-green p-8 md:p-12 text-center flex flex-col items-center gap-6 shadow-xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-accent-green/10 rounded-full -mr-20 -mt-20"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-ent-primary/10 rounded-full -ml-10 -mb-10"></div>
+        <div class="relative z-10 flex flex-col gap-3">
+          <h2 class="text-white text-3xl md:text-4xl font-black tracking-tight">Still have questions?</h2>
+          <p class="text-white/80 text-lg font-medium max-w-lg">If you couldn't find the answer you're looking for, our friendly medical team is here to provide personalized assistance.</p>
+        </div>
+        <div class="relative z-10">
+          <a routerLink="/location" class="inline-flex items-center justify-center gap-2 rounded-xl h-14 px-8 bg-ent-primary text-white text-lg font-bold hover:scale-105 transition-transform active:scale-95 shadow-lg shadow-ent-primary/30">
+            <span class="material-symbols-outlined">mail</span>
+            <span>Contact Us Now</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

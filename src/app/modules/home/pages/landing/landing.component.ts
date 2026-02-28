@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-landing',
@@ -6,8 +7,18 @@ import { Component } from '@angular/core';
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss'],
 })
-export class LandingComponent {
+export class LandingComponent implements AfterViewInit {
   currentYear = new Date().getFullYear();
+
+  constructor(private route: ActivatedRoute) {}
+
+  ngAfterViewInit(): void {
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment) {
+        setTimeout(() => this.scrollTo(fragment), 100);
+      }
+    });
+  }
 
   scrollTo(sectionId: string): void {
     const el = document.getElementById(sectionId);

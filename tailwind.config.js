@@ -32,6 +32,8 @@ module.exports = {
         'soft-gray': '#DCE1E6',
         'background-light': '#F0E7D6',
         'background-dark': '#1a2210',
+        'heading-green': '#325A46',
+        'map-tone': '#DCE1E6',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

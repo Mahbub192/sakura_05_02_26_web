@@ -1,0 +1,69 @@
+<header
+  class="sticky top-0 z-50 w-full border-b border-beige bg-background-light/95 backdrop-blur-sm px-6 lg:px-20 py-4"
+>
+  <div class="mx-auto flex max-w-7xl items-center justify-between">
+    <a routerLink="/" class="flex items-center gap-3">
+      <div
+        class="flex h-10 w-10 items-center justify-center rounded-lg bg-dark-green text-white"
+      >
+        <span class="material-symbols-outlined text-2xl">medical_services</span>
+      </div>
+      <h2 class="text-xl font-bold tracking-tight text-dark-green">
+        ENT Specialist
+      </h2>
+    </a>
+    <nav class="hidden md:flex items-center gap-8">
+      <a
+        routerLink="/"
+        routerLinkActive="nav-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="text-sm font-semibold text-dark-green hover:text-ent-primary transition-colors py-1 px-2 rounded"
+        >Home</a
+      >
+      <a
+        routerLink="/location"
+        routerLinkActive="nav-active"
+        class="text-sm font-semibold text-dark-green hover:text-ent-primary transition-colors py-1 px-2 rounded"
+        >Location</a
+      >
+      <a
+        routerLink="/patient/book"
+        routerLinkActive="nav-active"
+        class="text-sm font-semibold text-dark-green hover:text-ent-primary transition-colors py-1 px-2 rounded"
+        >Appointment</a
+      >
+      <a
+        routerLink="/services"
+        routerLinkActive="nav-active"
+        class="text-sm font-semibold text-dark-green hover:text-ent-primary transition-colors py-1 px-2 rounded"
+        >Services</a
+      >
+      <a
+        routerLink="/meet-the-doctor"
+        routerLinkActive="nav-active"
+        class="text-sm font-semibold text-dark-green hover:text-ent-primary transition-colors py-1 px-2 rounded"
+        >Meet the Doctor</a
+      >
+      <a
+        [routerLink]="['/']"
+        fragment="reviews"
+        class="text-sm font-semibold text-dark-green hover:text-ent-primary transition-colors py-1 px-2 rounded"
+        >Reviews</a
+      >
+      <a
+        routerLink="/faq"
+        routerLinkActive="nav-active"
+        class="text-sm font-semibold text-dark-green hover:text-ent-primary transition-colors py-1 px-2 rounded"
+        >FAQ</a
+      >
+    </nav>
+    <div class="flex items-center gap-4">
+      <a
+        routerLink="/auth/login"
+        class="rounded-full bg-ent-primary px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-ent-primary/20 hover:scale-105 active:scale-95 transition-all"
+      >
+        Login
+      </a>
+    </div>
+  </div>
+</header>
