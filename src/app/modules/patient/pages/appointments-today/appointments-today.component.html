@@ -12,24 +12,24 @@
       <button
         type="button"
         (click)="setTab('upcoming')"
-        class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
-        [ngClass]="activeTab === 'upcoming' ? 'bg-white shadow-sm text-dark-green' : 'text-slate-500 hover:text-slate-700'"
+        class="px-5 py-2 rounded-lg text-sm font-bold transition-all min-w-[100px]"
+        [ngClass]="activeTab === 'upcoming' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'"
       >
         Upcoming (4)
       </button>
       <button
         type="button"
         (click)="setTab('completed')"
-        class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
-        [ngClass]="activeTab === 'completed' ? 'bg-white shadow-sm text-dark-green' : 'text-slate-500 hover:text-slate-700'"
+        class="px-5 py-2 rounded-lg text-sm font-bold transition-all min-w-[100px]"
+        [ngClass]="activeTab === 'completed' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'"
       >
         Completed (12)
       </button>
     </div>
   </div>
 
-  <!-- Appointment cards -->
-  <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+  <!-- Upcoming: Appointment cards -->
+  <div *ngIf="activeTab === 'upcoming'" class="grid grid-cols-1 xl:grid-cols-2 gap-5">
     <!-- Card 1: Virtual appointment -->
     <div class="bg-white border border-dark-green/5 rounded-xl p-5 shadow-xl shadow-slate-200/50 flex flex-col gap-4">
       <div class="flex justify-between items-start">
@@ -154,5 +154,53 @@
       <p class="text-slate-500 text-sm font-bold">Available Slot</p>
       <a routerLink="/patient/book" class="text-ent-primary font-bold text-xs hover:underline">Book new appointment</a>
     </div>
+  </div>
+
+  <!-- Completed: List of past appointments -->
+  <div *ngIf="activeTab === 'completed'" class="space-y-3">
+    <div class="rounded-xl bg-white border border-dark-green/5 shadow-sm overflow-hidden">
+      <div class="divide-y divide-slate-100">
+        <div class="flex items-center justify-between gap-4 p-4 hover:bg-slate-50/80 transition-colors">
+          <div class="flex gap-3 min-w-0">
+            <div class="h-10 w-10 rounded-lg bg-accent-green/10 flex items-center justify-center text-accent-green shrink-0">
+              <span class="material-symbols-outlined text-xl">check_circle</span>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-sm font-bold text-slate-900 truncate">Dr. Sarah Jenkins</h3>
+              <p class="text-xs text-slate-500">Ear Department • 08:00 AM - 08:30 AM</p>
+            </div>
+          </div>
+          <span class="inline-flex items-center rounded-md bg-accent-green/10 px-2 py-0.5 text-[10px] font-bold text-accent-green ring-1 ring-inset ring-accent-green/20 shrink-0">Completed</span>
+          <button type="button" class="text-xs font-bold text-ent-primary hover:underline shrink-0">View summary</button>
+        </div>
+        <div class="flex items-center justify-between gap-4 p-4 hover:bg-slate-50/80 transition-colors">
+          <div class="flex gap-3 min-w-0">
+            <div class="h-10 w-10 rounded-lg bg-dark-green/10 flex items-center justify-center text-dark-green shrink-0">
+              <span class="material-symbols-outlined text-xl">stethoscope</span>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-sm font-bold text-slate-900 truncate">Dr. Marcus Thorne</h3>
+              <p class="text-xs text-slate-500">Nose & Sinus • 10:00 AM - 10:45 AM</p>
+            </div>
+          </div>
+          <span class="inline-flex items-center rounded-md bg-accent-green/10 px-2 py-0.5 text-[10px] font-bold text-accent-green ring-1 ring-inset ring-accent-green/20 shrink-0">Completed</span>
+          <button type="button" class="text-xs font-bold text-ent-primary hover:underline shrink-0">View summary</button>
+        </div>
+        <div class="flex items-center justify-between gap-4 p-4 hover:bg-slate-50/80 transition-colors">
+          <div class="flex gap-3 min-w-0">
+            <div class="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0">
+              <span class="material-symbols-outlined text-xl">hearing</span>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-sm font-bold text-slate-900 truncate">Dr. Elena Rodriguez</h3>
+              <p class="text-xs text-slate-500">Throat & Vocal • 01:00 PM - 01:30 PM</p>
+            </div>
+          </div>
+          <span class="inline-flex items-center rounded-md bg-accent-green/10 px-2 py-0.5 text-[10px] font-bold text-accent-green ring-1 ring-inset ring-accent-green/20 shrink-0">Completed</span>
+          <button type="button" class="text-xs font-bold text-ent-primary hover:underline shrink-0">View summary</button>
+        </div>
+      </div>
+    </div>
+    <p class="text-xs text-slate-500 text-center py-4">Showing 12 completed appointments today. Older records are in History.</p>
   </div>
 </div>
