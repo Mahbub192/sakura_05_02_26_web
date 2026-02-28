@@ -18,6 +18,7 @@ import { TodaysAppointmentsComponent } from './pages/appointments/todays-appoint
 import { UpcomingAppointmentsComponent } from './pages/appointments/upcoming-appointments/upcoming-appointments.component';
 import { AppointmentHistoryComponent } from './pages/appointments/appointment-history/appointment-history.component';
 import { SlotManagementComponent } from './pages/appointment-slots/slot-management/slot-management.component';
+import { AssistantsComponent } from './pages/team/assistants/assistants.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 
@@ -38,6 +39,7 @@ import { ChamberStatsComponent } from './components/chamber-stats/chamber-stats.
     UpcomingAppointmentsComponent,
     AppointmentHistoryComponent,
     SlotManagementComponent,
+    AssistantsComponent,
     SettingsComponent,
     ProfileComponent,
     PatientListComponent,

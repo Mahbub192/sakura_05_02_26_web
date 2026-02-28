@@ -7,11 +7,11 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrls: ['./doctor-layout.component.scss'],
 })
 export class DoctorLayoutComponent {
-  expandedNav: 'appointments' | 'chambers' | null = null;
+  expandedNav: 'appointments' | 'chambers' | 'team' | null = null;
 
   constructor(public authService: AuthService) {}
 
-  toggleNav(key: 'appointments' | 'chambers'): void {
+  toggleNav(key: 'appointments' | 'chambers' | 'team'): void {
     this.expandedNav = this.expandedNav === key ? null : key;
   }
 

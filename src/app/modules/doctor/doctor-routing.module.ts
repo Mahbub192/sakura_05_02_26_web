@@ -10,6 +10,7 @@ import { TodaysAppointmentsComponent } from './pages/appointments/todays-appoint
 import { UpcomingAppointmentsComponent } from './pages/appointments/upcoming-appointments/upcoming-appointments.component';
 import { AppointmentHistoryComponent } from './pages/appointments/appointment-history/appointment-history.component';
 import { SlotManagementComponent } from './pages/appointment-slots/slot-management/slot-management.component';
+import { AssistantsComponent } from './pages/team/assistants/assistants.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 
@@ -29,6 +30,7 @@ const routes: Routes = [
       { path: 'appointments/upcoming', component: UpcomingAppointmentsComponent },
       { path: 'appointments/history', component: AppointmentHistoryComponent },
       { path: 'appointment-slots', component: SlotManagementComponent },
+      { path: 'team/assistants', component: AssistantsComponent },
       { path: 'settings', component: SettingsComponent },
       { path: 'profile', component: ProfileComponent }
     ]
