@@ -1,3 +1,132 @@
-// Chamber form styles
+// Chamber form – compact, full-width, professional
 
+.chamber-form-section {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f1f5f9;
 
+  &.chamber-form-section-last {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.chamber-form-section-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #325A46;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+}
+
+.chamber-form-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 0.25rem;
+}
+
+.chamber-form-input {
+  width: 100%;
+  padding: 0.375rem 0.625rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: #0f172a;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #9DBD68;
+    box-shadow: 0 0 0 2px rgba(157, 189, 104, 0.2);
+  }
+
+  &::placeholder {
+    color: #94a3b8;
+  }
+}
+
+.chamber-form-textarea {
+  min-height: 4rem;
+  resize: vertical;
+}
+
+.chamber-day-btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 0.375rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.chamber-day-btn-active {
+  background-color: #325A46;
+  color: #fff;
+  border: 1px solid #325A46;
+}
+
+.chamber-day-btn-inactive {
+  background-color: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+
+  &:hover {
+    background-color: #e2e8f0;
+    color: #475569;
+  }
+}
+
+.chamber-form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+}
+
+.chamber-form-checkbox-input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: #325A46;
+  cursor: pointer;
+}
+
+.chamber-form-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  transition: opacity 0.15s ease;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.chamber-form-btn-primary {
+  background-color: #EA2E00;
+  color: #fff;
+  border: none;
+
+  &:not(:disabled):hover {
+    opacity: 0.9;
+  }
+}
+
+.chamber-form-btn-secondary {
+  background-color: #fff;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+
+  &:not(:disabled):hover {
+    background-color: #f8fafc;
+    border-color: #325A46;
+    color: #325A46;
+  }
+}
