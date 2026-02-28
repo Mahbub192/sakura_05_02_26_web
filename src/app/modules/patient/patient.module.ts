@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PatientRoutingModule } from './patient-routing.module';
 import { PatientLayoutComponent } from './layout/patient-layout.component';
 import { AppointmentsTodayComponent } from './pages/appointments-today/appointments-today.component';
 import { BookingComponent } from './pages/booking/booking.component';
+import { DoctorPrescriptionsComponent } from './pages/doctor-prescriptions/doctor-prescriptions.component';
 import { PatientDashboardComponent } from './pages/dashboard/patient-dashboard.component';
 import { UploadImageComponent } from './pages/upload-image/upload-image.component';
 import { SharedModule } from '../../shared/shared.module';
@@ -17,9 +18,11 @@ import { SharedModule } from '../../shared/shared.module';
     PatientDashboardComponent,
     AppointmentsTodayComponent,
     UploadImageComponent,
+    DoctorPrescriptionsComponent,
   ],
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     RouterModule,
     PatientRoutingModule,

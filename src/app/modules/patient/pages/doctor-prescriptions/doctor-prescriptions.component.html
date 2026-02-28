@@ -1,0 +1,95 @@
+<div class="mx-auto flex max-w-5xl flex-col gap-6">
+  <!-- Header & Request Refill -->
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-black leading-tight tracking-tight text-dark-green">Doctor Prescriptions</h1>
+      <p class="text-slate-600 text-sm mt-1">Review and manage your medical prescriptions from ENT specialists.</p>
+    </div>
+    <button type="button" (click)="requestRefill()" class="flex items-center gap-2 bg-accent-green text-dark-green px-4 py-2 rounded-lg font-bold text-xs hover:opacity-90 transition-opacity w-fit">
+      <span class="material-symbols-outlined text-lg">add</span>
+      Request Refill
+    </button>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="bg-white p-3 rounded-xl shadow-sm flex flex-wrap gap-3 items-center border border-slate-200">
+    <div class="relative flex-1 min-w-[200px]">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+      <input [(ngModel)]="searchQuery" class="w-full pl-9 pr-4 py-2 bg-slate-50 border-none rounded-lg text-xs focus:ring-2 focus:ring-accent-green" placeholder="Search by medication or doctor..." type="text"/>
+    </div>
+    <div class="flex gap-2">
+      <button type="button" class="flex items-center gap-2 px-3 py-2 bg-slate-50 text-slate-700 rounded-lg text-xs border border-slate-200">
+        <span class="material-symbols-outlined text-lg">calendar_today</span>
+        <span>Last 6 Months</span>
+        <span class="material-symbols-outlined text-sm">expand_more</span>
+      </button>
+      <button type="button" class="flex items-center gap-2 px-3 py-2 bg-slate-50 text-slate-700 rounded-lg text-xs border border-slate-200">
+        <span class="material-symbols-outlined text-lg">filter_alt</span>
+        <span>Filters</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Prescription list -->
+  <div class="grid grid-cols-1 gap-5">
+    <div
+      *ngFor="let rx of prescriptions"
+      class="bg-white rounded-xl p-5 border border-dark-green/10 shadow-sm flex flex-col md:flex-row gap-5"
+      [class.opacity-75]="rx.status === 'expired'"
+    >
+      <div class="flex-1">
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <h3 class="text-base font-bold text-dark-green">{{ rx.doctorName }}</h3>
+            <p class="text-slate-600 text-xs font-medium">{{ rx.role }} • {{ rx.date }}</p>
+          </div>
+          <span
+            class="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider"
+            [ngClass]="{
+              'bg-green-100 text-green-700': rx.status === 'active',
+              'bg-slate-200 text-slate-600': rx.status === 'completed' || rx.status === 'expired'
+            }"
+          >
+            {{ rx.status === 'active' ? 'Active' : rx.status === 'completed' ? 'Completed' : 'Expired' }}
+          </span>
+        </div>
+        <div class="space-y-3">
+          <div *ngFor="let med of rx.medications" class="flex gap-3 items-start">
+            <div class="mt-0.5 flex items-center justify-center size-8 rounded-full bg-beige text-dark-green shrink-0">
+              <span class="material-symbols-outlined text-lg">{{ med.icon }}</span>
+            </div>
+            <div>
+              <p class="font-bold text-slate-800 text-sm">{{ med.name }}</p>
+              <p class="text-xs text-slate-600">{{ med.instruction }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-200 flex flex-wrap gap-3 items-center">
+          <a href="#" class="text-dark-green font-bold text-xs hover:underline flex items-center gap-1">
+            View Full Details
+            <span class="material-symbols-outlined text-xs">open_in_new</span>
+          </a>
+          <span *ngIf="rx.showPharmacy" class="text-slate-400 text-xs">•</span>
+          <p *ngIf="rx.pharmacy" class="text-[10px] text-slate-500 italic">Pharmacy: {{ rx.pharmacy }}</p>
+        </div>
+      </div>
+      <div class="md:w-40 flex flex-col justify-center gap-2">
+        <button type="button" (click)="downloadPdf(rx.id)" class="w-full flex items-center justify-center gap-2 bg-ent-primary text-white py-2.5 rounded-xl font-bold text-xs shadow-lg shadow-ent-primary/20 hover:opacity-90">
+          <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+          Download PDF
+        </button>
+        <button *ngIf="rx.status !== 'expired'" type="button" (click)="printPrescription(rx.id)" class="w-full py-2.5 rounded-xl font-bold text-xs text-slate-700 border border-slate-300 hover:bg-slate-50 transition-colors">
+          Print Prescription
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load more -->
+  <div class="flex justify-center py-4">
+    <button type="button" class="text-dark-green font-bold text-xs flex items-center gap-2 hover:bg-accent-green/10 px-5 py-2 rounded-full transition-colors">
+      View Older Prescriptions
+      <span class="material-symbols-outlined text-lg">expand_more</span>
+    </button>
+  </div>
+</div>
