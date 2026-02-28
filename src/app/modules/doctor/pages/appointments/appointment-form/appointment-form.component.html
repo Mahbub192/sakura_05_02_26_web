@@ -1,7 +1,7 @@
-<div [ngClass]="{'min-h-screen': !modalMode, '': modalMode}">
+<div [ngClass]="{'min-h-screen bg-white': !modalMode, '': modalMode}">
   <div [ngClass]="{'w-full max-w-full px-0': !modalMode, '': modalMode}" class="flex flex-col">
     <!-- Header (only when not in modal mode) -->
-    <div *ngIf="!modalMode" class="flex items-center justify-between gap-4 mb-5">
+    <div *ngIf="!modalMode" class="flex items-center justify-between gap-4 mb-5 p-4">
       <div class="flex items-center gap-3">
         <button
           type="button"
