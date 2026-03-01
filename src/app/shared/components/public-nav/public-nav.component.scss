@@ -64,6 +64,28 @@
   color: #fff !important;
 }
 
+/* Drawer Logout বাটন – মোবাইল/ট্যাবে টেক্সট সাদা, আইকন ও টেক্সট সঠিক অ্যালাইন */
+.drawer-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #fff !important;
+}
+
+.drawer-logout-btn:hover {
+  color: #fff !important;
+}
+
+.drawer-logout-icon {
+  font-size: 1.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

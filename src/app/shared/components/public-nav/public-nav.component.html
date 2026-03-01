@@ -162,10 +162,10 @@
           *ngIf="authService.isAuthenticated"
           type="button"
           (click)="logout(); closeDrawer()"
-          class="drawer-link w-full rounded-full bg-ent-primary px-6 py-3 font-bold text-white flex items-center justify-center gap-2"
+          class="drawer-logout-btn inline-flex w-full items-center justify-center gap-2 rounded-full bg-ent-primary px-6 py-3 font-bold text-white hover:bg-ent-primary/90 transition-colors"
         >
-          <span class="material-symbols-outlined">logout</span>
-          Logout
+          <span class="material-symbols-outlined drawer-logout-icon">logout</span>
+          <span>Logout</span>
         </button>
       </div>
     </nav>
