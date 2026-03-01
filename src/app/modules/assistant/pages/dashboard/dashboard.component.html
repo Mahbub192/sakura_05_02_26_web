@@ -1,74 +1,246 @@
-<div class="space-y-6">
-  <div class="flex items-center justify-between">
+<div class="mx-auto max-w-6xl flex flex-col gap-6">
+  <!-- Header with Filters -->
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
     <div>
-      <h1 class="text-3xl font-bold text-gray-900">Assistant Dashboard</h1>
-      <p class="text-gray-600 mt-1">Manage appointments and patient reports</p>
+      <h1 class="text-2xl font-black tracking-tight text-dark-green flex items-center gap-2">
+        <span class="material-symbols-outlined text-dark-green text-2xl">dashboard</span>
+        Assistant Dashboard
+      </h1>
+      <p class="text-slate-600 text-sm mt-1">Manage appointments and patients for your doctor</p>
     </div>
-    <button (click)="openBookingModal()" class="btn btn-primary">
-      Book Appointment
+    
+    <!-- Filter Controls -->
+    <div class="flex flex-col sm:flex-row gap-2">
+      <div class="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2 shadow-sm hover:border-dark-green/30 transition-colors">
+        <span class="material-symbols-outlined text-dark-green text-lg">calendar_today</span>
+        <input
+          type="date"
+          [(ngModel)]="selectedDate"
+          (change)="onDateChange()"
+          class="border-0 focus:ring-0 text-sm font-medium text-slate-700 cursor-pointer bg-transparent"
+          style="outline: none;">
+      </div>
+      <select
+        [(ngModel)]="selectedChamberId"
+        (change)="onChamberChange()"
+        class="px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-accent-green focus:border-transparent text-sm font-medium text-slate-700 shadow-sm hover:border-dark-green/30 transition-colors bg-white">
+        <option [value]="null">All Chambers</option>
+        <option *ngFor="let chamber of chambers" [value]="chamber.id">
+          {{chamber.name}}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Control Buttons -->
+  <app-assistant-control-buttons 
+    (refresh)="loadDashboardData()"
+    (break)="onBreak($event)"
+    (next)="onNextPatient()"
+    (testNext)="onTestNext()"
+    (appointmentBooked)="onAppointmentBooked()">
+  </app-assistant-control-buttons>
+
+  <!-- Active Break Notice -->
+  <div *ngIf="activeBreak" class="bg-amber-50 border-2 border-amber-400 rounded-xl p-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="material-symbols-outlined text-amber-600 text-2xl">schedule</span>
+      <div>
+        <p class="font-semibold text-amber-800">Break Active</p>
+        <p class="text-sm text-amber-700" *ngIf="activeBreak.notes">{{ activeBreak.notes }}</p>
+        <p class="text-xs text-amber-600">Duration: {{ activeBreak.duration }} minutes</p>
+      </div>
+    </div>
+    <button 
+      (click)="cancelBreak()"
+      class="px-4 py-2 bg-ent-primary text-white rounded-lg hover:opacity-90 transition-opacity font-medium flex items-center gap-2 text-sm">
+      <span class="material-symbols-outlined text-lg">close</span>
+      <span>Cancel Break</span>
     </button>
   </div>
 
-  <!-- Patient List -->
-  <div class="card">
-    <h2 class="text-xl font-semibold text-gray-900 mb-4">Patient Queue</h2>
-    
-    <app-loader *ngIf="loading"></app-loader>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-dark-green"></div>
+    <p class="mt-4 text-slate-600 text-sm">Loading dashboard...</p>
+  </div>
 
-    <div *ngIf="!loading" class="overflow-x-auto">
-      <table class="table">
-        <thead class="table-header">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">SL</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Patient</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-          </tr>
-        </thead>
-        <tbody class="table-body">
-          <tr *ngFor="let patient of patients" class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-              {{ patient.serialNumber }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm">
-                <p class="font-medium text-gray-900 bengali-text">{{ patient.patientName }}</p>
-                <p class="text-gray-500">{{ patient.patientId }}</p>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="badge badge-absent">{{ patient.status }}</span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm">
-              <button (click)="managePatient(patient)" class="btn btn-sm btn-primary">
-                Manage
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-sm">
+    {{error}}
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="dashboardData && !loading" class="space-y-4">
+    
+    <!-- Chamber Stats -->
+    <app-assistant-chamber-stats [stats]="getStats()"></app-assistant-chamber-stats>
+
+    <!-- Patient List -->
+    <div class="rounded-xl bg-white shadow-sm border border-dark-green/5">
+      <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-dark-green">Patients</h2>
+          <p class="text-xs text-slate-600 mt-0.5 flex items-center gap-1">
+            <span class="material-symbols-outlined text-dark-green text-sm">event</span>
+            {{ getFormattedDate(selectedDate) }}
+          </p>
+        </div>
+        <button
+          (click)="loadDashboardData()"
+          class="text-dark-green hover:text-accent-green text-sm font-medium flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-lg">refresh</span>
+          Refresh
+        </button>
+      </div>
 
       <!-- Empty State -->
-      <div *ngIf="patients.length === 0" class="text-center py-12">
-        <p class="text-gray-500">No patients in queue</p>
+      <div *ngIf="dashboardData.todayAppointments.length === 0" class="text-center py-8">
+        <span class="material-symbols-outlined text-5xl text-slate-300">calendar_today</span>
+        <h3 class="mt-3 text-base font-bold text-slate-900">No appointments today</h3>
+        <p class="mt-1 text-sm text-slate-500">Get started by booking a new appointment</p>
+        <a
+          routerLink="/assistant/appointments/new"
+          class="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-ent-primary text-white hover:opacity-90 px-3 py-1.5 text-xs font-bold shadow-md">
+          <span class="material-symbols-outlined text-base">add</span>
+          Book Appointment
+        </a>
+      </div>
+
+      <!-- Patient Table -->
+      <div *ngIf="dashboardData.todayAppointments.length > 0" class="overflow-x-auto" style="max-height: 400px; overflow-y: auto;">
+        <table class="min-w-full divide-y divide-slate-200">
+          <thead class="bg-slate-50 sticky top-0 z-10">
+            <tr>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">SL</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Patient</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Type</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Status</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Present</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-slate-200">
+            <tr *ngFor="let apt of getSortedPatients()" 
+                class="hover:bg-slate-50 transition-colors"
+                [ngClass]="{'dashboard-row-running': apt.status === 'running'}">
+              <td class="px-3 py-1.5 whitespace-nowrap">
+                <div class="text-sm font-bold text-slate-900">#{{ apt.serialNumber }}</div>
+              </td>
+              <td class="px-3 py-1.5 whitespace-nowrap">
+                <div class="text-sm font-medium text-slate-900">{{ apt.patient.fullName }}</div>
+                <div class="text-xs text-slate-500">{{ apt.patient.patientId }}</div>
+                <div class="text-xs text-slate-500">{{ apt.patient.phone }}</div>
+              </td>
+              <td class="px-3 py-1.5 whitespace-nowrap">
+                <span class="px-2 py-0.5 text-xs font-semibold rounded-full"
+                      [ngClass]="{
+                        'bg-accent-green/20 text-dark-green': apt.identifier === 'New',
+                        'bg-dark-green/10 text-dark-green': apt.identifier === 'Old',
+                        'bg-ent-primary/10 text-ent-primary': apt.identifier === 'Lab',
+                        'bg-amber-100 text-amber-800': apt.identifier === 'Report',
+                        'bg-red-100 text-red-800': apt.identifier === 'Emergency',
+                        'bg-slate-100 text-slate-700': !apt.identifier || apt.identifier === ''
+                      }">
+                  {{ apt.identifier || 'New' }}
+                </span>
+              </td>
+              <td class="px-3 py-1.5 whitespace-nowrap">
+                <span class="px-2 py-0.5 text-xs font-semibold rounded-full"
+                      [ngClass]="{
+                        'bg-slate-100 text-slate-700': apt.status === 'scheduled',
+                        'bg-accent-green/20 text-dark-green': apt.status === 'confirmed',
+                        'bg-dark-green/20 text-dark-green': apt.status === 'running' || apt.status === 'next',
+                        'bg-amber-100 text-amber-800': apt.status === 'need_test',
+                        'bg-slate-100 text-slate-600': apt.status === 'completed' || apt.status === 'seen',
+                        'bg-red-100 text-red-700': apt.status === 'cancelled',
+                        'bg-amber-100 text-amber-700': apt.status === 'absent' || apt.status === 'no_show'
+                      }">
+                  {{ getStatusLabel(apt.status) }}
+                </span>
+              </td>
+              <td class="px-3 py-1.5 whitespace-nowrap">
+                <button
+                  (click)="togglePresent(apt.id)"
+                  [ngClass]="apt.isPresent ? 'bg-accent-green text-dark-green' : 'bg-slate-200 text-slate-600'"
+                  class="px-2.5 py-1 text-xs font-bold rounded-lg hover:opacity-80 transition-opacity flex items-center gap-0.5">
+                  <span class="material-symbols-outlined text-sm" *ngIf="apt.isPresent">check</span>
+                  <span class="material-symbols-outlined text-sm" *ngIf="!apt.isPresent">radio_button_unchecked</span>
+                  {{ apt.isPresent ? 'Yes' : 'No' }}
+                </button>
+              </td>
+              <td class="px-3 py-1.5 whitespace-nowrap text-xs">
+                <div class="flex items-center gap-1.5">
+                  <select
+                    (change)="changeStatus(apt.id, $any($event.target).value); $any($event.target).value = apt.status"
+                    [value]="apt.status"
+                    class="text-xs px-2 py-1 border border-slate-200 rounded-lg focus:ring-2 focus:ring-accent-green focus:border-transparent bg-white text-slate-700 font-medium">
+                    <option value="scheduled">Scheduled</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="running">Running</option>
+                    <option value="seen">Seen</option>
+                    <option value="need_test">Need Test</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                  <button
+                    (click)="cancelAppointment(apt.id)"
+                    class="text-red-600 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors"
+                    title="Cancel">
+                    <span class="material-symbols-outlined text-lg">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
+
+    <!-- Test Patient List -->
+    <div *ngIf="showTestList" class="rounded-xl bg-white shadow-sm border border-dark-green/5">
+      <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-dark-green">Test Patient List</h2>
+          <p class="text-xs text-slate-600 mt-0.5">Patients waiting for tests</p>
+        </div>
+        <button
+          (click)="showTestList = false"
+          class="text-slate-500 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+      <div class="overflow-x-auto" style="max-height: 300px; overflow-y: auto;">
+        <table class="min-w-full divide-y divide-slate-200">
+          <thead class="bg-accent-green/10 sticky top-0 z-10">
+            <tr>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-dark-green uppercase tracking-wider">Serial</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-dark-green uppercase tracking-wider">Patient</th>
+              <th class="px-3 py-1.5 text-left text-xs font-semibold text-dark-green uppercase tracking-wider">Action</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-slate-200">
+            <tr *ngFor="let apt of getTestPatients()" class="hover:bg-accent-green/5 transition-colors">
+              <td class="px-3 py-1.5 whitespace-nowrap">
+                <div class="text-sm font-bold text-dark-green">#{{ apt.serialNumber }}</div>
+              </td>
+              <td class="px-3 py-1.5 whitespace-nowrap">
+                <div class="text-sm font-medium text-slate-900">{{ apt.patient.fullName }}</div>
+                <div class="text-xs text-slate-500">{{ apt.patient.patientId }}</div>
+              </td>
+              <td class="px-3 py-1.5 whitespace-nowrap">
+                <button
+                  (click)="assignTestSerial(apt)"
+                  class="rounded-lg px-3 py-1.5 text-xs font-bold bg-dark-green text-white hover:opacity-90 transition-opacity shadow-md flex items-center gap-1">
+                  <span class="material-symbols-outlined text-base">campaign</span>
+                  Call for Test
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 </div>
-
-<!-- Booking Modal -->
-<app-modal 
-  [isOpen]="showBookingModal" 
-  [title]="'Book Appointment'" 
-  [size]="'lg'"
-  (closeModal)="closeBookingModal()">
-  <div class="space-y-4">
-    <p class="text-gray-600">Appointment booking form will go here</p>
-    <div class="flex space-x-3 pt-4">
-      <button (click)="closeBookingModal()" class="flex-1 btn btn-secondary">Cancel</button>
-      <button class="flex-1 btn btn-primary">Book</button>
-    </div>
-  </div>
-</app-modal>
-
-

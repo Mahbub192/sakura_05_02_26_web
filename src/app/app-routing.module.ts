@@ -40,13 +40,13 @@ const routes: Routes = [
         path: 'tv-display',
         loadChildren: () => import('./modules/tv-display/tv-display.module').then(m => m.TvDisplayModule),
       },
-      {
-        path: 'assistant',
-        loadChildren: () => import('./modules/assistant/assistant.module').then(m => m.AssistantModule),
-        canActivate: [AuthGuard],
-        data: { role: 'assistant' },
-      },
     ],
+  },
+  {
+    path: 'assistant',
+    loadChildren: () => import('./modules/assistant/assistant.module').then(m => m.AssistantModule),
+    canActivate: [AuthGuard],
+    data: { role: 'assistant' },
   },
   {
     path: 'login',
