@@ -8,11 +8,27 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class AssistantLayoutComponent {
   expandedNav: 'appointments' | null = null;
+  drawerOpen = false;
 
   constructor(public authService: AuthService) {}
 
   toggleNav(key: 'appointments'): void {
     this.expandedNav = this.expandedNav === key ? null : key;
+  }
+
+  openDrawer(): void {
+    this.drawerOpen = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeDrawer(): void {
+    this.drawerOpen = false;
+    document.body.style.overflow = '';
+  }
+
+  toggleDrawer(): void {
+    this.drawerOpen = !this.drawerOpen;
+    document.body.style.overflow = this.drawerOpen ? 'hidden' : '';
   }
 
   get user() {
