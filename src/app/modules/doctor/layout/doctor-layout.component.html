@@ -1,12 +1,24 @@
 <div class="relative flex h-screen w-full flex-col overflow-hidden bg-background-light font-display text-slate-900">
   <!-- Top bar -->
   <header class="z-20 flex h-16 shrink-0 items-center justify-between border-b border-dark-green/10 bg-white px-6 py-3 lg:px-8">
-    <a routerLink="/" class="flex items-center gap-4 text-dark-green">
-      <div class="flex size-8 items-center justify-center rounded-lg bg-dark-green text-white">
-        <span class="material-symbols-outlined text-xl">medical_services</span>
-      </div>
-      <h2 class="text-lg font-bold leading-tight tracking-tight">ENT Specialist Clinic</h2>
-    </a>
+    <div class="flex items-center gap-4">
+      <!-- Mobile/Tablet: Drawer toggle -->
+      <button
+        type="button"
+        class="flex lg:hidden relative z-[100] items-center justify-center rounded-lg p-2 text-dark-green hover:bg-dark-green/10 transition-colors"
+        [attr.aria-label]="drawerOpen ? 'Close menu' : 'Open menu'"
+        (click)="toggleDrawer()"
+      >
+        <span class="material-symbols-outlined text-3xl" *ngIf="!drawerOpen">menu</span>
+        <span class="material-symbols-outlined text-3xl" *ngIf="drawerOpen">close</span>
+      </button>
+      <a routerLink="/" class="flex items-center gap-4 text-dark-green">
+        <div class="flex size-8 items-center justify-center rounded-lg bg-dark-green text-white">
+          <span class="material-symbols-outlined text-xl">medical_services</span>
+        </div>
+        <h2 class="text-lg font-bold leading-tight tracking-tight">ENT Specialist Clinic</h2>
+      </a>
+    </div>
     <div class="flex flex-1 items-center justify-end gap-6">
       <a
         routerLink="/doctor/appointments/new"
@@ -18,8 +30,8 @@
   </header>
 
   <div class="flex flex-1 overflow-hidden">
-    <!-- Sidebar -->
-    <aside class="flex w-72 shrink-0 flex-col bg-dark-green text-white">
+    <!-- Sidebar (desktop only) -->
+    <aside class="hidden lg:flex w-72 shrink-0 flex-col bg-dark-green text-white">
       <div class="flex flex-col gap-1 p-6 pb-4">
         <h1 class="text-xl font-bold text-white">Doctor Portal</h1>
         <p class="text-xs font-medium uppercase tracking-wider text-white/70">Physician Dashboard</p>
@@ -105,6 +117,116 @@
         </button>
       </nav>
       <div class="border-t border-white/10 p-6">
+        <div class="flex items-center gap-3">
+          <div class="flex size-10 items-center justify-center rounded-full border border-accent-green bg-accent-green/30 text-accent-green">
+            <span class="material-symbols-outlined">person</span>
+          </div>
+          <div class="min-w-0 flex-1 overflow-hidden">
+            <p class="truncate text-sm font-bold">{{ user?.fullName || 'Doctor' }}</p>
+            <p class="truncate text-xs text-white/60">Physician</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Drawer overlay (mobile/tablet) -->
+    <div
+      *ngIf="drawerOpen"
+      class="doctor-drawer-overlay"
+      (click)="closeDrawer()"
+      [attr.aria-hidden]="!drawerOpen"
+    ></div>
+    <!-- Drawer panel (mobile/tablet) – বাম থেকে খুলবে -->
+    <aside
+      *ngIf="drawerOpen"
+      class="doctor-drawer-panel bg-dark-green text-white"
+    >
+      <div class="flex flex-col gap-1 p-6 pb-4">
+        <h1 class="text-xl font-bold text-white">Doctor Portal</h1>
+        <p class="text-xs font-medium uppercase tracking-wider text-white/70">Physician Dashboard</p>
+      </div>
+      <nav class="flex flex-1 flex-col gap-1 px-4 pb-4 overflow-y-auto">
+        <a
+          routerLink="/doctor/dashboard"
+          routerLinkActive="doctor-nav-active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="flex cursor-pointer items-center gap-3 rounded-lg px-4 py-3 transition-colors hover:bg-white/5"
+          (click)="closeDrawer()"
+        >
+          <span class="material-symbols-outlined">dashboard</span>
+          <span class="text-sm font-semibold">Dashboard</span>
+        </a>
+        <div class="flex flex-col gap-1">
+          <div
+            (click)="toggleNav('chambers')"
+            class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-3 text-white/90 transition-colors hover:bg-white/5"
+          >
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined">apartment</span>
+              <span class="text-sm font-medium">Chambers</span>
+            </div>
+            <span class="material-symbols-outlined text-sm transition-transform" [class.rotate-180]="expandedNav === 'chambers'">expand_more</span>
+          </div>
+          <div *ngIf="expandedNav === 'chambers'" class="flex flex-col gap-1 py-1 pl-12">
+            <a routerLink="/doctor/chambers" routerLinkActive="doctor-nav-active-sub" [routerLinkActiveOptions]="{ exact: true }" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white" (click)="closeDrawer()">All Chambers</a>
+            <a routerLink="/doctor/chambers/new" routerLinkActive="doctor-nav-active-sub" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white" (click)="closeDrawer()">Add Chamber</a>
+          </div>
+        </div>
+        <div class="flex flex-col gap-1">
+          <div
+            (click)="toggleNav('appointments')"
+            class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-3 text-white/90 transition-colors hover:bg-white/5"
+          >
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined">calendar_today</span>
+              <span class="text-sm font-medium">Appointments</span>
+            </div>
+            <span class="material-symbols-outlined text-sm transition-transform" [class.rotate-180]="expandedNav === 'appointments'">expand_more</span>
+          </div>
+          <div *ngIf="expandedNav === 'appointments'" class="flex flex-col gap-1 py-1 pl-12">
+            <a routerLink="/doctor/appointments/today" routerLinkActive="doctor-nav-active-sub" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white" (click)="closeDrawer()">Today</a>
+            <a routerLink="/doctor/appointments/upcoming" routerLinkActive="doctor-nav-active-sub" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white" (click)="closeDrawer()">Upcoming</a>
+            <a routerLink="/doctor/appointments/history" routerLinkActive="doctor-nav-active-sub" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white" (click)="closeDrawer()">History</a>
+            <a routerLink="/doctor/appointments/new" routerLinkActive="doctor-nav-active-sub" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white" (click)="closeDrawer()">Book New</a>
+          </div>
+        </div>
+        <a routerLink="/doctor/appointment-slots" routerLinkActive="doctor-nav-active" class="flex items-center gap-3 rounded-lg px-4 py-3 text-white/90 transition-colors hover:bg-white/5" (click)="closeDrawer()">
+          <span class="material-symbols-outlined">schedule</span>
+          <span class="text-sm font-medium">Appointment Slots</span>
+        </a>
+        <div class="flex flex-col gap-1">
+          <div
+            (click)="toggleNav('team')"
+            class="flex cursor-pointer items-center justify-between rounded-lg px-4 py-3 text-white/90 transition-colors hover:bg-white/5"
+          >
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined">groups</span>
+              <span class="text-sm font-medium">Team</span>
+            </div>
+            <span class="material-symbols-outlined text-sm transition-transform" [class.rotate-180]="expandedNav === 'team'">expand_more</span>
+          </div>
+          <div *ngIf="expandedNav === 'team'" class="flex flex-col gap-1 py-1 pl-12">
+            <a routerLink="/doctor/team/assistants" routerLinkActive="doctor-nav-active-sub" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white" (click)="closeDrawer()">Assistant</a>
+          </div>
+        </div>
+        <a routerLink="/doctor/settings" routerLinkActive="doctor-nav-active" class="flex items-center gap-3 rounded-lg px-4 py-3 text-white/90 transition-colors hover:bg-white/5" (click)="closeDrawer()">
+          <span class="material-symbols-outlined">settings</span>
+          <span class="text-sm font-medium">Settings</span>
+        </a>
+        <a routerLink="/doctor/profile" routerLinkActive="doctor-nav-active" class="flex items-center gap-3 rounded-lg px-4 py-3 text-white/90 transition-colors hover:bg-white/5" (click)="closeDrawer()">
+          <span class="material-symbols-outlined">person</span>
+          <span class="text-sm font-medium">Profile</span>
+        </a>
+        <button
+          type="button"
+          (click)="logout(); closeDrawer()"
+          class="mt-2 flex cursor-pointer items-center gap-3 rounded-lg px-4 py-3 text-white/90 transition-colors hover:bg-white/10 hover:text-white"
+        >
+          <span class="material-symbols-outlined">logout</span>
+          <span class="text-sm font-medium">Logout</span>
+        </button>
+      </nav>
+      <div class="border-t border-white/10 p-6 shrink-0">
         <div class="flex items-center gap-3">
           <div class="flex size-10 items-center justify-center rounded-full border border-accent-green bg-accent-green/30 text-accent-green">
             <span class="material-symbols-outlined">person</span>
