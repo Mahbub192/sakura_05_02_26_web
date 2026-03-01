@@ -23,6 +23,46 @@
       class="relative z-10 w-full overflow-visible rounded-2xl border border-dark-green/10 bg-white p-6 shadow-lg"
     >
       <div class="grid grid-cols-1 gap-4 overflow-visible sm:grid-cols-2 lg:grid-cols-4">
+        <!-- Doctor -->
+        <div class="custom-dropdown relative sm:col-span-2 lg:col-span-1">
+          <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-dark-green">
+            <span class="material-symbols-outlined text-ent-primary text-xs">person</span>
+            Doctor <span class="text-red-500">*</span>
+            <span *ngIf="loadingDoctors" class="ml-2">
+              <span class="material-symbols-outlined animate-spin text-base text-ent-primary">progress_activity</span>
+            </span>
+          </label>
+          <button
+            type="button"
+            (click)="toggleDropdown('doctor')"
+            class="flex h-9 w-full items-center justify-between rounded-lg border-2 border-gray-200 bg-white px-3 text-left text-sm transition-all hover:border-gray-300 focus:border-ent-primary focus:outline-none focus:ring-2 focus:ring-ent-primary/20"
+            [class.border-red-300]="f['doctorId'].invalid && f['doctorId'].touched"
+          >
+            <span>{{ getDoctorLabel() }}</span>
+            <span class="material-symbols-outlined text-lg text-gray-500">expand_more</span>
+          </button>
+          <div
+            *ngIf="openDropdown === 'doctor'"
+            class="dropdown-panel absolute left-0 right-0 top-full z-[9999] mt-1 max-h-48 overflow-y-auto rounded-lg border-2 border-dark-green/20 bg-white shadow-xl"
+          >
+            <button type="button" (click)="selectDoctor('')" class="dropdown-option w-full px-3 py-2 text-left text-sm hover:bg-accent-green/20">
+              Select Doctor
+            </button>
+            <button
+              *ngFor="let doctor of doctors"
+              type="button"
+              (click)="selectDoctor(doctor.id)"
+              class="dropdown-option w-full px-3 py-2 text-left text-sm hover:bg-accent-green/20"
+            >
+              {{ doctor.fullName }}
+            </button>
+          </div>
+          <p *ngIf="f['doctorId'].invalid && f['doctorId'].touched" class="mt-0.5 text-xs text-red-600">
+            Please select a doctor
+          </p>
+          <p *ngIf="f['doctorId'].valid && !f['doctorId'].touched" class="mt-0.5 text-xs text-gray-500">Select doctor first, then chamber</p>
+        </div>
+
         <!-- Chamber -->
         <div class="custom-dropdown relative sm:col-span-2 lg:col-span-1">
           <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-dark-green">

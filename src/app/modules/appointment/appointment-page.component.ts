@@ -10,9 +10,11 @@ import { ApiService } from '../../core/services/api.service';
 })
 export class AppointmentPageComponent implements OnInit {
   appointmentForm: FormGroup;
+  doctors: any[] = [];
   chambers: any[] = [];
   availableSlots: any[] = [];
   selectedSlot: any = null;
+  loadingDoctors = false;
   loadingSlots = false;
   loading = false;
   submitting = false;
@@ -22,8 +24,8 @@ export class AppointmentPageComponent implements OnInit {
   selectedPatient: any = null;
   searchingPatient = false;
 
-  /** Which custom dropdown is open: 'chamber' | 'type' | 'gender' | 'district' | '' */
-  openDropdown: '' | 'chamber' | 'type' | 'gender' | 'district' = '';
+  /** Which custom dropdown is open: 'doctor' | 'chamber' | 'type' | 'gender' | 'district' | '' */
+  openDropdown: '' | 'doctor' | 'chamber' | 'type' | 'gender' | 'district' = '';
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
@@ -50,6 +52,7 @@ export class AppointmentPageComponent implements OnInit {
     private router: Router
   ) {
     this.appointmentForm = this.formBuilder.group({
+      doctorId: ['', Validators.required],
       chamberId: ['', Validators.required],
       appointmentSlotId: [''],
       appointmentTime: [''],
@@ -71,10 +74,16 @@ export class AppointmentPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadChambers();
+    this.loadDoctors();
     this.setDefaultDate();
 
     this.appointmentForm.get('identifier')?.valueChanges.subscribe((id) => this.updateFee(id));
+    this.appointmentForm.get('doctorId')?.valueChanges.subscribe((doctorId) => {
+      this.appointmentForm.patchValue({ chamberId: '' }, { emitEvent: false });
+      this.availableSlots = [];
+      this.selectedSlot = null;
+      this.loadChambers();
+    });
     this.appointmentForm.get('chamberId')?.valueChanges.subscribe(() => {
       this.updateFee(this.appointmentForm.get('identifier')?.value);
       this.loadAvailableSlots();
@@ -98,9 +107,29 @@ export class AppointmentPageComponent implements OnInit {
     });
   }
 
+  loadDoctors(): void {
+    this.loadingDoctors = true;
+    this.apiService.get('/public/doctors').subscribe({
+      next: (response: any) => {
+        this.doctors = Array.isArray(response) ? response : [];
+        this.loadingDoctors = false;
+      },
+      error: () => {
+        this.error = 'Failed to load doctors';
+        this.loadingDoctors = false;
+      },
+    });
+  }
+
   loadChambers(): void {
+    const doctorId = this.appointmentForm.get('doctorId')?.value;
+    if (!doctorId) {
+      this.chambers = [];
+      this.loading = false;
+      return;
+    }
     this.loading = true;
-    this.apiService.get('/chambers').subscribe({
+    this.apiService.get(`/public/chambers?doctorId=${doctorId}`).subscribe({
       next: (response: any) => {
         this.chambers = (response || []).filter((c: any) => c.isActive !== false);
         this.loading = false;
@@ -120,7 +149,7 @@ export class AppointmentPageComponent implements OnInit {
   searchPatient(phone: string): void {
     if (this.appointmentForm.get('phone')?.value !== phone) return;
     this.searchingPatient = true;
-    this.apiService.get(`/patients/by-phone/${phone}`).subscribe({
+    this.apiService.get(`/public/patients/by-phone/${phone}`).subscribe({
       next: (patients: any) => {
         this.searchingPatient = false;
         if (this.appointmentForm.get('phone')?.value !== phone) return;
@@ -198,7 +227,7 @@ export class AppointmentPageComponent implements OnInit {
     }
     this.loadingSlots = true;
     this.apiService
-      .get(`/appointment-slots/available?chamberId=${chamberId}&date=${appointmentDate}`)
+      .get(`/public/appointment-slots/available?chamberId=${chamberId}&date=${appointmentDate}`)
       .subscribe({
         next: (response: any) => {
           this.availableSlots = (response || [])
@@ -296,8 +325,14 @@ export class AppointmentPageComponent implements OnInit {
     }
   }
 
-  toggleDropdown(key: '' | 'chamber' | 'type' | 'gender' | 'district'): void {
+  toggleDropdown(key: '' | 'doctor' | 'chamber' | 'type' | 'gender' | 'district'): void {
     this.openDropdown = this.openDropdown === key ? '' : key;
+  }
+
+  selectDoctor(id: string | number): void {
+    const value = id === '' || id == null ? '' : String(id);
+    this.appointmentForm.patchValue({ doctorId: value });
+    this.openDropdown = '';
   }
 
   selectChamber(id: string | number): void {
@@ -325,6 +360,13 @@ export class AppointmentPageComponent implements OnInit {
     if (!id) return 'Select Chamber';
     const c = this.chambers.find((ch) => String(ch.id) === String(id));
     return c ? `${c.name} - ${c.appointmentNumber}` : 'Select Chamber';
+  }
+
+  getDoctorLabel(): string {
+    const id = this.appointmentForm.get('doctorId')?.value;
+    if (!id) return 'Select Doctor';
+    const d = this.doctors.find((doc: any) => String(doc.id) === String(id));
+    return d ? d.fullName : 'Select Doctor';
   }
 
   getTypeLabel(): string {
@@ -359,7 +401,7 @@ export class AppointmentPageComponent implements OnInit {
     if (this.selectedSlot?.time && !formData.appointmentTime) {
       formData.appointmentTime = this.selectedSlot.time;
     }
-    this.apiService.post('/appointments', formData).subscribe({
+    this.apiService.post('/public/appointments', formData).subscribe({
       next: (response: any) => {
         this.success = `Appointment booked successfully! Serial Number: ${response.serialNumber}`;
         this.submitting = false;

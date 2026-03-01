@@ -68,8 +68,9 @@ export class AuthService {
   logout(): void {
     this.storage.clearAll();
     this.currentUserSubject.next(null);
-    // this.router.navigate(['/auth/login']);
-    this.router.navigate(['/']);
+    if (!this.router.url.startsWith('/appointment')) {
+      this.router.navigate(['/']);
+    }
   }
 
   refreshToken(): Observable<any> {
