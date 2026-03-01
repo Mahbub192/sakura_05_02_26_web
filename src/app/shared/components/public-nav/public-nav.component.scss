@@ -10,3 +10,74 @@
   padding-bottom: 2px;
   margin-bottom: -2px;
 }
+
+/* Drawer overlay – mobile/tablet */
+.nav-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Drawer panel – slides from right */
+.nav-drawer-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 70;
+  width: min(320px, 85vw);
+  max-width: 320px;
+  height: 100vh;
+  background: var(--background-light, #fafaf8);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
+  animation: slideInRight 0.25s ease-out;
+  overflow-y: auto;
+}
+
+.nav-drawer-panel-open {
+  display: block;
+}
+
+.drawer-link {
+  display: block;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a3c34;
+  border-radius: 0.5rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+.drawer-link:hover {
+  background: rgba(42, 122, 82, 0.08);
+  color: #ea2e00;
+}
+
+/* Drawer Login বাটন – টেক্সট সাদা, hover এও সাদা */
+.drawer-login-btn {
+  display: flex;
+  color: #fff !important;
+}
+
+.drawer-login-btn:hover {
+  color: #fff !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

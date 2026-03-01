@@ -12,7 +12,7 @@
         ENT Specialist
       </h2>
     </a>
-    <nav class="hidden md:flex items-center gap-8">
+    <nav class="hidden lg:flex items-center gap-8">
       <a
         routerLink="/"
         routerLinkActive="nav-active"
@@ -58,10 +58,11 @@
       >
     </nav>
     <div class="flex items-center gap-4">
+      <!-- Desktop: Login/Logout -->
       <a
         *ngIf="!authService.isAuthenticated"
         routerLink="/auth/login"
-        class="rounded-full bg-ent-primary px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-ent-primary/20 hover:scale-105 active:scale-95 transition-all"
+        class="hidden lg:inline-flex rounded-full bg-ent-primary px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-ent-primary/20 hover:scale-105 active:scale-95 transition-all"
       >
         Login
       </a>
@@ -69,11 +70,104 @@
         *ngIf="authService.isAuthenticated"
         type="button"
         (click)="logout()"
-        class="flex items-center gap-2 rounded-full bg-ent-primary px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-ent-primary/20 hover:scale-105 active:scale-95 transition-all"
+        class="hidden lg:flex items-center gap-2 rounded-full bg-ent-primary px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-ent-primary/20 hover:scale-105 active:scale-95 transition-all"
       >
         <span class="material-symbols-outlined text-lg">logout</span>
         Logout
       </button>
+      <!-- Mobile/Tablet: শুধু drawer icon – ক্লিক করলে নেভ খুলবে, আবার ক্লিক করলে বন্ধ -->
+      <button
+        type="button"
+        class="flex lg:hidden relative z-[100] items-center justify-center rounded-lg p-2 text-dark-green hover:bg-accent-green/10 transition-colors"
+        [attr.aria-label]="drawerOpen ? 'Close menu' : 'Open menu'"
+        (click)="toggleDrawer()"
+      >
+        <span class="material-symbols-outlined text-3xl" *ngIf="!drawerOpen">menu</span>
+        <span class="material-symbols-outlined text-3xl" *ngIf="drawerOpen">close</span>
+      </button>
     </div>
   </div>
+
+  <!-- Drawer overlay (mobile/tablet) -->
+  <div
+    *ngIf="drawerOpen"
+    class="nav-drawer-overlay"
+    (click)="closeDrawer()"
+    [attr.aria-hidden]="!drawerOpen"
+  ></div>
+  <!-- Drawer panel -->
+  <aside
+    *ngIf="drawerOpen"
+    class="nav-drawer-panel"
+    [class.nav-drawer-panel-open]="drawerOpen"
+  >
+    <div class="border-b border-beige px-6 py-4">
+      <span class="text-lg font-bold text-dark-green">Menu</span>
+    </div>
+    <nav class="flex flex-col p-4">
+      <a
+        routerLink="/"
+        routerLinkActive="nav-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="drawer-link"
+        (click)="closeDrawer()"
+        >Home</a
+      >
+      <a
+        routerLink="/location"
+        routerLinkActive="nav-active"
+        class="drawer-link"
+        (click)="closeDrawer()"
+        >Location</a
+      >
+      <a
+        routerLink="/services"
+        routerLinkActive="nav-active"
+        class="drawer-link"
+        (click)="closeDrawer()"
+        >Services</a
+      >
+      <a
+        routerLink="/meet-the-doctor"
+        routerLinkActive="nav-active"
+        class="drawer-link"
+        (click)="closeDrawer()"
+        >Meet the Doctor</a
+      >
+      <a
+        [routerLink]="['/']"
+        fragment="reviews"
+        class="drawer-link"
+        (click)="closeDrawer()"
+        >Reviews</a
+      >
+      <a
+        routerLink="/faq"
+        routerLinkActive="nav-active"
+        class="drawer-link"
+        (click)="closeDrawer()"
+        >FAQ</a
+      >
+      <div class="mt-4 border-t border-beige pt-4">
+        <a
+          *ngIf="!authService.isAuthenticated"
+          routerLink="/auth/login"
+          class="drawer-login-btn flex items-center justify-center gap-2 rounded-full bg-ent-primary px-6 py-3 font-bold text-white hover:bg-ent-primary/90 transition-colors"
+          (click)="closeDrawer()"
+        >
+          <span class="material-symbols-outlined text-xl">login</span>
+          Login
+        </a>
+        <button
+          *ngIf="authService.isAuthenticated"
+          type="button"
+          (click)="logout(); closeDrawer()"
+          class="drawer-link w-full rounded-full bg-ent-primary px-6 py-3 font-bold text-white flex items-center justify-center gap-2"
+        >
+          <span class="material-symbols-outlined">logout</span>
+          Logout
+        </button>
+      </div>
+    </nav>
+  </aside>
 </header>
