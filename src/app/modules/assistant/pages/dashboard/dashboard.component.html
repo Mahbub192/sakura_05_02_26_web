@@ -35,29 +35,8 @@
   <!-- Control Buttons -->
   <app-assistant-control-buttons 
     (refresh)="loadDashboardData()"
-    (break)="onBreak($event)"
-    (next)="onNextPatient()"
-    (testNext)="onTestNext()"
     (appointmentBooked)="onAppointmentBooked()">
   </app-assistant-control-buttons>
-
-  <!-- Active Break Notice -->
-  <div *ngIf="activeBreak" class="bg-amber-50 border-2 border-amber-400 rounded-xl p-4 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <span class="material-symbols-outlined text-amber-600 text-2xl">schedule</span>
-      <div>
-        <p class="font-semibold text-amber-800">Break Active</p>
-        <p class="text-sm text-amber-700" *ngIf="activeBreak.notes">{{ activeBreak.notes }}</p>
-        <p class="text-xs text-amber-600">Duration: {{ activeBreak.duration }} minutes</p>
-      </div>
-    </div>
-    <button 
-      (click)="cancelBreak()"
-      class="px-4 py-2 bg-ent-primary text-white rounded-lg hover:opacity-90 transition-opacity font-medium flex items-center gap-2 text-sm">
-      <span class="material-symbols-outlined text-lg">close</span>
-      <span>Cancel Break</span>
-    </button>
-  </div>
 
   <!-- Loading State -->
   <div *ngIf="loading" class="text-center py-12">
@@ -107,7 +86,7 @@
         </a>
       </div>
 
-      <!-- Patient Table -->
+      <!-- Patient Table (view only + Update info) -->
       <div *ngIf="dashboardData.todayAppointments.length > 0" class="overflow-x-auto" style="max-height: 400px; overflow-y: auto;">
         <table class="min-w-full divide-y divide-slate-200">
           <thead class="bg-slate-50 sticky top-0 z-10">
@@ -160,36 +139,18 @@
                 </span>
               </td>
               <td class="px-3 py-1.5 whitespace-nowrap">
-                <button
-                  (click)="togglePresent(apt.id)"
-                  [ngClass]="apt.isPresent ? 'bg-accent-green text-dark-green' : 'bg-slate-200 text-slate-600'"
-                  class="px-2.5 py-1 text-xs font-bold rounded-lg hover:opacity-80 transition-opacity flex items-center gap-0.5">
-                  <span class="material-symbols-outlined text-sm" *ngIf="apt.isPresent">check</span>
-                  <span class="material-symbols-outlined text-sm" *ngIf="!apt.isPresent">radio_button_unchecked</span>
+                <span class="text-xs font-medium" [ngClass]="apt.isPresent ? 'text-dark-green' : 'text-slate-500'">
                   {{ apt.isPresent ? 'Yes' : 'No' }}
-                </button>
+                </span>
               </td>
               <td class="px-3 py-1.5 whitespace-nowrap text-xs">
-                <div class="flex items-center gap-1.5">
-                  <select
-                    (change)="changeStatus(apt.id, $any($event.target).value); $any($event.target).value = apt.status"
-                    [value]="apt.status"
-                    class="text-xs px-2 py-1 border border-slate-200 rounded-lg focus:ring-2 focus:ring-accent-green focus:border-transparent bg-white text-slate-700 font-medium">
-                    <option value="scheduled">Scheduled</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="running">Running</option>
-                    <option value="seen">Seen</option>
-                    <option value="need_test">Need Test</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                  <button
-                    (click)="cancelAppointment(apt.id)"
-                    class="text-red-600 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors"
-                    title="Cancel">
-                    <span class="material-symbols-outlined text-lg">delete</span>
-                  </button>
-                </div>
+                <button
+                  (click)="openUpdatePatientModal(apt)"
+                  class="text-dark-green hover:text-accent-green p-1.5 rounded hover:bg-accent-green/10 transition-colors font-medium flex items-center gap-1"
+                  title="Update patient info">
+                  <span class="material-symbols-outlined text-lg">edit</span>
+                  Update info
+                </button>
               </td>
             </tr>
           </tbody>
@@ -197,50 +158,35 @@
       </div>
     </div>
 
-    <!-- Test Patient List -->
-    <div *ngIf="showTestList" class="rounded-xl bg-white shadow-sm border border-dark-green/5">
-      <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+    <!-- Update Patient Info Modal -->
+    <app-modal
+      [isOpen]="showUpdatePatientModal"
+      [title]="'Update Patient Info'"
+      (closeModal)="closeUpdatePatientModal()">
+      <form *ngIf="selectedAppointment" (ngSubmit)="savePatientInfo()" class="space-y-4">
         <div>
-          <h2 class="text-base font-bold text-dark-green">Test Patient List</h2>
-          <p class="text-xs text-slate-600 mt-0.5">Patients waiting for tests</p>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Patient name</label>
+          <input type="text" [(ngModel)]="editPatientForm.fullName" name="fullName" class="input w-full" required>
         </div>
-        <button
-          (click)="showTestList = false"
-          class="text-slate-500 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100">
-          <span class="material-symbols-outlined text-xl">close</span>
-        </button>
-      </div>
-      <div class="overflow-x-auto" style="max-height: 300px; overflow-y: auto;">
-        <table class="min-w-full divide-y divide-slate-200">
-          <thead class="bg-accent-green/10 sticky top-0 z-10">
-            <tr>
-              <th class="px-3 py-1.5 text-left text-xs font-semibold text-dark-green uppercase tracking-wider">Serial</th>
-              <th class="px-3 py-1.5 text-left text-xs font-semibold text-dark-green uppercase tracking-wider">Patient</th>
-              <th class="px-3 py-1.5 text-left text-xs font-semibold text-dark-green uppercase tracking-wider">Action</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-slate-200">
-            <tr *ngFor="let apt of getTestPatients()" class="hover:bg-accent-green/5 transition-colors">
-              <td class="px-3 py-1.5 whitespace-nowrap">
-                <div class="text-sm font-bold text-dark-green">#{{ apt.serialNumber }}</div>
-              </td>
-              <td class="px-3 py-1.5 whitespace-nowrap">
-                <div class="text-sm font-medium text-slate-900">{{ apt.patient.fullName }}</div>
-                <div class="text-xs text-slate-500">{{ apt.patient.patientId }}</div>
-              </td>
-              <td class="px-3 py-1.5 whitespace-nowrap">
-                <button
-                  (click)="assignTestSerial(apt)"
-                  class="rounded-lg px-3 py-1.5 text-xs font-bold bg-dark-green text-white hover:opacity-90 transition-opacity shadow-md flex items-center gap-1">
-                  <span class="material-symbols-outlined text-base">campaign</span>
-                  Call for Test
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Phone</label>
+          <input type="text" [(ngModel)]="editPatientForm.phone" name="phone" class="input w-full" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Age</label>
+          <input type="number" [(ngModel)]="editPatientForm.age" name="age" min="0" class="input w-full">
+        </div>
+        <p *ngIf="updatePatientError" class="text-red-600 text-sm">{{ updatePatientError }}</p>
+        <div class="flex gap-3 pt-2">
+          <button type="submit" [disabled]="savingPatient" class="flex-1 rounded-lg bg-ent-primary text-white py-2 font-bold hover:opacity-90 disabled:opacity-50">
+            {{ savingPatient ? 'Saving...' : 'Save' }}
+          </button>
+          <button type="button" (click)="closeUpdatePatientModal()" class="flex-1 rounded-lg border border-slate-300 text-slate-700 py-2 font-medium hover:bg-slate-50">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </app-modal>
 
   </div>
 </div>

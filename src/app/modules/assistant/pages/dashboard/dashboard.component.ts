@@ -12,9 +12,11 @@ interface ChamberStats {
 }
 
 interface Patient {
+  id?: number;
   fullName: string;
   patientId: string;
   phone: string;
+  age?: number;
 }
 
 interface Appointment {
@@ -52,8 +54,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dashboardData: DashboardData | null = null;
   loading = false;
   error: string | null = null;
-  showTestList = false;
   private refreshInterval: any;
+
+  showUpdatePatientModal = false;
+  selectedAppointment: Appointment | null = null;
+  editPatientForm = { fullName: '', phone: '', age: 0 as number };
+  updatePatientError = '';
+  savingPatient = false;
 
   constructor(
     private apiService: ApiService,
@@ -158,34 +165,53 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
   }
 
-  togglePresent(appointmentId: number): void {
-    this.apiService.put(`/appointments/${appointmentId}/toggle-present`, {}).subscribe({
-      next: () => {
-        if (this.dashboardData) {
-          const apt = this.dashboardData.todayAppointments.find(a => a.id === appointmentId);
-          if (apt) apt.isPresent = !apt.isPresent;
-        }
-      },
-      error: () => alert('Failed to update patient presence. Please try again.')
-    });
+  openUpdatePatientModal(apt: Appointment): void {
+    this.selectedAppointment = apt;
+    this.editPatientForm = {
+      fullName: apt.patient.fullName,
+      phone: apt.patient.phone || '',
+      age: (apt.patient as any).age ?? 0
+    };
+    this.updatePatientError = '';
+    this.showUpdatePatientModal = true;
   }
 
-  changeStatus(appointmentId: number, newStatus: string): void {
-    this.apiService.put(`/appointments/${appointmentId}/status`, { status: newStatus }).subscribe({
-      next: () => {
-        if (this.dashboardData) {
-          const apt = this.dashboardData.todayAppointments.find(a => a.id === appointmentId);
-          if (apt) apt.status = newStatus;
-        }
-      },
-      error: () => alert('Failed to update appointment status. Please try again.')
-    });
+  closeUpdatePatientModal(): void {
+    this.showUpdatePatientModal = false;
+    this.selectedAppointment = null;
+    this.updatePatientError = '';
   }
 
-  cancelAppointment(appointmentId: number): void {
-    if (confirm('Are you sure you want to cancel this appointment?')) {
-      this.changeStatus(appointmentId, 'cancelled');
+  savePatientInfo(): void {
+    if (!this.selectedAppointment?.patient?.id) {
+      this.updatePatientError = 'Patient ID not found.';
+      return;
     }
+    this.savingPatient = true;
+    this.updatePatientError = '';
+    const id = this.selectedAppointment.patient.id;
+    this.apiService.put(`/patients/${id}`, {
+      fullName: this.editPatientForm.fullName,
+      phone: this.editPatientForm.phone,
+      age: this.editPatientForm.age
+    }).subscribe({
+      next: () => {
+        if (this.dashboardData) {
+          const apt = this.dashboardData.todayAppointments.find(a => a.id === this.selectedAppointment!.id);
+          if (apt?.patient) {
+            apt.patient.fullName = this.editPatientForm.fullName;
+            apt.patient.phone = this.editPatientForm.phone;
+            (apt.patient as any).age = this.editPatientForm.age;
+          }
+        }
+        this.closeUpdatePatientModal();
+        this.savingPatient = false;
+      },
+      error: (err) => {
+        this.updatePatientError = err.error?.message || 'Failed to update patient info.';
+        this.savingPatient = false;
+      }
+    });
   }
 
   getStatusLabel(status: string): string {
@@ -214,117 +240,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return d.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
   }
 
-  activeBreak: any = null;
-
-  onBreak(breakData: { notes: string; duration: number }): void {
-    this.apiService.post('/breaks/start', {
-      notes: breakData.notes,
-      duration: breakData.duration,
-      chamberId: this.selectedChamberId || undefined
-    }).subscribe({
-      next: (response: any) => {
-        this.activeBreak = response;
-        this.loadDashboardData();
-      },
-      error: (e) => alert(e.error?.message || 'Failed to start break. Please try again.')
-    });
-  }
-
-  cancelBreak(): void {
-    if (!this.activeBreak) return;
-    if (confirm('Are you sure you want to cancel the current break?')) {
-      const params = this.selectedChamberId ? `?chamberId=${this.selectedChamberId}` : '';
-      this.apiService.delete(`/breaks/end${params}`).subscribe({
-        next: () => {
-          this.activeBreak = null;
-          this.loadDashboardData();
-        },
-        error: (e) => alert(e.error?.message || 'Failed to cancel break.')
-      });
-    }
-  }
-
-  onNextPatient(): void {
-    if (!this.dashboardData?.todayAppointments?.length) {
-      alert('No patients in queue!');
-      return;
-    }
-    const timeToMin = (t: string | null | undefined): number => {
-      if (!t) return Infinity;
-      let s = t.trim();
-      if (s.length === 5) s += ':00';
-      const [h, m] = s.split(':').map(Number);
-      return (isNaN(h) ? 0 : h) * 60 + (isNaN(m) ? 0 : m);
-    };
-    const waiting = this.dashboardData.todayAppointments
-      .filter(apt => apt.isPresent && ['scheduled', 'confirmed', 'serialized'].includes(apt.status))
-      .sort((a, b) => {
-        const ta = timeToMin(a.appointmentTime);
-        const tb = timeToMin(b.appointmentTime);
-        return ta !== tb ? ta - tb : (a.serialNumber || 0) - (b.serialNumber || 0);
-      });
-    if (waiting.length === 0) {
-      alert('No waiting patients!');
-      return;
-    }
-    const next = waiting[0];
-    if (confirm(`Call next patient?\n\nSerial #${next.serialNumber}\n${next.patient.fullName}`)) {
-      this.apiService.put(`/appointments/${next.id}/status`, { status: 'running' }).subscribe({
-        next: () => this.loadDashboardData(),
-        error: () => alert('Failed to call patient. Please try again.')
-      });
-    }
-  }
-
   onAppointmentBooked(): void {
     this.loadDashboardData();
-  }
-
-  onTestNext(): void {
-    if (!this.dashboardData?.todayAppointments?.length) {
-      alert('No patients in queue!');
-      return;
-    }
-    const running = this.dashboardData.todayAppointments.find(a => a.status === 'running');
-    if (!running) {
-      this.showTestList = !this.showTestList;
-      if (this.showTestList && this.getTestPatients().length === 0) {
-        alert('No patients waiting for tests!');
-        this.showTestList = false;
-      }
-      return;
-    }
-    this.apiService.put(`/appointments/${running.id}/status`, { status: 'need_test' }).subscribe({
-      next: () => {
-        const timeToMin = (t: string | null | undefined): number => {
-          if (!t) return Infinity;
-          let s = t.trim();
-          if (s.length === 5) s += ':00';
-          const [h, m] = s.split(':').map(Number);
-          return (isNaN(h) ? 0 : h) * 60 + (isNaN(m) ? 0 : m);
-        };
-        const waiting = this.dashboardData!.todayAppointments
-          .filter(apt => apt.isPresent && ['scheduled', 'confirmed', 'serialized'].includes(apt.status))
-          .sort((a, b) => {
-            const ta = timeToMin(a.appointmentTime);
-            const tb = timeToMin(b.appointmentTime);
-            return ta !== tb ? ta - tb : (a.serialNumber || 0) - (b.serialNumber || 0);
-          });
-        if (waiting.length > 0) {
-          this.apiService.put(`/appointments/${waiting[0].id}/status`, { status: 'running' }).subscribe({
-            next: () => {
-              this.showTestList = true;
-              this.loadDashboardData();
-            },
-            error: () => this.loadDashboardData()
-          });
-        } else {
-          this.showTestList = true;
-          this.loadDashboardData();
-        }
-      },
-      error: () => alert('Failed to send patient to test. Please try again.')
-    });
   }
 
   getSortedPatients(): Appointment[] {
@@ -343,21 +260,5 @@ export class DashboardComponent implements OnInit, OnDestroy {
       const tb = timeToMin(b.appointmentTime);
       return ta !== tb ? ta - tb : (a.serialNumber || 0) - (b.serialNumber || 0);
     });
-  }
-
-  getTestPatients(): Appointment[] {
-    if (!this.dashboardData?.todayAppointments) return [];
-    return this.dashboardData.todayAppointments
-      .filter(apt => apt.isPresent && apt.status === 'need_test')
-      .sort((a, b) => (a.serialNumber || 0) - (b.serialNumber || 0));
-  }
-
-  assignTestSerial(appointment: Appointment): void {
-    if (confirm(`Call patient for lab test?\n\nSerial #${appointment.serialNumber}\n${appointment.patient.fullName}`)) {
-      this.apiService.put(`/appointments/${appointment.id}/status`, { status: 'next' }).subscribe({
-        next: () => this.loadDashboardData(),
-        error: () => alert('Failed to call patient for test. Please try again.')
-      });
-    }
   }
 }
