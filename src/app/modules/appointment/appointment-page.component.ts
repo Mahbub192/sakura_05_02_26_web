@@ -20,6 +20,11 @@ export class AppointmentPageComponent implements OnInit {
   submitting = false;
   error = '';
   success = '';
+  /** Booking success: show confirmation modal with serial number */
+  showSuccessModal = false;
+  successSerialNumber: string | null = null;
+  /** Booking error: show error modal */
+  showErrorModal = false;
   foundPatients: any[] = [];
   selectedPatient: any = null;
   searchingPatient = false;
@@ -403,23 +408,32 @@ export class AppointmentPageComponent implements OnInit {
     }
     this.apiService.post('/public/appointments', formData).subscribe({
       next: (response: any) => {
-        this.success = `Appointment booked successfully! Serial Number: ${response.serialNumber}`;
+        this.successSerialNumber = response?.serialNumber ?? null;
+        this.showSuccessModal = true;
         this.submitting = false;
-        setTimeout(() => {
-          this.appointmentForm.reset();
-          this.setDefaultDate();
-          this.appointmentForm.patchValue({ identifier: 'New' });
-          this.selectedPatient = null;
-          this.foundPatients = [];
-          this.selectedSlot = null;
-          this.success = '';
-        }, 2500);
       },
       error: (err) => {
         this.error = err.error?.message || 'Failed to book appointment';
+        this.showErrorModal = true;
         this.submitting = false;
       },
     });
+  }
+
+  closeSuccessModal(): void {
+    this.showSuccessModal = false;
+    this.successSerialNumber = null;
+    this.appointmentForm.reset();
+    this.setDefaultDate();
+    this.appointmentForm.patchValue({ identifier: 'New' });
+    this.selectedPatient = null;
+    this.foundPatients = [];
+    this.selectedSlot = null;
+  }
+
+  closeErrorModal(): void {
+    this.showErrorModal = false;
+    this.error = '';
   }
 
   onCancel(): void {
