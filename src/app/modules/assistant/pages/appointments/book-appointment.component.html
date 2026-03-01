@@ -1,0 +1,277 @@
+<div class="min-h-screen bg-white">
+  <div class="w-full max-w-full px-0 flex flex-col">
+    <!-- Header -->
+    <div class="flex items-center justify-between gap-4 mb-5 p-4">
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          (click)="onCancel()"
+          class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-dark-green/30 hover:text-dark-green transition-colors shrink-0">
+          <span class="material-symbols-outlined text-xl">arrow_back</span>
+        </button>
+        <div>
+          <h1 class="text-xl font-black tracking-tight text-dark-green flex items-center gap-2">
+            <span class="material-symbols-outlined text-dark-green text-xl">event_available</span>
+            Book New Appointment
+          </h1>
+          <p class="text-slate-600 text-sm mt-0.5">Fill in the patient details to book an appointment</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error" class="rounded-xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 flex items-center gap-2 text-sm mb-4">
+      <span class="material-symbols-outlined text-red-600">error</span>
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Success -->
+    <div *ngIf="success" class="rounded-xl bg-accent-green/10 border border-accent-green/30 text-dark-green px-4 py-3 flex items-center gap-2 text-sm mb-4">
+      <span class="material-symbols-outlined text-accent-green">check_circle</span>
+      <p>{{ success }}</p>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="rounded-xl bg-white border border-dark-green/5 shadow-sm p-5 lg:p-6 w-full">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-2 gap-y-3">
+        <!-- Chamber -->
+        <div class="sm:col-span-2 lg:col-span-1 book-form-field">
+          <label class="book-form-label">
+            <span class="material-symbols-outlined book-form-icon">apartment</span>
+            Chamber <span class="text-red-500">*</span>
+          </label>
+          <select
+            formControlName="chamberId"
+            class="book-form-input"
+            [class.border-red-300]="f['chamberId'].invalid && f['chamberId'].touched">
+            <option value="">Select Chamber</option>
+            <option *ngFor="let chamber of chambers" [value]="chamber.id">{{ chamber.name }} - {{ chamber.appointmentNumber }}</option>
+          </select>
+          <div class="book-form-msg"><p *ngIf="f['chamberId'].invalid && f['chamberId'].touched" class="book-form-error">Please select a chamber</p></div>
+        </div>
+
+        <!-- Phone -->
+        <div class="book-form-field">
+          <label class="book-form-label">
+            <span class="material-symbols-outlined book-form-icon">phone</span>
+            Phone Number <span class="text-red-500">*</span>
+            <span *ngIf="searchingPatient" class="ml-2 inline-block animate-spin rounded-full h-3 w-3 border-2 border-dark-green border-t-transparent"></span>
+          </label>
+          <input
+            type="tel"
+            formControlName="phone"
+            placeholder="01710000000"
+            class="book-form-input"
+            [class.border-red-300]="f['phone'].invalid && f['phone'].touched">
+          <div class="book-form-msg"><p *ngIf="f['phone'].invalid && f['phone'].touched" class="book-form-error">Please enter a valid phone number (01XXXXXXXXX)</p></div>
+
+          <div *ngIf="foundPatients.length > 1 && !selectedPatient" class="mt-2 p-3 rounded-lg bg-dark-green/5 border border-dark-green/20">
+            <p class="text-xs font-semibold text-dark-green mb-2 flex items-center gap-1">
+              <span class="material-symbols-outlined text-base">info</span>
+              Multiple patients found with this phone number:
+            </p>
+            <div class="space-y-2 max-h-40 overflow-y-auto">
+              <button
+                *ngFor="let patient of foundPatients"
+                type="button"
+                (click)="selectPatient(patient)"
+                class="w-full text-left px-3 py-2 rounded-lg border border-slate-200 bg-white hover:border-dark-green/40 hover:bg-accent-green/5 text-sm transition-colors">
+                <div class="font-semibold text-slate-800">{{ patient.fullName }}</div>
+                <div class="text-xs text-slate-600">Age: {{ patient.age }}{{ patient.months ? '.' + patient.months : '' }} | Gender: {{ patient.gender || 'N/A' }} | ID: {{ patient.patientId }}</div>
+              </button>
+            </div>
+            <button type="button" (click)="createNewPatient()" class="mt-2 w-full px-3 py-2 rounded-lg bg-accent-green text-dark-green font-bold text-sm hover:opacity-90">
+              <span class="material-symbols-outlined text-base align-middle mr-1">add</span>
+              Create New Patient
+            </button>
+          </div>
+
+          <div *ngIf="selectedPatient" class="mt-2 p-2 rounded-lg bg-accent-green/10 border border-accent-green/30">
+            <p class="text-xs font-semibold text-dark-green flex items-center gap-1">
+              <span class="material-symbols-outlined text-base">check_circle</span>
+              Selected: {{ selectedPatient.fullName }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Patient Name -->
+        <div class="book-form-field">
+          <label class="book-form-label">
+            <span class="material-symbols-outlined book-form-icon">person</span>
+            Patient Name <span class="text-red-500">*</span>
+          </label>
+          <input type="text" formControlName="fullName" placeholder="Enter full name" class="book-form-input" [class.border-red-300]="f['fullName'].invalid && f['fullName'].touched">
+          <div class="book-form-msg"><p *ngIf="f['fullName'].invalid && f['fullName'].touched" class="book-form-error">Please enter patient name</p></div>
+        </div>
+
+        <!-- Type (Identifier) -->
+        <div class="book-form-field">
+          <label class="book-form-label">
+            <span class="material-symbols-outlined book-form-icon">label</span>
+            Type <span class="text-red-500">*</span>
+          </label>
+          <select formControlName="identifier" class="book-form-input" [class.border-red-300]="f['identifier'].invalid && f['identifier'].touched">
+            <option value="">Select Type</option>
+            <option *ngFor="let type of identifierTypes" [value]="type">{{ type }}</option>
+          </select>
+          <div class="book-form-msg"><p *ngIf="f['identifier'].invalid && f['identifier'].touched" class="book-form-error">Please select a type</p></div>
+        </div>
+
+        <!-- Gender -->
+        <div class="book-form-field">
+          <label class="book-form-label">
+            <span class="material-symbols-outlined book-form-icon">female</span>
+            Gender <span class="text-red-500">*</span>
+          </label>
+          <select formControlName="gender" class="book-form-input" [class.border-red-300]="f['gender'].invalid && f['gender'].touched">
+            <option value="">Select Gender</option>
+            <option *ngFor="let g of genders" [value]="g.value">{{ g.label }}</option>
+          </select>
+          <div class="book-form-msg"><p *ngIf="f['gender'].invalid && f['gender'].touched" class="book-form-error">Please select gender</p></div>
+        </div>
+
+        <!-- Age -->
+        <div class="book-form-field">
+          <label class="book-form-label">
+            <span class="material-symbols-outlined book-form-icon">cake</span>
+            Age (Years) <span class="text-red-500">*</span>
+          </label>
+          <input type="number" formControlName="age" placeholder="60" min="0" max="150" class="book-form-input" [class.border-red-300]="f['age'].invalid && f['age'].touched">
+          <div class="book-form-msg"><p *ngIf="f['age'].invalid && f['age'].touched" class="book-form-error">Please enter a valid age</p></div>
+        </div>
+
+        <!-- Months -->
+        <div class="book-form-field mt-2">
+          <label class="book-form-label">Months</label>
+          <input type="number" formControlName="months" placeholder="6" min="0" max="11" class="book-form-input">
+          <div class="book-form-msg"><p class="text-xs text-slate-500">Additional months (0-11)</p></div>
+        </div>
+
+        <!-- Appointment Date -->
+        <div class="book-form-field">
+          <label class="book-form-label">
+            <span class="material-symbols-outlined book-form-icon">calendar_today</span>
+            Appointment Date <span class="text-red-500">*</span>
+          </label>
+          <input type="date" formControlName="appointmentDate" class="book-form-input" [class.border-red-300]="f['appointmentDate'].invalid && f['appointmentDate'].touched">
+          <div class="book-form-msg"><p *ngIf="f['appointmentDate'].invalid && f['appointmentDate'].touched" class="book-form-error">Please select appointment date</p></div>
+        </div>
+
+        <!-- Appointment Slot -->
+        <div class="sm:col-span-2 lg:col-span-4 mt-0">
+          <label class="book-form-label">
+            <span class="material-symbols-outlined book-form-icon">schedule</span>
+            Appointment Slot (Optional)
+            <span *ngIf="loadingSlots" class="text-xs text-slate-500 ml-2">Loading...</span>
+          </label>
+
+          <div *ngIf="availableSlots.length > 0" class="rounded-xl border border-slate-200 bg-slate-50/50 p-3 overflow-y-auto" style="max-height: 260px; min-height: 140px;">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-1.5">
+              <ng-container *ngFor="let slot of availableSlots">
+                <button
+                  *ngFor="let timeSlot of generateTimeSlots(slot)"
+                  type="button"
+                  (click)="selectTimeSlot(timeSlot, slot)"
+                  [class]="getTimeSlotButtonClass(timeSlot)"
+                  [disabled]="timeSlot.isBooked || !timeSlot.isActive"
+                  class="px-2.5 py-1.5 rounded-lg font-semibold text-xs transition-all w-full">
+                  {{ formatTime(timeSlot.time) }}
+                </button>
+              </ng-container>
+            </div>
+          </div>
+
+          <div *ngIf="selectedSlot" class="mt-3 rounded-lg bg-accent-green/10 border border-accent-green/30 p-3">
+            <p class="text-sm font-medium text-dark-green flex items-center gap-2">
+              <span class="material-symbols-outlined text-accent-green">check_circle</span>
+              Selected Time: <span class="font-bold">{{ formatTime(selectedSlot.time) }}</span>
+            </p>
+          </div>
+
+          <div *ngIf="!loadingSlots && availableSlots.length === 0 && f['chamberId'].value && f['appointmentDate'].value" class="rounded-lg bg-amber-50 border border-amber-200 p-3 text-amber-800 text-sm flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-600">warning</span>
+            No time slots available for this date. You can still book without selecting a slot.
+          </div>
+
+          <div *ngIf="loadingSlots" class="flex items-center justify-center py-8 text-slate-500 text-sm">
+            <span class="inline-block animate-spin rounded-full h-6 w-6 border-2 border-dark-green border-t-transparent mr-2"></span>
+            Loading available time slots...
+          </div>
+
+          <p *ngIf="!loadingSlots && availableSlots.length === 0 && (!f['chamberId'].value || !f['appointmentDate'].value)" class="text-sm text-slate-500 italic">
+            Select chamber and date to see available time slots
+          </p>
+        </div>
+
+        <!-- District -->
+        <div class="book-form-field">
+          <label class="book-form-label">District</label>
+          <select formControlName="district" class="book-form-input">
+            <option value="">Select District</option>
+            <option *ngFor="let d of districts" [value]="d">{{ d }}</option>
+          </select>
+          <div class="book-form-msg"></div>
+        </div>
+
+        <!-- Upazila -->
+        <div class="book-form-field">
+          <label class="book-form-label">Upazila</label>
+          <input type="text" formControlName="upazila" placeholder="Enter upazila" class="book-form-input">
+          <div class="book-form-msg"></div>
+        </div>
+
+        <!-- Union -->
+        <div class="book-form-field">
+          <label class="book-form-label">Union</label>
+          <input type="text" formControlName="union" placeholder="Enter union" class="book-form-input">
+          <div class="book-form-msg"></div>
+        </div>
+
+        <!-- Fee -->
+        <div class="book-form-field">
+          <label class="book-form-label">Fee (৳)</label>
+          <input type="number" formControlName="fee" placeholder="0" min="0" class="book-form-input bg-slate-50" readonly>
+          <div class="book-form-msg"><p class="text-xs text-slate-500">Auto-calculated based on type</p></div>
+        </div>
+
+        <!-- Referer Doctor -->
+        <div class="book-form-field">
+          <label class="book-form-label">Referer Doctor</label>
+          <input type="text" formControlName="refererDoctor" placeholder="Enter referer doctor name" class="book-form-input">
+          <div class="book-form-msg"></div>
+        </div>
+
+        <!-- Referer PC -->
+        <div class="book-form-field">
+          <label class="book-form-label">Referer PC</label>
+          <input type="text" formControlName="refererPC" placeholder="Enter referer PC name" class="book-form-input">
+          <div class="book-form-msg"></div>
+        </div>
+
+        <!-- Notes -->
+        <div class="sm:col-span-2 lg:col-span-4">
+          <label class="book-form-label">Notes</label>
+          <textarea formControlName="notes" rows="3" placeholder="Enter any additional notes..." class="book-form-input resize-none"></textarea>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-wrap items-center justify-end gap-3 mt-4 pt-4 border-t border-slate-200">
+        <button type="button" (click)="onCancel()" class="book-form-btn book-form-btn-cancel">
+          <span class="material-symbols-outlined text-lg">close</span>
+          <span>Cancel</span>
+        </button>
+        <button type="submit" [disabled]="submitting || loading" class="book-form-btn book-form-btn-submit disabled:cursor-not-allowed">
+          <span *ngIf="!submitting" class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg">event_available</span>
+            <span>Book Appointment</span>
+          </span>
+          <span *ngIf="submitting" class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-lg animate-spin">progress_activity</span>
+            <span>Booking...</span>
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
