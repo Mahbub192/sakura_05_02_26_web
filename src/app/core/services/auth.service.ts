@@ -7,6 +7,7 @@ import { StorageService } from './storage.service';
 
 export interface User {
   id: number;
+  code?: string;
   phone: string;
   email?: string;
   role: 'admin' | 'doctor' | 'assistant' | 'patient';
@@ -16,7 +17,7 @@ export interface User {
   address?: string;
   age?: number;
   profilePicture?: string;
-  chambers?: { id: number; name: string }[];
+  chambers?: { id: number; code?: string; name: string }[];
 }
 
 export interface UpdateProfileRequest {

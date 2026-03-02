@@ -1,0 +1,91 @@
+<div class="relative flex h-screen w-full flex-col overflow-hidden bg-background-light font-display text-slate-900">
+  <header class="z-20 flex h-16 shrink-0 items-center justify-between border-b border-dark-green/10 bg-white px-6 py-3 lg:px-8">
+    <div class="flex items-center gap-4">
+      <button
+        type="button"
+        class="flex lg:hidden relative z-[100] items-center justify-center rounded-lg p-2 text-dark-green hover:bg-dark-green/10"
+        (click)="toggleDrawer()"
+      >
+        <span class="material-symbols-outlined text-3xl">{{ drawerOpen ? 'close' : 'menu' }}</span>
+      </button>
+      <a routerLink="/" class="flex items-center gap-4 text-dark-green">
+        <div class="flex size-8 items-center justify-center rounded-lg bg-dark-green text-white">
+          <span class="material-symbols-outlined text-xl">medical_services</span>
+        </div>
+        <h2 class="text-lg font-bold">ENT Specialist Clinic</h2>
+      </a>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-sm text-slate-600">{{ user?.fullName }}</span>
+      <button
+        type="button"
+        (click)="logout()"
+        class="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+      >
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <div class="flex flex-1 overflow-hidden">
+    <aside class="hidden lg:flex w-64 shrink-0 flex-col bg-dark-green text-white">
+      <div class="p-6 pb-4">
+        <h1 class="text-xl font-bold">Admin</h1>
+        <p class="text-xs font-medium uppercase tracking-wider text-white/70">Dashboard</p>
+      </div>
+      <nav class="flex flex-1 flex-col gap-1 px-4 pb-4">
+        <a
+          routerLink="/admin/doctors"
+          routerLinkActive="doctor-nav-active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors hover:bg-white/5"
+        >
+          <span class="material-symbols-outlined">person</span>
+          <span class="text-sm font-medium">Doctors</span>
+        </a>
+        <button
+          type="button"
+          (click)="logout()"
+          class="mt-2 flex items-center gap-3 rounded-lg px-4 py-3 text-white/90 hover:bg-white/10"
+        >
+          <span class="material-symbols-outlined">logout</span>
+          <span class="text-sm font-medium">Logout</span>
+        </button>
+      </nav>
+    </aside>
+
+    <div
+      *ngIf="drawerOpen"
+      class="fixed inset-0 z-30 bg-black/30 lg:hidden"
+      (click)="closeDrawer()"
+    ></div>
+    <aside
+      *ngIf="drawerOpen"
+      class="fixed left-0 top-16 bottom-0 z-40 w-64 flex flex-col bg-dark-green text-white lg:hidden"
+    >
+      <nav class="flex flex-1 flex-col gap-1 p-4">
+        <a
+          routerLink="/admin/doctors"
+          routerLinkActive="doctor-nav-active"
+          (click)="closeDrawer()"
+          class="flex items-center gap-3 rounded-lg px-4 py-3 hover:bg-white/5"
+        >
+          <span class="material-symbols-outlined">person</span>
+          <span class="text-sm font-medium">Doctors</span>
+        </a>
+        <button
+          type="button"
+          (click)="logout(); closeDrawer()"
+          class="mt-2 flex items-center gap-3 rounded-lg px-4 py-3 text-white/90 hover:bg-white/10"
+        >
+          <span class="material-symbols-outlined">logout</span>
+          <span class="text-sm font-medium">Logout</span>
+        </button>
+      </nav>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto bg-background-light p-6 lg:p-8">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

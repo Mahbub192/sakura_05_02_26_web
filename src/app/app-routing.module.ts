@@ -64,6 +64,12 @@ const routes: Routes = [
     data: { role: 'doctor' }
   },
   {
+    path: 'admin',
+    loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule),
+    canActivate: [AuthGuard],
+    data: { role: 'admin' }
+  },
+  {
     path: '**',
     redirectTo: ''
   }

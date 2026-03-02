@@ -1,0 +1,75 @@
+<div class="mx-auto max-w-4xl">
+  <button type="button" (click)="back()" class="mb-4 text-dark-green hover:underline">
+    ← Back to Doctors
+  </button>
+
+  <p *ngIf="error" class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{{ error }}</p>
+  <div *ngIf="loading" class="rounded-xl bg-white p-8 text-center text-slate-500">Loading...</div>
+
+  <ng-container *ngIf="!loading && doctor">
+    <div class="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-6">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">{{ doctor.fullName }}</h1>
+        <p class="mt-1 font-mono text-slate-600">ID: {{ doctor.code }}</p>
+        <p class="mt-1 text-slate-600">Phone: {{ doctor.phone }}</p>
+        <p class="mt-1 text-slate-600" *ngIf="doctor.email">Email: {{ doctor.email }}</p>
+        <span
+          class="mt-2 inline-block rounded px-2 py-0.5 text-sm"
+          [class.bg-green-100]="doctor.isActive"
+          [class.text-green-800]="doctor.isActive"
+          [class.bg-slate-200]="!doctor.isActive"
+          [class.text-slate-600]="!doctor.isActive"
+        >
+          {{ doctor.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+      <button
+        type="button"
+        (click)="edit()"
+        class="rounded-lg border border-dark-green bg-white px-4 py-2 text-sm font-medium text-dark-green hover:bg-dark-green/5"
+      >
+        Edit Doctor
+      </button>
+    </div>
+
+    <div class="grid gap-8 md:grid-cols-2">
+      <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
+        <h2 class="border-b border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700">
+          Assistants ({{ assistants.length }})
+        </h2>
+        <div class="max-h-64 overflow-y-auto p-4">
+          <p *ngIf="assistants.length === 0" class="text-slate-500 text-sm">No assistants.</p>
+          <ul *ngIf="assistants.length > 0" class="space-y-2">
+            <li *ngFor="let a of assistants" class="flex justify-between text-sm">
+              <span class="font-medium">{{ a.fullName }}</span>
+              <span class="text-slate-500">{{ a.phone }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
+        <h2 class="border-b border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700">
+          Chambers ({{ chambers.length }})
+        </h2>
+        <div class="max-h-64 overflow-y-auto p-4">
+          <p *ngIf="chambers.length === 0" class="text-slate-500 text-sm">No chambers.</p>
+          <ul *ngIf="chambers.length > 0" class="space-y-2">
+            <li *ngFor="let c of chambers" class="flex flex-wrap items-center justify-between gap-2 text-sm">
+              <span class="font-medium">{{ c.name }}</span>
+              <span class="font-mono text-slate-600">({{ c.code }})</span>
+              <span
+                class="rounded px-2 py-0.5 text-xs"
+                [class.bg-green-100]="c.isActive"
+                [class.text-green-800]="c.isActive"
+                [class.bg-slate-200]="!c.isActive"
+                [class.text-slate-600]="!c.isActive"
+              >
+                {{ c.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

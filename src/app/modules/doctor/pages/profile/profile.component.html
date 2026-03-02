@@ -20,12 +20,12 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="profile-label">Doctor ID</label>
-            <input type="text" [value]="profile.id" readonly class="profile-input">
+            <input type="text" [value]="profile.code || profile.id" readonly class="profile-input">
           </div>
         </div>
-        <div class="mt-4" *ngIf="profile.chambers && profile.chambers.length > 0">
+        <div class="mt-4" *ngIf="chambers && chambers.length > 0">
           <label class="profile-label block mb-2">
-            সব চেম্বার (All Chambers) — {{ profile.chambers.length }} টি
+            সব চেম্বার (All Chambers) — {{ chambers.length }} টি
           </label>
           <div class="rounded-lg border border-slate-200 overflow-hidden">
             <table class="w-full text-sm">
@@ -36,15 +36,15 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let ch of profile.chambers" class="border-t border-slate-200">
-                  <td class="px-4 py-2">{{ ch.id }}</td>
+                <tr *ngFor="let ch of chambers" class="border-t border-slate-200">
+                  <td class="px-4 py-2">{{ ch.code || ch.id }}</td>
                   <td class="px-4 py-2">{{ ch.name }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
-        <p *ngIf="!profile.chambers || profile.chambers.length === 0" class="text-slate-500 text-sm mt-2">কোন চেম্বার নেই। (No chambers assigned.)</p>
+        <p *ngIf="!chambers || chambers.length === 0" class="text-slate-500 text-sm mt-2">কোন চেম্বার নেই। (No chambers assigned.)</p>
       </div>
     </div>
 

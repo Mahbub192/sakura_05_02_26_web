@@ -1,5 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService, User, UpdateProfileRequest } from '../../../../core/services/auth.service';
+import { ApiService } from '../../../../core/services/api.service';
+
+/** Chamber row for profile display (id, code, name) */
+interface ChamberDisplay {
+  id: number;
+  code?: string;
+  name: string;
+}
 
 @Component({
   selector: 'app-profile',
@@ -8,6 +16,8 @@ import { AuthService, User, UpdateProfileRequest } from '../../../../core/servic
 })
 export class ProfileComponent implements OnInit {
   profile: User | null = null;
+  /** Chambers to show: from GET /chambers for doctor (matches All Chambers), else from profile */
+  chambers: ChamberDisplay[] = [];
   loading = true;
   saving = false;
   uploadingPhoto = false;
@@ -23,7 +33,10 @@ export class ProfileComponent implements OnInit {
     age: undefined,
   };
 
-  constructor(public authService: AuthService) {}
+  constructor(
+    public authService: AuthService,
+    private apiService: ApiService,
+  ) {}
 
   ngOnInit(): void {
     this.loadProfile();
@@ -43,7 +56,21 @@ export class ProfileComponent implements OnInit {
           address: res.address ?? '',
           age: res.age ?? undefined,
         };
-        this.loading = false;
+        if (res.role === 'doctor') {
+          this.apiService.get<ChamberDisplay[]>('/chambers').subscribe({
+            next: (list) => {
+              this.chambers = list?.map((c) => ({ id: c.id, code: (c as any).code, name: c.name })) ?? [];
+              this.loading = false;
+            },
+            error: () => {
+              this.chambers = res.chambers ?? [];
+              this.loading = false;
+            },
+          });
+        } else {
+          this.chambers = res.chambers ?? [];
+          this.loading = false;
+        }
       },
       error: (err) => {
         this.error = err.error?.message || 'Failed to load profile.';
@@ -71,6 +98,7 @@ export class ProfileComponent implements OnInit {
     this.authService.updateProfile(body).subscribe({
       next: (updated) => {
         this.profile = updated;
+        this.chambers = updated.chambers ?? this.chambers;
         this.form = {
           fullName: updated.fullName ?? '',
           email: updated.email ?? '',
@@ -102,6 +130,7 @@ export class ProfileComponent implements OnInit {
     this.authService.uploadProfilePicture(file).subscribe({
       next: (updated) => {
         this.profile = updated;
+        this.chambers = updated.chambers ?? this.chambers;
         this.uploadingPhoto = false;
         this.success = true;
         setTimeout(() => (this.success = false), 3000);

@@ -1,0 +1,84 @@
+<div class="mx-auto max-w-6xl">
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+    <h1 class="text-2xl font-bold text-slate-900">Doctors</h1>
+    <button
+      type="button"
+      (click)="create()"
+      class="rounded-lg bg-dark-green px-4 py-2.5 text-sm font-bold text-white hover:opacity-90"
+    >
+      Add Doctor
+    </button>
+  </div>
+
+  <p *ngIf="error" class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{{ error }}</p>
+
+  <div *ngIf="loading" class="rounded-xl bg-white p-12 text-center text-slate-500">
+    Loading doctors...
+  </div>
+
+  <div *ngIf="!loading && doctors.length === 0" class="rounded-xl bg-white p-12 text-center text-slate-500">
+    No doctors yet. Click "Add Doctor" to create one.
+  </div>
+
+  <div *ngIf="!loading && doctors.length > 0" class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+    <table class="w-full text-left text-sm">
+      <thead class="bg-slate-100">
+        <tr>
+          <th class="px-4 py-3 font-semibold text-slate-700">ID (Code)</th>
+          <th class="px-4 py-3 font-semibold text-slate-700">Name</th>
+          <th class="px-4 py-3 font-semibold text-slate-700">Phone</th>
+          <th class="px-4 py-3 font-semibold text-slate-700">Email</th>
+          <th class="px-4 py-3 font-semibold text-slate-700">Status</th>
+          <th class="px-4 py-3 font-semibold text-slate-700 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of doctors" class="border-t border-slate-100 hover:bg-slate-50/50">
+          <td class="px-4 py-3 font-mono text-slate-700">{{ d.code }}</td>
+          <td class="px-4 py-3 font-medium">{{ d.fullName }}</td>
+          <td class="px-4 py-3">{{ d.phone }}</td>
+          <td class="px-4 py-3">{{ d.email || '–' }}</td>
+          <td class="px-4 py-3">
+            <span
+              [class]="d.isActive ? 'rounded bg-green-100 px-2 py-0.5 text-green-800' : 'rounded bg-slate-200 px-2 py-0.5 text-slate-600'"
+            >
+              {{ d.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-right">
+            <button
+              type="button"
+              (click)="viewDetail(d)"
+              class="mr-2 text-dark-green hover:underline"
+            >
+              View
+            </button>
+            <button
+              type="button"
+              (click)="edit(d)"
+              class="mr-2 text-slate-600 hover:underline"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              (click)="toggleActive(d)"
+              [disabled]="actionLoading[d.id] === 'active'"
+              class="mr-2 text-slate-600 hover:underline disabled:opacity-50"
+            >
+              {{ actionLoading[d.id] === 'active' ? '...' : (d.isActive ? 'Deactivate' : 'Activate') }}
+            </button>
+            <button
+              type="button"
+              (click)="delete(d)"
+              [disabled]="actionLoading[d.id] === 'delete'"
+              class="text-red-600 hover:underline disabled:opacity-50"
+            >
+              {{ actionLoading[d.id] === 'delete' ? '...' : 'Delete' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
