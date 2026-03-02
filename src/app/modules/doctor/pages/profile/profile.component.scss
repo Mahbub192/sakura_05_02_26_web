@@ -22,3 +22,20 @@
     border-color: #cbd5e1;
   }
 }
+
+.profile-input-editable {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: #0f172a;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  cursor: text;
+
+  &:focus {
+    outline: none;
+    border-color: var(--ent-primary, #ea2e00);
+    box-shadow: 0 0 0 2px rgba(234, 46, 0, 0.1);
+  }
+}

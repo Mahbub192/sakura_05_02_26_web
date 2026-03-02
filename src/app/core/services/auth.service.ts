@@ -12,6 +12,20 @@ export interface User {
   role: 'admin' | 'doctor' | 'assistant' | 'patient';
   fullName: string;
   isActive: boolean;
+  education?: string;
+  address?: string;
+  age?: number;
+  profilePicture?: string;
+  chambers?: { id: number; name: string }[];
+}
+
+export interface UpdateProfileRequest {
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  education?: string;
+  address?: string;
+  age?: number;
 }
 
 export interface LoginRequest {
@@ -105,5 +119,29 @@ export class AuthService {
   hasRole(role: string): boolean {
     const user = this.currentUserValue;
     return user?.role === role;
+  }
+
+  getProfile(): Observable<User> {
+    return this.http.get<User>(`${environment.apiUrl}/auth/me`);
+  }
+
+  updateProfile(body: UpdateProfileRequest): Observable<User> {
+    return this.http.put<User>(`${environment.apiUrl}/users/me`, body).pipe(
+      tap((user) => {
+        this.storage.setUser(user);
+        this.currentUserSubject.next(user);
+      }),
+    );
+  }
+
+  uploadProfilePicture(file: File): Observable<User> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<User>(`${environment.apiUrl}/users/me/avatar`, formData).pipe(
+      tap((user) => {
+        this.storage.setUser(user);
+        this.currentUserSubject.next(user);
+      }),
+    );
   }
 }

@@ -118,12 +118,13 @@
       </nav>
       <div class="border-t border-white/10 p-6">
         <div class="flex items-center gap-3">
-          <div class="flex size-10 items-center justify-center rounded-full border border-accent-green bg-accent-green/30 text-accent-green">
-            <span class="material-symbols-outlined">person</span>
+          <div class="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-accent-green bg-accent-green/30 text-accent-green">
+            <img *ngIf="user?.profilePicture" [src]="user?.profilePicture" alt="" class="h-full w-full object-cover" />
+            <span *ngIf="!user?.profilePicture" class="material-symbols-outlined">person</span>
           </div>
           <div class="min-w-0 flex-1 overflow-hidden">
             <p class="truncate text-sm font-bold">{{ user?.fullName || 'Doctor' }}</p>
-            <p class="truncate text-xs text-white/60">Physician</p>
+            <p class="truncate text-xs text-white/60">{{ user?.education || 'Physician' }}</p>
           </div>
         </div>
       </div>
@@ -228,12 +229,13 @@
       </nav>
       <div class="border-t border-white/10 p-6 shrink-0">
         <div class="flex items-center gap-3">
-          <div class="flex size-10 items-center justify-center rounded-full border border-accent-green bg-accent-green/30 text-accent-green">
-            <span class="material-symbols-outlined">person</span>
+          <div class="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-accent-green bg-accent-green/30 text-accent-green">
+            <img *ngIf="user?.profilePicture" [src]="user?.profilePicture" alt="" class="h-full w-full object-cover" />
+            <span *ngIf="!user?.profilePicture" class="material-symbols-outlined">person</span>
           </div>
           <div class="min-w-0 flex-1 overflow-hidden">
             <p class="truncate text-sm font-bold">{{ user?.fullName || 'Doctor' }}</p>
-            <p class="truncate text-xs text-white/60">Physician</p>
+            <p class="truncate text-xs text-white/60">{{ user?.education || 'Physician' }}</p>
           </div>
         </div>
       </div>
