@@ -1,6 +1,6 @@
 {
   "name": "sakura-frontend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sakura - Single Doctor Appointment System Frontend",
   "scripts": {
     "ng": "ng",
@@ -40,5 +40,3 @@
     "typescript": "~5.2.2"
   }
 }
-
-
