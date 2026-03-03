@@ -504,6 +504,8 @@ export class AppointmentPageComponent implements OnInit {
     this.selectedPatient = null;
     this.foundPatients = [];
     this.selectedSlot = null;
+    // Appointment confirm এর পর পেজ রিলোড
+    window.location.reload();
   }
 
   closeErrorModal(): void {

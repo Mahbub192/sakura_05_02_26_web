@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { UPLOADS_BASE_URL } from '../../../config/api.config';
 import { environment } from '../../../environments/environment';
 import { StorageService } from './storage.service';
 
@@ -144,5 +145,21 @@ export class AuthService {
         this.currentUserSubject.next(user);
       }),
     );
+  }
+
+  /**
+   * Resolve avatar URL so it always uses the same host as the API (avoids localhost:3000 when API is elsewhere).
+   * Use this for [src] when displaying profilePicture from the backend.
+   */
+  getAvatarUrl(profilePicture: string | undefined): string | undefined {
+    if (!profilePicture?.trim()) return undefined;
+    const s = profilePicture.trim();
+    if (s.startsWith('/')) return UPLOADS_BASE_URL + s;
+    try {
+      const u = new URL(s);
+      return UPLOADS_BASE_URL + u.pathname;
+    } catch {
+      return s;
+    }
   }
 }

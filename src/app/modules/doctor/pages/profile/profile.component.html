@@ -58,7 +58,7 @@
         <!-- Profile photo upload -->
         <div class="mb-6 flex flex-wrap items-end gap-4">
           <div class="flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-dark-green/20 bg-slate-100">
-            <img *ngIf="profile?.profilePicture" [src]="profile.profilePicture" alt="Profile" class="h-full w-full object-cover" />
+            <img *ngIf="profile?.profilePicture" [src]="authService.getAvatarUrl(profile.profilePicture)" alt="Profile" class="h-full w-full object-cover" />
             <span *ngIf="!profile?.profilePicture" class="material-symbols-outlined text-4xl text-slate-400">person</span>
           </div>
           <div class="flex flex-col gap-2">

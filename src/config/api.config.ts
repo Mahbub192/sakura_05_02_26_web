@@ -23,3 +23,6 @@
 
 // SAKURA - For production/staging
 export const API_BASE_URL = 'https://sakura-api.sakuraentcenter.com/api'; // SAKURA - ACTIVE
+
+/** Base URL for static uploads (avatars, etc.) – same host as API, without /api. Use for [src] that point to /uploads/... */
+export const UPLOADS_BASE_URL = API_BASE_URL.replace(/\/api\/?$/, '');
