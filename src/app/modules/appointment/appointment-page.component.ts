@@ -9,6 +9,10 @@ import { ApiService } from '../../core/services/api.service';
   styleUrls: ['./appointment-page.component.scss'],
 })
 export class AppointmentPageComponent implements OnInit {
+  /** Current step: 1 = Doctor/Chamber/Date/Slot, 2 = Patient info, 3 = Review, 4 = Confirm */
+  currentStep = 1;
+  readonly totalSteps = 4;
+
   appointmentForm: FormGroup;
   doctors: any[] = [];
   chambers: any[] = [];
@@ -391,6 +395,53 @@ export class AppointmentPageComponent implements OnInit {
     return this.appointmentForm.controls;
   }
 
+  isStep1Valid(): boolean {
+    const d = this.appointmentForm.get('doctorId')?.value;
+    const c = this.appointmentForm.get('chamberId')?.value;
+    const date = this.appointmentForm.get('appointmentDate')?.value;
+    return !!d && !!c && !!date;
+  }
+
+  isStep2Valid(): boolean {
+    const g = this.appointmentForm.get('gender');
+    const age = this.appointmentForm.get('age');
+    this.appointmentForm.get('phone')?.markAsTouched();
+    this.appointmentForm.get('fullName')?.markAsTouched();
+    this.appointmentForm.get('identifier')?.markAsTouched();
+    g?.markAsTouched();
+    age?.markAsTouched();
+    return (
+      this.appointmentForm.get('phone')?.valid === true &&
+      this.appointmentForm.get('fullName')?.valid === true &&
+      this.appointmentForm.get('identifier')?.valid === true &&
+      g?.valid === true &&
+      age?.valid === true
+    );
+  }
+
+  nextStep(): void {
+    if (this.currentStep === 1 && !this.isStep1Valid()) return;
+    if (this.currentStep === 2 && !this.isStep2Valid()) return;
+    if (this.currentStep < this.totalSteps) {
+      this.currentStep++;
+      this.error = '';
+    }
+  }
+
+  previousStep(): void {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+      this.error = '';
+    }
+  }
+
+  goToStep(step: number): void {
+    if (step >= 1 && step <= this.totalSteps && step < this.currentStep) {
+      this.currentStep = step;
+      this.error = '';
+    }
+  }
+
   onSubmit(): void {
     if (this.appointmentForm.invalid) {
       Object.keys(this.appointmentForm.controls).forEach((key) =>
@@ -423,6 +474,7 @@ export class AppointmentPageComponent implements OnInit {
   closeSuccessModal(): void {
     this.showSuccessModal = false;
     this.successSerialNumber = null;
+    this.currentStep = 1;
     this.appointmentForm.reset();
     this.setDefaultDate();
     this.appointmentForm.patchValue({ identifier: 'New' });
