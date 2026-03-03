@@ -17,7 +17,7 @@
     </div>
 
     <!-- Progress Steps (same width as card) -->
-    <div class="mx-auto mb-4 w-full max-w-4xl rounded-xl border border-dark-green/10 bg-white p-4 shadow sm:p-5">
+    <div class="mx-auto mb-4 w-full max-w-4xl lg:max-w-5xl rounded-xl border border-dark-green/10 bg-white p-4 shadow sm:p-5">
       <!-- Progress bar -->
       <div class="mb-4 h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
         <div
@@ -68,66 +68,71 @@
     <form
       [formGroup]="appointmentForm"
       (ngSubmit)="currentStep === 4 ? onSubmit() : nextStep()"
-      class="relative z-10 mx-auto w-full max-w-4xl overflow-visible rounded-xl border border-dark-green/10 bg-white p-4 shadow sm:p-5"
+      class="relative z-10 mx-auto w-full max-w-4xl lg:max-w-5xl overflow-visible rounded-xl border border-dark-green/10 bg-white p-4 shadow sm:p-5"
     >
-      <!-- Step 1: Doctor, Chamber, Date, Slot -->
-      <div *ngIf="currentStep === 1" class="grid grid-cols-1 gap-4 overflow-visible sm:grid-cols-2 lg:grid-cols-4">
-        <div class="custom-dropdown relative sm:col-span-2 lg:col-span-1">
-          <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-dark-green">
-            <span class="material-symbols-outlined text-ent-primary text-xs">person</span>
-            Doctor <span class="text-red-500">*</span>
-            <span *ngIf="loadingDoctors" class="ml-2">
-              <span class="material-symbols-outlined animate-spin text-base text-ent-primary">progress_activity</span>
-            </span>
-          </label>
-          <button
-            type="button"
-            (click)="toggleDropdown('doctor')"
-            class="flex h-9 w-full items-center justify-between rounded-lg border-2 border-gray-200 bg-white px-3 text-left text-sm transition-all hover:border-gray-300 focus:border-ent-primary focus:outline-none focus:ring-2 focus:ring-ent-primary/20"
-            [class.border-red-300]="f['doctorId'].invalid && f['doctorId'].touched"
-          >
-            <span>{{ getDoctorLabel() }}</span>
-            <span class="material-symbols-outlined text-lg text-gray-500">expand_more</span>
-          </button>
-          <div
-            *ngIf="openDropdown === 'doctor'"
-            class="dropdown-panel absolute left-0 right-0 top-full z-[9999] mt-1 max-h-48 overflow-y-auto rounded-lg border-2 border-dark-green/20 bg-white shadow-xl"
-          >
-            <button type="button" (click)="selectDoctor('')" class="dropdown-option w-full px-3 py-2 text-left text-sm hover:bg-accent-green/20">Select Doctor</button>
-            <button *ngFor="let doctor of doctors" type="button" (click)="selectDoctor(doctor.id)" class="dropdown-option w-full px-3 py-2 text-left text-sm hover:bg-accent-green/20">
-              {{ doctor.fullName }}
+      <!-- Step 1: Chamber (list), then Appointment Date below, then Slot. Doctor shown only when not System Administrator. -->
+      <div *ngIf="currentStep === 1" class="space-y-4 overflow-visible">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" [class.lg:grid-cols-1]="hideDoctorField">
+          <div *ngIf="!hideDoctorField" class="custom-dropdown relative sm:col-span-2 lg:col-span-1">
+            <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-dark-green">
+              <span class="material-symbols-outlined text-ent-primary text-xs">person</span>
+              Doctor <span class="text-red-500">*</span>
+              <span *ngIf="loadingDoctors" class="ml-2">
+                <span class="material-symbols-outlined animate-spin text-base text-ent-primary">progress_activity</span>
+              </span>
+            </label>
+            <button
+              type="button"
+              (click)="toggleDropdown('doctor')"
+              class="flex h-9 w-full items-center justify-between rounded-lg border-2 border-gray-200 bg-white px-3 text-left text-sm transition-all hover:border-gray-300 focus:border-ent-primary focus:outline-none focus:ring-2 focus:ring-ent-primary/20"
+              [class.border-red-300]="f['doctorId'].invalid && f['doctorId'].touched"
+            >
+              <span>{{ getDoctorLabel() }}</span>
+              <span class="material-symbols-outlined text-lg text-gray-500">expand_more</span>
             </button>
+            <div
+              *ngIf="openDropdown === 'doctor'"
+              class="dropdown-panel absolute left-0 right-0 top-full z-[9999] mt-1 max-h-48 overflow-y-auto rounded-lg border-2 border-dark-green/20 bg-white shadow-xl"
+            >
+              <button type="button" (click)="selectDoctor('')" class="dropdown-option w-full px-3 py-2 text-left text-sm hover:bg-accent-green/20">Select Doctor</button>
+              <button *ngFor="let doctor of doctors" type="button" (click)="selectDoctor(doctor.id)" class="dropdown-option w-full px-3 py-2 text-left text-sm hover:bg-accent-green/20">
+                {{ doctor.fullName }}
+              </button>
+            </div>
+            <p *ngIf="f['doctorId'].invalid && f['doctorId'].touched" class="mt-0.5 text-xs text-red-600">Please select a doctor</p>
           </div>
-          <p *ngIf="f['doctorId'].invalid && f['doctorId'].touched" class="mt-0.5 text-xs text-red-600">Please select a doctor</p>
+
         </div>
 
-        <div class="custom-dropdown relative sm:col-span-2 lg:col-span-1">
-          <label class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-dark-green">
+        <!-- Chamber list: full width, 1 per row on mobile/tablet, 2 per row on large screen -->
+        <div class="w-full">
+          <label class="mb-2 flex items-center gap-1.5 text-xs font-semibold text-dark-green">
             <span class="material-symbols-outlined text-ent-primary text-xs">local_hospital</span>
             Chamber <span class="text-red-500">*</span>
           </label>
-          <button
-            type="button"
-            (click)="toggleDropdown('chamber')"
-            class="flex h-9 w-full items-center justify-between rounded-lg border-2 border-gray-200 bg-white px-3 text-left text-sm transition-all hover:border-gray-300 focus:border-ent-primary focus:outline-none focus:ring-2 focus:ring-ent-primary/20"
-            [class.border-red-300]="f['chamberId'].invalid && f['chamberId'].touched"
-          >
-            <span>{{ getChamberLabel() }}</span>
-            <span class="material-symbols-outlined text-lg text-gray-500">expand_more</span>
-          </button>
-          <div
-            *ngIf="openDropdown === 'chamber'"
-            class="dropdown-panel absolute left-0 right-0 top-full z-[9999] mt-1 max-h-48 overflow-y-auto rounded-lg border-2 border-dark-green/20 bg-white shadow-xl"
-          >
-            <button type="button" (click)="selectChamber('')" class="dropdown-option w-full px-3 py-2 text-left text-sm hover:bg-accent-green/20">Select Chamber</button>
-            <button *ngFor="let chamber of chambers" type="button" (click)="selectChamber(chamber.id)" class="dropdown-option w-full px-3 py-2 text-left text-sm hover:bg-accent-green/20">
-              {{ chamber.name }} - {{ chamber.appointmentNumber }}
-            </button>
+          <div class="max-h-64 overflow-y-auto rounded-xl border-2 border-gray-200 bg-gray-50/50 p-3">
+            <ng-container *ngIf="chambers.length === 0">
+              <p class="py-6 text-center text-sm text-gray-500">Select a doctor to see chambers</p>
+            </ng-container>
+            <div class="grid grid-cols-1 gap-3 lg:grid-cols-2">
+              <button
+                *ngFor="let chamber of chambers"
+                type="button"
+                (click)="selectChamber(chamber.id)"
+                class="w-full text-left rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all"
+                [ngClass]="(f['chamberId'].value == chamber.id) ? 'border-ent-primary bg-accent-green/15 text-dark-green ring-2 ring-ent-primary/30' : 'border-gray-200 bg-white text-slate-700 hover:border-dark-green/30 hover:bg-accent-green/5'"
+              >
+                <span class="flex items-center gap-2">
+                  <span *ngIf="f['chamberId'].value == chamber.id" class="material-symbols-outlined text-ent-primary text-lg shrink-0">check_circle</span>
+                  {{ chamber.name }} - {{ chamber.appointmentNumber }}
+                </span>
+              </button>
+            </div>
           </div>
-          <p *ngIf="f['chamberId'].invalid && f['chamberId'].touched" class="mt-0.5 text-xs text-red-600">Please select a chamber</p>
+          <p *ngIf="f['chamberId'].invalid && f['chamberId'].touched" class="mt-1 text-xs text-red-600">Please select a chamber</p>
         </div>
 
-        <div>
+        <div class="w-full">
           <label class="mb-1.5 flex items-center gap-1 text-xs font-semibold text-dark-green">
             <span class="material-symbols-outlined text-ent-primary text-xs">calendar_today</span>
             Appointment Date <span class="text-red-500">*</span>
@@ -135,16 +140,16 @@
           <input
             type="date"
             formControlName="appointmentDate"
-            class="h-9 w-full rounded-lg border-2 border-gray-200 bg-white px-3 text-sm transition-all focus:border-ent-primary focus:ring-2 focus:ring-ent-primary/20"
+            class="h-9 w-full max-w-xs rounded-lg border-2 border-gray-200 bg-white px-3 text-sm transition-all focus:border-ent-primary focus:ring-2 focus:ring-ent-primary/20"
             [class.border-red-300]="f['appointmentDate'].invalid && f['appointmentDate'].touched"
           />
           <p *ngIf="f['appointmentDate'].invalid && f['appointmentDate'].touched" class="mt-0.5 text-xs text-red-600">Please select appointment date</p>
         </div>
 
-        <div class="sm:col-span-2 lg:col-span-4">
+        <div class="w-full">
           <label class="mb-2 flex items-center gap-1.5 text-xs font-semibold text-dark-green">
             <span class="material-symbols-outlined text-ent-primary text-xs">schedule</span>
-            Appointment Slot (Optional)
+            Appointment Slot <span class="text-red-500">*</span>
             <span *ngIf="loadingSlots" class="ml-2 text-xs text-gray-500">
               <span class="material-symbols-outlined animate-spin align-middle">progress_activity</span>
               Loading...
@@ -174,7 +179,7 @@
           </div>
           <div *ngIf="!loadingSlots && availableSlots.length === 0 && f['chamberId'].value && f['appointmentDate'].value" class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
             <span class="material-symbols-outlined align-middle">warning</span>
-            No time slots available for this date. You can still book without selecting a slot.
+            No time slots available for this date. Please select another date or chamber to continue.
           </div>
           <p *ngIf="!loadingSlots && availableSlots.length === 0 && (!f['chamberId'].value || !f['appointmentDate'].value)" class="italic text-sm text-gray-500">
             Select chamber and date to see available time slots
@@ -325,18 +330,20 @@
           />
         </div>
 
+        <!-- TODO: Fee field – uncomment when needed
         <div>
-          <label class="mb-1.5 block text-xs font-semibold text-dark-green">Fee (৳)</label>
+          <label class="mb-1.5 block text-xs font-semibold text-dark-green">Fee (৳) <span class="font-normal text-gray-500">— type অনুযায়ী</span></label>
           <input
             type="number"
             formControlName="fee"
             placeholder="0"
             min="0"
             readonly
-            class="h-9 w-full rounded-lg border-2 border-gray-200 bg-gray-50 px-3 text-sm transition-all"
+            class="h-9 w-full rounded-lg border-2 border-gray-200 bg-gray-50 px-3 text-sm transition-all tabular-nums"
           />
-          <p class="mt-0.5 text-xs text-gray-500">Auto-calculated based on type</p>
+          <p class="mt-0.5 text-xs text-gray-500">Type অনুযায়ী: New = প্রথম ভিজিট, অন্যগুলো = Follow-up ফি</p>
         </div>
+        -->
       </div>
 
       <!-- Step 3: Review -->
@@ -360,10 +367,12 @@
               <p class="text-sm text-slate-600">Age: {{ f['age'].value }}{{ f['months'].value ? ' yrs ' + f['months'].value + ' months' : '' }}</p>
               <p class="text-sm text-slate-600" *ngIf="f['refererDoctor'].value">Referral Doctor: {{ f['refererDoctor'].value }}</p>
             </div>
+            <!-- TODO: Fee in Review – uncomment when needed
             <div>
               <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Fee</p>
               <p class="mt-1 text-lg font-bold text-dark-green">৳ {{ f['fee'].value || 0 }}</p>
             </div>
+            -->
           </div>
         </div>
       </div>
@@ -376,7 +385,9 @@
           <p class="font-medium text-dark-green">{{ getDoctorLabel() }} — {{ getChamberLabel() }}</p>
           <p class="text-sm text-slate-600">{{ f['appointmentDate'].value }} <span *ngIf="selectedSlot">at {{ formatTime(selectedSlot.time) }}</span></p>
           <p class="mt-2 font-medium text-dark-green">{{ f['fullName'].value }} ({{ f['phone'].value }})</p>
+          <!-- TODO: Fee in Confirm – uncomment when needed
           <p class="text-sm text-slate-600">Fee: ৳ {{ f['fee'].value || 0 }}</p>
+          -->
         </div>
       </div>
 

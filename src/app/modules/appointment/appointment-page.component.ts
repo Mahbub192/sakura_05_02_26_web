@@ -116,11 +116,26 @@ export class AppointmentPageComponent implements OnInit {
     });
   }
 
+  /** Doctor with fullName "System Administrator" – when present, doctor field is hidden and this doctor is auto-selected. */
+  getSystemAdministratorDoctor(): any {
+    return this.doctors.find((d: any) => (d.fullName || '').trim() === 'System Administrator') || null;
+  }
+
+  /** When true, hide doctor dropdown and use System Administrator as selected doctor so only chambers are shown. */
+  get hideDoctorField(): boolean {
+    return !!this.getSystemAdministratorDoctor();
+  }
+
   loadDoctors(): void {
     this.loadingDoctors = true;
     this.apiService.get('/public/doctors').subscribe({
       next: (response: any) => {
         this.doctors = Array.isArray(response) ? response : [];
+        const sysAdmin = this.getSystemAdministratorDoctor();
+        if (sysAdmin) {
+          this.appointmentForm.patchValue({ doctorId: String(sysAdmin.id) }, { emitEvent: false });
+          this.loadChambers();
+        }
         this.loadingDoctors = false;
       },
       error: () => {
@@ -324,13 +339,16 @@ export class AppointmentPageComponent implements OnInit {
     return 'bg-accent-green text-dark-green hover:bg-accent-green/90 cursor-pointer border border-dark-green/20';
   }
 
+  /** Update fee based on selected Type (identifier): New = first visit fee, others = follow-up fee. */
   updateFee(identifier: string): void {
     const chamberId = this.appointmentForm.get('chamberId')?.value;
     if (!chamberId) return;
     const chamber = this.chambers.find((c) => c.id === +chamberId);
     if (chamber) {
-      const fee = identifier === 'New' ? chamber.feeFirstTime : chamber.feeFollowup;
-      this.appointmentForm.patchValue({ fee });
+      const fee = identifier === 'New'
+        ? (chamber.feeFirstTime ?? 0)
+        : (chamber.feeFollowup ?? 0);
+      this.appointmentForm.patchValue({ fee: fee });
     }
   }
 
@@ -399,7 +417,8 @@ export class AppointmentPageComponent implements OnInit {
     const d = this.appointmentForm.get('doctorId')?.value;
     const c = this.appointmentForm.get('chamberId')?.value;
     const date = this.appointmentForm.get('appointmentDate')?.value;
-    return !!d && !!c && !!date;
+    const hasSlot = !!this.selectedSlot;
+    return !!d && !!c && !!date && hasSlot;
   }
 
   isStep2Valid(): boolean {
@@ -425,6 +444,10 @@ export class AppointmentPageComponent implements OnInit {
     if (this.currentStep < this.totalSteps) {
       this.currentStep++;
       this.error = '';
+      // When entering step 2 (Patient Info), refresh fee so it shows according to current Type
+      if (this.currentStep === 2) {
+        this.updateFee(this.appointmentForm.get('identifier')?.value || 'New');
+      }
     }
   }
 
