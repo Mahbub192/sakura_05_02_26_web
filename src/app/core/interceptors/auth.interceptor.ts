@@ -25,6 +25,11 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError(error => {
         if (error instanceof HttpErrorResponse && error.status === 401) {
+          // Do not try to refresh when the failing request is login or refresh-token
+          const url = request.url ?? '';
+          if (url.includes('/auth/login') || url.includes('/auth/refresh-token')) {
+            return throwError(() => error);
+          }
           return this.handle401Error(request, next);
         } else {
           return throwError(() => error);
